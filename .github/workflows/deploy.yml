@@ -52,4 +52,4 @@ jobs:
         aws s3 cp \
         --region ap-northeast-2 \
         --acl private \ 
-	  ./resumerry.zip s3://resumerry-deploy-bucket/
+	./resumerry.zip s3://resumerry-deploy-bucket/
