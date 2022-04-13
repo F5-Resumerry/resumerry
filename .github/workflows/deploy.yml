@@ -34,6 +34,10 @@ jobs:
       
     - name: Build with Gradle
       run: ./gradlew clean build
+      
+    - name: Make directory for deliver
+      run: mkdir deploy
+
 
     - name: Make Directory for deliver
       run: mkdir deploy
@@ -49,3 +53,9 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: aws s3 cp --region ap-northeast-2 --acl private ./resumerry-build.zip s3://resumerry-deploy-bucket/
+      
+    - name: Deploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: aws deploy create-deployment --application-name resumerry --deployment-group-name resumerry-deploy-group --file-exists-behavior OVERWRITE --s3-location bucket=resumerry-deploy-bucket,bundleType=zip,key=resumerry-build.zip --region ap-northeast-2
