@@ -40,7 +40,7 @@ jobs:
 
 
     - name: Make Directory for deliver
-      run: mkdir deploy
+      run: mkdir -p deploy
       
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy/
