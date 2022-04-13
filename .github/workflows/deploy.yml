@@ -58,4 +58,4 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: aws deploy create-deployment --application-name resumerry --deployment-group-name resumerry-deploy-group --file-exists-behavior OVERWRITE --s3-location bucket=resumerry-deploy-bucket,bundleType=zip,key=resumerry-build.zip --region ap-northeast-2
+      run: aws deploy create-deployment --application-name resumerry --deployment-group-name resumerry --file-exists-behavior OVERWRITE --s3-location bucket=resumerry-deploy-bucket,bundleType=zip,key=resumerry-build.zip --region ap-northeast-2
