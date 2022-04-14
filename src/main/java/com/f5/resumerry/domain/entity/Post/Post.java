@@ -4,6 +4,7 @@ import com.f5.resumerry.domain.entity.Member;
 import com.f5.resumerry.domain.entity.Resume.Resume;
 import com.f5.resumerry.domain.entity.converter.BaseTimeEntity;
 import com.f5.resumerry.domain.entity.converter.BooleanToYNConverter;
+import com.f5.resumerry.domain.entity.selector.CategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer views;
 
+    @Column(nullable = false)
+    private CategoryEnum category;
+
     @Column(name = "is_anonymous", nullable = false)
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean isAnonymous;
@@ -51,8 +55,5 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post")
     private List<PostComment> postCommentList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post")
-    private List<PostCategory> postCategoryList = new ArrayList<>();
 
 }

@@ -3,6 +3,7 @@ package com.f5.resumerry.domain.entity.Resume;
 import com.f5.resumerry.domain.entity.Member;
 import com.f5.resumerry.domain.entity.Post.Post;
 import com.f5.resumerry.domain.entity.converter.BaseTimeEntity;
+import com.f5.resumerry.domain.entity.selector.CategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,6 +46,9 @@ public class Resume extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer views;
 
+    @Column(nullable = false)
+    private CategoryEnum category;
+
     @ManyToOne
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"))
     private Member member;
@@ -63,8 +67,5 @@ public class Resume extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "resume")
     private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "resume")
-    private List<ResumeCategory> resumeCategoryList = new ArrayList<>();
 
 }

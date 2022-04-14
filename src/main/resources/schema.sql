@@ -79,12 +79,6 @@ CREATE TABLE IF NOT EXISTS post (
     primary key (post_id)
     )
 
-CREATE TABLE IF NOT EXISTS post_category (
-    post_category_id bigint not null,
-    category_id bigint, post_id bigint,
-    primary key (post_category_id)
-    )
-
 CREATE TABLE IF NOT EXISTS post_comment (
     post_comment_id bigint not null,
     created_date datetime(6),
@@ -120,13 +114,6 @@ CREATE TABLE IF NOT EXISTS resume (
     years integer not null,
     member_id bigint,
     primary key (resume_id)
-    )
-
-CREATE TABLE IF NOT EXISTS resume_category (
-    resume_category_id bigint not null,
-    category_id bigint,
-    resume_id bigint,
-    primary key (resume_category_id)
     )
 
 CREATE TABLE IF NOT EXISTS resume_comment (

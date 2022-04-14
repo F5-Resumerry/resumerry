@@ -1,9 +1,6 @@
 package com.f5.resumerry.domain.entity.selector;
 
 import com.f5.resumerry.domain.entity.MemberCategory;
-import com.f5.resumerry.domain.entity.Post.PostCategory;
-import com.f5.resumerry.domain.entity.Post.PostComment;
-import com.f5.resumerry.domain.entity.Resume.ResumeCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,12 +29,6 @@ public class Category {
 
     @Column(nullable = false)
     private CategoryEnum category;
-
-    @OneToMany(mappedBy = "category")
-    private List<PostCategory> postCategoryList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "category")
-    private List<ResumeCategory> resumeCategoryList = new ArrayList<>();
 
     @OneToMany(mappedBy = "category")
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
