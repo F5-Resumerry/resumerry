@@ -1,6 +1,6 @@
 package com.f5.resumerry.domain.entity.Resume;
 
-import com.f5.resumerry.domain.entity.Member;
+import com.f5.resumerry.domain.entity.Member.Member;
 import com.f5.resumerry.domain.entity.converter.BaseTimeEntity;
 import com.f5.resumerry.domain.entity.converter.BooleanToYNConverter;
 import lombok.AllArgsConstructor;

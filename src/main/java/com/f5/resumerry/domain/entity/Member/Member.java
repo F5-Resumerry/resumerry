@@ -1,4 +1,4 @@
-package com.f5.resumerry.domain.entity;
+package com.f5.resumerry.domain.entity.Member;
 
 import com.f5.resumerry.domain.entity.Order.Order;
 import com.f5.resumerry.domain.entity.Post.*;

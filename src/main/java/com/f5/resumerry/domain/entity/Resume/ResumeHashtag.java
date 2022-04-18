@@ -1,6 +1,5 @@
 package com.f5.resumerry.domain.entity.Resume;
 
-import com.f5.resumerry.domain.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
