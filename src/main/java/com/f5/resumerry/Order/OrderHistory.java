@@ -1,4 +1,4 @@
-package com.f5.resumerry.domain.entity.Order;
+package com.f5.resumerry.Order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

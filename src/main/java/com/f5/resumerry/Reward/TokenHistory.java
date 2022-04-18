@@ -1,6 +1,7 @@
-package com.f5.resumerry.domain.entity.Resume;
+package com.f5.resumerry.Reward;
 
-import com.f5.resumerry.domain.entity.Member.Member;
+
+import com.f5.resumerry.Member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,27 +14,29 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Table(
-        name = "resume_scrap"
+        name = "token_history"
 )
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResumeScrap{
+public class TokenHistory {
 
     @Id
     @GeneratedValue
-    @Column(name = "resume_scrap_id")
+    @Column(name = "token_history_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumescrap"))
-    private Resume resume;
+    @Column(nullable = false)
+    private Long count;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumescrap"))
-    private Member member;
+    @Column(nullable = false)
+    private String reason;
 
     @CreatedDate
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_tokenhistory"))
+    private Member member;
 }

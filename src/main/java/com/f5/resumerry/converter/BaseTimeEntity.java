@@ -1,4 +1,4 @@
-package com.f5.resumerry.domain.entity.converter;
+package com.f5.resumerry.converter;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

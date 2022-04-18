@@ -1,6 +1,6 @@
-package com.f5.resumerry.domain.entity.Member;
+package com.f5.resumerry.Member;
 
-import com.f5.resumerry.domain.entity.converter.BooleanToYNConverter;
+import com.f5.resumerry.converter.BooleanToYNConverter;
 
 import javax.persistence.*;
 

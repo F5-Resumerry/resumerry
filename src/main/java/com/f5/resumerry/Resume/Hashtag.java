@@ -1,4 +1,4 @@
-package com.f5.resumerry.domain.entity.Resume;
+package com.f5.resumerry.Resume;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.f5.resumerry.domain.entity.converter;
+package com.f5.resumerry.converter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

@@ -1,6 +1,6 @@
-package com.f5.resumerry.domain.entity.Member;
+package com.f5.resumerry.Member;
 
-import com.f5.resumerry.domain.entity.selector.Category;
+import com.f5.resumerry.selector.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
