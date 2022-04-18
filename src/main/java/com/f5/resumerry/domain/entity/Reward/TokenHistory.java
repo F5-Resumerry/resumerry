@@ -37,6 +37,6 @@ public class TokenHistory {
     private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_token_history"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_tokenhistory"))
     private Member member;
 }

@@ -24,10 +24,10 @@ public class ResumeCommentRecommend{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_comment_id", foreignKey = @ForeignKey(name = "FK_resume_comment_resume_comment_recommend"))
+    @JoinColumn(name = "resume_comment_id", foreignKey = @ForeignKey(name = "FK_resumecomment_resumecommentrecommend"))
     private ResumeComment resumeComment;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume_comment_recommend"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumecommentrecommend"))
     private Member member;
 }

@@ -24,10 +24,10 @@ public class PostCommentReport{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "post_comment_id", foreignKey = @ForeignKey(name = "FK_post_comment_post_comment_report"))
+    @JoinColumn(name = "post_comment_id", foreignKey = @ForeignKey(name = "FK_postcomment_postcommentreport"))
     private PostComment postComment;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_post_comment_report"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_postcommentreport"))
     private Member member;
 }

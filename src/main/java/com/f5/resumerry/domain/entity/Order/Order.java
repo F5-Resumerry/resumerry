@@ -58,6 +58,6 @@ public class Order {
     private Member member;
 
     @OneToOne
-    @JoinColumn(name = "order_history_id", foreignKey = @ForeignKey(name = "FK_order_history_order"))
+    @JoinColumn(name = "order_history_id", foreignKey = @ForeignKey(name = "FK_orderhistory_order"))
     private OrderHistory orderHistory;
 }

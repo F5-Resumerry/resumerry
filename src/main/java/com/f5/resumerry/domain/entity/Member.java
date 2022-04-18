@@ -62,7 +62,7 @@ public class Member extends BaseTimeEntity {
     private Role role;
 
     @OneToOne
-    @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_member_info_member"))
+    @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"))
     private MemberInfo memberInfo;
 
     @OneToMany(mappedBy = "member")

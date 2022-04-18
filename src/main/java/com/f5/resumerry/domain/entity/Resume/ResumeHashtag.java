@@ -24,10 +24,10 @@ public class ResumeHashtag{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resume_hashtag"))
+    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumehashtag"))
     private Resume resume;
 
     @ManyToOne
-    @JoinColumn(name = "hashtag_id", foreignKey = @ForeignKey(name = "FK_hashtag_resume_hashtag"))
+    @JoinColumn(name = "hashtag_id", foreignKey = @ForeignKey(name = "FK_hashtag_resumehashtag"))
     private Hashtag hashtag;
 }

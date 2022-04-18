@@ -25,10 +25,10 @@ public class MemberCategory{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_member_category"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_membercategory"))
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "FK_category_member_category"))
+    @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "FK_category_membercategory"))
     private Category category;
 }

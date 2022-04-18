@@ -26,11 +26,11 @@ public class ResumeScrap{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resume_scrap"))
+    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumescrap"))
     private Resume resume;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume_scrap"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumescrap"))
     private Member member;
 
     @CreatedDate

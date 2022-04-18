@@ -41,11 +41,11 @@ public class PostComment extends BaseTimeEntity {
     private Integer postCommentDepth;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_post_comment"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_postcomment"))
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_post_comment"))
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_postcomment"))
     private Post post;
 
     @OneToMany(mappedBy = "postComment")
