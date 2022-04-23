@@ -1,4 +1,4 @@
-package com.f5.resumerry.Member;
+package com.f5.resumerry.Member.entity;
 
 import com.f5.resumerry.converter.BooleanToYNConverter;
 

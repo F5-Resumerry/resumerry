@@ -1,4 +1,4 @@
-package com.f5.resumerry.Member;
+package com.f5.resumerry.Member.entity;
 
 import com.f5.resumerry.Order.Order;
 import com.f5.resumerry.Post.Post;
@@ -6,8 +6,6 @@ import com.f5.resumerry.Post.PostComment;
 import com.f5.resumerry.Post.PostCommentRecommend;
 import com.f5.resumerry.Post.PostCommentReport;
 import com.f5.resumerry.Resume.*;
-import com.f5.resumerry.domain.entity.Post.*;
-import com.f5.resumerry.domain.entity.Resume.*;
 import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
@@ -108,4 +106,5 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member")
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
+
 }
