@@ -37,22 +37,20 @@ public class SignUpDTO {
             , message = "비밀번호는 영문 대,소문자와 숫자, 특수기호가 적어도 1개 이상씩 포함된 8자 ~ 20자의 비밀번호여야 합니다.")
     private String password;
 
-    @NotBlank(message = "연차는 필수 입력 값입니다.")
-    @Pattern(regexp="^[0-9]+$"
-            , message = "연차는 숫자로만 이루어져야 합니다.")
+//    @NotBlank(message = "연차는 필수 입력 값입니다.")
     private Integer years;
 
-    @NotBlank(message = "카테고리는 필수 입력 값입니다.")
+//    @NotBlank(message = "카테고리는 필수 입력 값입니다.")
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
-
-    @NotBlank(message = "재직 여부는 필수 입력 값입니다.")
+//
+//    @NotBlank(message = "재직 여부는 필수 입력 값입니다.")
     private Boolean isWorking;
 
     @NotBlank(message = "역할은 필수 입력 값입니다.")
-    private Role role;
+    private String role;
 
     @Builder
-    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, Role role) {
+    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, String role) {
         this.id = id;
         this.accountName = accountName;
         this.nickname = nickname;
