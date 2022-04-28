@@ -57,7 +57,7 @@ public class AuthController {
             throw new DuplicateException("id", "id duplicated", ErrorCode.DUPLICATION);
         }
 
-        if (!memberServiceImpl.checkExistsNickname(memberDTO.getNickname())) {
+        if (memberServiceImpl.checkExistsNickname(memberDTO.getNickname())) {
             throw new DuplicateException("nickname", "nickname duplicated", ErrorCode.DUPLICATION);
         }
 
@@ -65,11 +65,16 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<Map<String, Boolean>> signIn(@Validated(ValidationSequence.class) @RequestBody SignInDTO memberDTO) throws Exception {
-        Map<String, Boolean> result = new HashMap<>();
-        result.put("access token", true);
-        result.put("refresh token", true);
-
+    public ResponseEntity<Map<String, String>> signIn(@Validated(ValidationSequence.class) @RequestBody SignInDTO memberDTO) throws Exception {
+        Map<String, String> result = new HashMap<>();
+        if(memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword())){
+            result.put("result", "SUCCESS");
+            result.put("access token", "df");
+            result.put("refresh token", "adfa");
+        }
+        else{
+            result.put("result", "FAIL");
+        }
         return ResponseEntity.ok().body(result);
     }
 

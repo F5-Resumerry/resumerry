@@ -25,19 +25,19 @@ public class ValidController {
     private final MemberServiceImpl memberServiceImpl;
     private final ConfirmationTokenService confirmationTokenService;
 
-    @PostMapping("/check/email")
+    @PostMapping("/email/exists")
     public ResponseEntity<Boolean> checkEmailDuplicate(@RequestBody Member member) {
         return ResponseEntity.ok(memberServiceImpl.checkExistsEmail(member.getEmail()));
     }
 
-    @PostMapping("/exists")
+    @PostMapping("/account/exists")
     public ResponseEntity<Map<String, Boolean>> checkAccountNameDuplicate(@RequestBody SignUpDTO memberDTO) {
         Map<String, Boolean> result = new HashMap<>();
         result.put("result", memberServiceImpl.checkExistsAccountName(memberDTO.getAccountName()));
         return ResponseEntity.ok().body(result);
     }
 
-    @PostMapping("/send")
+    @PostMapping("/email/send")
     public ResponseEntity<Map<String, Boolean>> emailSend(@Valid @RequestBody ConfirmationTokenDTO confirmationTokenDTO) {
         if(ResponseEntity.ok(confirmationTokenService.checkExistsReceiverEmail(confirmationTokenDTO.getReceiverEmail())).getBody().booleanValue() == false){
             confirmationTokenService.createEmailConfirmationToken(confirmationTokenDTO.getReceiverEmail());
@@ -57,13 +57,13 @@ public class ValidController {
         //이메일 중복검증, 형식 검증 후 검증 완료 시 이메일 전송
     }
 
-    @GetMapping("/confirm")
+    @GetMapping("/email/confirm")
     public String confirmEmail(@RequestParam String token) throws Exception {
         memberServiceImpl.confirmEmail(token);
         return "이메일 인증이 완료되었습니다";
     }
 
-    @PostMapping("/check")
+    @PostMapping("/email/check")
     public ResponseEntity<Map<String, Boolean>> checkEmail(@Valid @RequestBody ConfirmationTokenDTO confirmationTokenDTO) throws Exception {
         Map<String, Boolean> result = new HashMap<>();
         result.put("result", memberServiceImpl.checkEmail(confirmationTokenDTO.getReceiverEmail()));

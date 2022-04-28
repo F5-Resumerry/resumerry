@@ -55,14 +55,15 @@ public class Member extends BaseTimeEntity {
     private String introduce;
 
     @Column(nullable = false)
-    private Integer years = 0;
+    private Integer years;
 
     @Column(name = "is_working", nullable = false)
     @Convert(converter = BooleanToYNConverter.class)
-    private Boolean isWorking = false;
+    private Boolean isWorking;
 
     @Column(nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToOne
     @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"))

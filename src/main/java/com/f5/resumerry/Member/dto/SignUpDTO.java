@@ -1,11 +1,13 @@
 package com.f5.resumerry.Member.dto;
 import com.f5.resumerry.Member.entity.Member;
 import com.f5.resumerry.Member.entity.MemberCategory;
+import com.f5.resumerry.Member.entity.MemberInfo;
 import com.f5.resumerry.selector.Role;
 import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,20 +39,22 @@ public class SignUpDTO {
             , message = "비밀번호는 영문 대,소문자와 숫자, 특수기호가 적어도 1개 이상씩 포함된 8자 ~ 20자의 비밀번호여야 합니다.")
     private String password;
 
-//    @NotBlank(message = "연차는 필수 입력 값입니다.")
+    @NotNull(message = "연차는 필수 입력 값입니다.")
     private Integer years;
 
-//    @NotBlank(message = "카테고리는 필수 입력 값입니다.")
+//    @NotNull(message = "카테고리는 필수 입력 값입니다.")
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
-//
-//    @NotBlank(message = "재직 여부는 필수 입력 값입니다.")
+
+    @NotNull(message = "재직 여부는 필수 입력 값입니다.")
     private Boolean isWorking;
 
-    @NotBlank(message = "역할은 필수 입력 값입니다.")
-    private String role;
+    @NotNull(message = "역할은 필수 입력 값입니다.")
+    private Role role;
+
+    private MemberInfo memberInfo;
 
     @Builder
-    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, String role) {
+    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, Role role, MemberInfo memberInfo) {
         this.id = id;
         this.accountName = accountName;
         this.nickname = nickname;
@@ -60,6 +64,7 @@ public class SignUpDTO {
         this.memberCategoryList = memberCategoryList;
         this.isWorking = isWorking;
         this.role = role;
+        this.memberInfo = memberInfo;
     }
 
     public Member toEntity(){
@@ -73,6 +78,7 @@ public class SignUpDTO {
                 .memberCategoryList(memberCategoryList)
                 .isWorking(isWorking)
                 .role(role)
+                .memberInfo(memberInfo)
                 .build();
         return build;
     }

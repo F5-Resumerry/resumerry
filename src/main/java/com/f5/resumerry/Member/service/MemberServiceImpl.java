@@ -1,14 +1,17 @@
 package com.f5.resumerry.Member.service;
 
 
+import com.f5.resumerry.Member.dto.MemberInfoDTO;
 import com.f5.resumerry.Member.dto.SignUpDTO;
 import com.f5.resumerry.Member.entity.ConfirmationToken;
 import com.f5.resumerry.Member.entity.Member;
+import com.f5.resumerry.Member.entity.MemberInfo;
 import com.f5.resumerry.Member.repository.ConfirmationTokenRepository;
+import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,6 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MemberServiceImpl implements MemberService, UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final MemberInfoRepository memberInfoRepository;
 //    private final BCryptPasswordEncoder passwordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -40,7 +44,14 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
     @Override
     @Transactional
     public Member saveMember(SignUpDTO memberDTO) {
-//        memberDTO.setPassword(passwordEncoder().encode(memberDTO.getPassword()));
+//        memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
+
+        MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder().build();
+
+        MemberInfo memberInfo = memberInfoDTO.toEntity();
+        memberInfoRepository.save(memberInfo);
+
+        memberDTO.setMemberInfo(memberInfo);
         Member member = memberDTO.toEntity();
         return memberRepository.save(member);
     }
@@ -86,6 +97,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         Optional<Member> member = memberRepository.findById(mbrNo);
         return member;
     }
+
     @Transactional
     public void confirmEmail(String token) {
         ConfirmationToken findConfirmationToken = confirmationTokenService.findByIdAndExpirationDateAfterAndExpired(token);
@@ -97,6 +109,15 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
 
         AtomicBoolean check = new AtomicBoolean(false);
         findConfirmationToken.stream().filter(s->s.isCertification()).forEach((s)->check.set(true));
+        return check.get();
+    }
+
+    public boolean checkLogin(String accountName, String password){
+        Member member = memberRepository.findByAccountName(accountName);
+        AtomicBoolean check = new AtomicBoolean(false);
+        if (member.getPassword() == password) {
+            check.set(true);
+        }
         return check.get();
     }
 
