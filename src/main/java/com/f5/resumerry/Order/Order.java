@@ -1,6 +1,6 @@
 package com.f5.resumerry.Order;
 
-import com.f5.resumerry.Member.Member;
+import com.f5.resumerry.Member.domain.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,9 @@
-package com.f5.resumerry.Member;
+package com.f5.resumerry.Member.domain.entity;
 
 import com.f5.resumerry.converter.BooleanToYNConverter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -8,6 +11,9 @@ import javax.persistence.*;
 @Table(
         name = "member_info"
 )
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class MemberInfo {
 
     @Id
@@ -16,10 +22,10 @@ public class MemberInfo {
     private Long id;
 
     @Column(nullable = false)
-    private Integer token;
+    private Integer token = 0 ;
 
     @Column(nullable = false)
-    private Integer stack;
+    private Integer stack = 0;
 
     @Column(name = "receive_advertisement")
     @Convert(converter = BooleanToYNConverter.class)
@@ -27,17 +33,12 @@ public class MemberInfo {
 
     @Column(name = "email_verified")
     @Convert(converter = BooleanToYNConverter.class)
-    private Boolean emailVerified;
+    private Boolean emailVerified = true;
 
-    @Column(name = "image_src_s", nullable = false)
-    private String imageSrcS;
-
-    @Column(name = "image_src_m", nullable = false)
-    private String imageSrcM;
-
-    @Column(name = "image_src_l", nullable = false)
-    private String imageSrcL;
+    @Column(name = "image_src")
+    private String imageSrc;
 
     @OneToOne(mappedBy = "memberInfo")
     private Member member;
+
 }
