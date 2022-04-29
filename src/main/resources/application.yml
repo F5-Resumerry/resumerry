@@ -33,9 +33,15 @@ logging:
   level:
     org.hibernate.SQL: debug
 
-server:
-  port: 8081
 
+
+aws:
+  ses:
+    credentials:
+      access-key: qJZL3GkIcD9dz/OcuvkjeL7oPaOIjc+YvqJleoc1
+      secret-key: https://629314205341.signin.aws.amazon.com/console
+    veritied:
+      email: flower5develop@gmail.com
 
 #
 #spring:
