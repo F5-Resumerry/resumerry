@@ -78,6 +78,13 @@ public class AuthController {
         return ResponseEntity.ok().body(result);
     }
 
+    @GetMapping("/test")
+    public String test() {
+
+        return "이메일 인증이 완료되었습니다";
+    }
+
+
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
