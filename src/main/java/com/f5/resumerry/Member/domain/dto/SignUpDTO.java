@@ -1,7 +1,7 @@
-package com.f5.resumerry.Member.dto;
-import com.f5.resumerry.Member.entity.Member;
-import com.f5.resumerry.Member.entity.MemberCategory;
-import com.f5.resumerry.Member.entity.MemberInfo;
+package com.f5.resumerry.Member.domain.dto;
+import com.f5.resumerry.Member.domain.entity.Member;
+import com.f5.resumerry.Member.domain.entity.MemberCategory;
+import com.f5.resumerry.Member.domain.entity.MemberInfo;
 import com.f5.resumerry.selector.Role;
 import lombok.*;
 

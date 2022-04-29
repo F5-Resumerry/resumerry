@@ -1,4 +1,4 @@
-package com.f5.resumerry.Member.dto;
+package com.f5.resumerry.Member.domain.dto;
 
 import lombok.*;
 

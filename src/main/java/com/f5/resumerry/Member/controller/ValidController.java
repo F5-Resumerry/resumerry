@@ -1,10 +1,10 @@
 package com.f5.resumerry.Member.controller;
 
-import com.f5.resumerry.Member.dto.ConfirmationTokenDTO;
-import com.f5.resumerry.Member.dto.SignUpDTO;
-import com.f5.resumerry.Member.entity.Member;
-import com.f5.resumerry.Member.exception.DuplicateException;
-import com.f5.resumerry.Member.exception.ErrorCode;
+import com.f5.resumerry.Member.domain.dto.ConfirmationTokenDTO;
+import com.f5.resumerry.Member.domain.dto.SignUpDTO;
+import com.f5.resumerry.Member.domain.entity.Member;
+import com.f5.resumerry.exception.DuplicateException;
+import com.f5.resumerry.exception.ErrorCode;
 import com.f5.resumerry.Member.service.ConfirmationTokenService;
 import com.f5.resumerry.Member.service.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.f5.resumerry.Member.repository;
 
-import com.f5.resumerry.Member.entity.ConfirmationToken;
+import com.f5.resumerry.Member.domain.entity.ConfirmationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

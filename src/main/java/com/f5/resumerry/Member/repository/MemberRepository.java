@@ -1,6 +1,6 @@
 package com.f5.resumerry.Member.repository;
 
-import com.f5.resumerry.Member.entity.Member;
+import com.f5.resumerry.Member.domain.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {

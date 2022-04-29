@@ -1,4 +1,4 @@
-package com.f5.resumerry.Member.exception;
+package com.f5.resumerry.exception;
 
 public class BadRequestException extends RuntimeException {
     private String errorCode;

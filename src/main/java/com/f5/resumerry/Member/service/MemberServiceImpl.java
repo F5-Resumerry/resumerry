@@ -1,11 +1,11 @@
 package com.f5.resumerry.Member.service;
 
 
-import com.f5.resumerry.Member.dto.MemberInfoDTO;
-import com.f5.resumerry.Member.dto.SignUpDTO;
-import com.f5.resumerry.Member.entity.ConfirmationToken;
-import com.f5.resumerry.Member.entity.Member;
-import com.f5.resumerry.Member.entity.MemberInfo;
+import com.f5.resumerry.Member.domain.dto.MemberInfoDTO;
+import com.f5.resumerry.Member.domain.dto.SignUpDTO;
+import com.f5.resumerry.Member.domain.entity.ConfirmationToken;
+import com.f5.resumerry.Member.domain.entity.Member;
+import com.f5.resumerry.Member.domain.entity.MemberInfo;
 import com.f5.resumerry.Member.repository.ConfirmationTokenRepository;
 import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
@@ -16,10 +16,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;

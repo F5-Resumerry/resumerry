@@ -2,8 +2,8 @@ package com.f5.resumerry.Member.service;
 
 
 
-import com.f5.resumerry.Member.entity.ConfirmationToken;
-import com.f5.resumerry.Member.exception.BadRequestException;
+import com.f5.resumerry.Member.domain.entity.ConfirmationToken;
+import com.f5.resumerry.exception.BadRequestException;
 import com.f5.resumerry.Member.repository.ConfirmationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;

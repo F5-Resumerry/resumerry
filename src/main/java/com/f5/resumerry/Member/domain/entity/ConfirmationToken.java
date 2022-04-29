@@ -1,4 +1,4 @@
-package com.f5.resumerry.Member.entity;
+package com.f5.resumerry.Member.domain.entity;
 
 
 import lombok.AccessLevel;

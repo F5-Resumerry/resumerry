@@ -1,9 +1,8 @@
-package com.f5.resumerry.Member.dto;
-import com.f5.resumerry.Member.entity.Member;
+package com.f5.resumerry.Member.domain.dto;
+import com.f5.resumerry.Member.domain.entity.Member;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter

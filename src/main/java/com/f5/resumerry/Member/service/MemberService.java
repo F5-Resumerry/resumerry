@@ -1,8 +1,8 @@
 package com.f5.resumerry.Member.service;
 
 
-import com.f5.resumerry.Member.dto.SignUpDTO;
-import com.f5.resumerry.Member.entity.Member;
+import com.f5.resumerry.Member.domain.dto.SignUpDTO;
+import com.f5.resumerry.Member.domain.entity.Member;
 
 public interface MemberService {
 

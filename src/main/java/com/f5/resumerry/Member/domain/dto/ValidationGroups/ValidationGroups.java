@@ -1,4 +1,4 @@
-package com.f5.resumerry.Member.dto.ValidationGroups;
+package com.f5.resumerry.Member.domain.dto.ValidationGroups;
 
 
 public class ValidationGroups {

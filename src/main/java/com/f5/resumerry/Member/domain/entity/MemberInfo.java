@@ -1,13 +1,11 @@
-package com.f5.resumerry.Member.entity;
+package com.f5.resumerry.Member.domain.entity;
 
 import com.f5.resumerry.converter.BooleanToYNConverter;
-import com.f5.resumerry.selector.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(
@@ -37,14 +35,8 @@ public class MemberInfo {
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean emailVerified = true;
 
-    @Column(name = "image_src_s")
-    private String imageSrcS;
-
-    @Column(name = "image_src_m")
-    private String imageSrcM;
-
-    @Column(name = "image_src_l")
-    private String imageSrcL;
+    @Column(name = "image_src")
+    private String imageSrc;
 
     @OneToOne(mappedBy = "memberInfo")
     private Member member;

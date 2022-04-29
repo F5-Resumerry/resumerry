@@ -1,4 +1,4 @@
-package com.f5.resumerry.Member.filter;
+package com.f5.resumerry.filter;
 
 
 import com.auth0.jwt.JWT;
