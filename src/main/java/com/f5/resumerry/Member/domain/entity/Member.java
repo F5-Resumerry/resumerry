@@ -65,6 +65,15 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(nullable = false)
+    private String salt;
+
+    @Column(nullable = false)
+    private String access_token;
+
+    @Column(nullable = false)
+    private String refresh_token;
+
     @OneToOne
     @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"))
     private MemberInfo memberInfo;

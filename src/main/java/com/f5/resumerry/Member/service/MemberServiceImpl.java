@@ -12,10 +12,14 @@ import com.f5.resumerry.Member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.catalina.User;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,18 +36,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class MemberServiceImpl implements MemberService, UserDetailsService {
 
-    private final MemberRepository memberRepository;
+    private static MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
-//    private final BCryptPasswordEncoder passwordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private static SaltUtil saltUtil;
 
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     @Transactional
     public Member saveMember(SignUpDTO memberDTO) {
-//        memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
 
+        memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
         MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder().build();
 
         MemberInfo memberInfo = memberInfoDTO.toEntity();
@@ -74,20 +78,20 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return memberRepository.existsByNickname(nickname);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
-        Member member = memberRepository.findByAccountName(accountName);
-
-        if (member == null) {
-            log.error("Member not found in the database");
-            throw new UsernameNotFoundException("Member not found in the database");
-        }
-
-        log.info("≈@@accountName : {}", accountName);
-
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        return new org.springframework.security.core.userdetails.User(member.getAccountName(), member.getPassword(), authorities);
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
+//        Member member = memberRepository.findByAccountName(accountName);
+//
+//        if (member == null) {
+//            log.error("Member not found in the database");
+//            throw new UsernameNotFoundException("Member not found in the database");
+//        }
+//
+//        log.info("≈@@accountName : {}", accountName);
+//
+//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+//        return new org.springframework.security.core.userdetails.User(member.getAccountName(), member.getPassword(), authorities);
+//    }
 
 
     public Optional<Member> findById(Long mbrNo)
@@ -110,13 +114,34 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return check.get();
     }
 
-    public boolean checkLogin(String accountName, String password){
-        Member member = memberRepository.findByAccountName(accountName);
-        AtomicBoolean check = new AtomicBoolean(false);
-        if (member.getPassword() == password) {
-            check.set(true);
-        }
-        return check.get();
+//    public boolean checkLogin(String accountName, String password){
+//
+//        String encodePassword = passwordEncoder.encode(password);
+//        Member member = memberRepository.findByAccountName(accountName);
+//        log.info("checkLogin\n");
+//        log.info(member.getPassword());
+//        log.info("\n");
+//        log.info(encodePassword);
+//        log.info("\n");
+//        AtomicBoolean check = new AtomicBoolean(false);
+//        if (member.getPassword().equals(encodePassword)) {
+//            check.set(true);
+//        }
+//        return check.get();
+//    }
+
+    public static Member checkLogin(String id, String pw) throws Exception{
+        Member member = memberRepository.findByAccountName(id);
+        if(member==null) throw new Exception ("멤버가 조회되지 않음");
+        String salt = member.getSalt();
+        pw = saltUtil.encodePassword(salt,pw);
+        if(!member.getPassword().equals(pw))
+            throw new Exception ("비밀번호가 틀립니다.");
+        return member;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
+    }
 }

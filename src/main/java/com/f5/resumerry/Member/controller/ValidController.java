@@ -20,6 +20,7 @@ import java.util.Map;
 @RequestMapping("/valid")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class ValidController {
 
     private final MemberServiceImpl memberServiceImpl;

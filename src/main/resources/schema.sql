@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS category (category_id bigint not null, category integer not null, primary key (category_id));
 CREATE TABLE IF NOT EXISTS confirmation_token (id varchar(36) not null, certification bit not null, create_date datetime(6) not null, expiration_date datetime(6) not null, expired bit not null, last_modified_date datetime(6) not null, receiver_email varchar(255) not null, primary key (id));
 CREATE TABLE IF NOT EXISTS hashtag (hashtag bigint not null, hashtag_name varchar(255) not null, primary key (hashtag));
--- CREATE TABLE IF NOT EXISTS hibernate_sequence (next_val bigint)
--- CREATE TABLE IF NOT EXISTS hibernate_sequence (next_val bigint);
--- insert into hibernate_sequence values ( 1 )
---     insert into hibernate_sequence values ( 1 );
+CREATE TABLE IF NOT EXISTS hibernate_sequence (next_val bigint);
+
+INSERT INTO hibernate_sequence VALUES ( 1 );
+
 CREATE TABLE IF NOT EXISTS member (member_id bigint not null, created_date datetime(6), modified_date datetime(6), account_name varchar(255) not null, email varchar(255) not null, introduce varchar(255), is_working varchar(255) not null, nickname varchar(255) not null, password varchar(255) not null, role varchar(255) not null, years integer not null, member_info_id bigint, primary key (member_id));
 CREATE TABLE IF NOT EXISTS member_category (member_category_id bigint not null, category_id bigint, member_id bigint, primary key (member_category_id));
 CREATE TABLE IF NOT EXISTS member_info (member_info_id bigint not null, email_verified varchar(255), image_src varchar(255), receive_advertisement varchar(255), stack integer not null, token integer not null, primary key (member_info_id));
