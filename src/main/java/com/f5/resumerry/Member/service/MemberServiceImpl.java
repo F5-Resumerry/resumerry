@@ -9,13 +9,18 @@ import com.f5.resumerry.Member.domain.entity.MemberInfo;
 import com.f5.resumerry.Member.repository.ConfirmationTokenRepository;
 import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
+import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.catalina.User;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,18 +37,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class MemberServiceImpl implements MemberService, UserDetailsService {
 
+
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
-//    private final BCryptPasswordEncoder passwordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final SaltUtil saltUtil;
 
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     @Transactional
     public Member saveMember(SignUpDTO memberDTO) {
-//        memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
-
+        String salt = saltUtil.genSalt();
+        memberDTO.setSalt(salt);
+        memberDTO.setPassword(saltUtil.encodePassword(salt, memberDTO.getPassword()));
         MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder().build();
 
         MemberInfo memberInfo = memberInfoDTO.toEntity();
@@ -74,22 +81,6 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return memberRepository.existsByNickname(nickname);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
-        Member member = memberRepository.findByAccountName(accountName);
-
-        if (member == null) {
-            log.error("Member not found in the database");
-            throw new UsernameNotFoundException("Member not found in the database");
-        }
-
-        log.info("≈@@accountName : {}", accountName);
-
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        return new org.springframework.security.core.userdetails.User(member.getAccountName(), member.getPassword(), authorities);
-    }
-
-
     public Optional<Member> findById(Long mbrNo)
     {
         Optional<Member> member = memberRepository.findById(mbrNo);
@@ -110,13 +101,25 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return check.get();
     }
 
-    public boolean checkLogin(String accountName, String password){
+
+    public boolean checkLogin(String accountName, String password) throws Exception {
+
         Member member = memberRepository.findByAccountName(accountName);
+        if(member==null) {
+            throw new Exception ("멤버가 조회되지 않음");
+        }
+        String salt = member.getSalt();
+        String encodePassword = saltUtil.encodePassword(salt,password);
+
         AtomicBoolean check = new AtomicBoolean(false);
-        if (member.getPassword() == password) {
+        if (member.getPassword().equals(encodePassword)) {
             check.set(true);
         }
         return check.get();
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
+    }
 }

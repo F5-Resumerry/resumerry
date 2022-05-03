@@ -8,6 +8,8 @@ import com.f5.resumerry.Member.domain.dto.SignInDTO;
 import com.f5.resumerry.Member.domain.dto.SignUpDTO;
 import com.f5.resumerry.Member.domain.dto.ValidationGroups.ValidationSequence;
 import com.f5.resumerry.Member.domain.entity.Member;
+import com.f5.resumerry.Member.service.JwtUtil;
+import com.f5.resumerry.Member.service.MyUserDetailsService;
 import com.f5.resumerry.exception.AuthenticateException;
 import com.f5.resumerry.exception.DuplicateException;
 import com.f5.resumerry.exception.ErrorCode;
@@ -17,6 +19,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +30,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -37,9 +45,13 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class AuthController {
 
     private final MemberServiceImpl memberServiceImpl;
+    private final JwtUtil jwtUtil;
+    private final MyUserDetailsService userDetailsService;
+
 
     @PostMapping("/sign-up")
     public ResponseEntity<Member> signUp(@Validated(ValidationSequence.class) @RequestBody SignUpDTO memberDTO) throws Exception {
@@ -64,17 +76,27 @@ public class AuthController {
         return ResponseEntity.created(uri).body(memberServiceImpl.saveMember(memberDTO));
     }
 
-    @PostMapping("/sign-in")
-    public ResponseEntity<Map<String, String>> signIn(@Validated(ValidationSequence.class) @RequestBody SignInDTO memberDTO) throws Exception {
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody SignInDTO memberDTO) throws Exception {
         Map<String, String> result = new HashMap<>();
-        if(memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword())){
+        AtomicBoolean check = new AtomicBoolean(false);
+        try {
+            if (memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword()))
+            {
+                check.set(true);
+            }
+        } catch (Exception e) {
+            throw new Exception("Incorrect username or password", e);
+        }
+
+        if(check.get()) {
+            final UserDetails userDetails = userDetailsService
+                    .loadUserByUsername(memberDTO.getAccountName());
+            final String jwt = jwtUtil.generateToken(userDetails);
             result.put("result", "SUCCESS");
-            result.put("access token", "df");
-            result.put("refresh token", "adfa");
+            result.put("token", jwt);
         }
-        else{
-            result.put("result", "FAIL");
-        }
+
         return ResponseEntity.ok().body(result);
     }
 

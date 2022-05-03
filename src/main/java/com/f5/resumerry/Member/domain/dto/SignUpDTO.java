@@ -51,10 +51,12 @@ public class SignUpDTO {
     @NotNull(message = "역할은 필수 입력 값입니다.")
     private Role role;
 
+    private String salt;
+
     private MemberInfo memberInfo;
 
     @Builder
-    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, Role role, MemberInfo memberInfo) {
+    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, Role role, String salt,  MemberInfo memberInfo) {
         this.id = id;
         this.accountName = accountName;
         this.nickname = nickname;
@@ -65,6 +67,8 @@ public class SignUpDTO {
         this.isWorking = isWorking;
         this.role = role;
         this.memberInfo = memberInfo;
+        this.salt = salt;
+
     }
 
     public Member toEntity(){
@@ -79,6 +83,7 @@ public class SignUpDTO {
                 .isWorking(isWorking)
                 .role(role)
                 .memberInfo(memberInfo)
+                .salt(salt)
                 .build();
         return build;
     }

@@ -1,4 +1,8 @@
 spring:
+  application:
+    bane: user-service
+  main:
+    allow-circular-references: true
   sql:
     init:
       mode: always
@@ -32,8 +36,8 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
-
-
+jwt:
+  secret: sdfasdfa
 #
 #spring:
 #  datasource:
