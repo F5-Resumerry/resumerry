@@ -7,7 +7,7 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:mysql://resumerry.cfwdtllyytwh.ap-northeast-2.rds.amazonaws.com:3306/test
+    url: jdbc:mysql://resumerry.cfwdtllyytwh.ap-northeast-2.rds.amazonaws.com:3306/resumerry
     username: admin
     password: dkwneo12!
     driver-class-name: com.mysql.cj.jdbc.Driver

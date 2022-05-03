@@ -103,7 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/auth/token/refresh/**", "/auth/sign-up", "/auth/login", "/member/exists", "/valid/**", "/auth/test").permitAll().
+                .authorizeRequests().antMatchers("/auth/token/refresh/**", "/auth/sign-up", "/auth/login", "/member/exists", "/valid/**").permitAll().
                 anyRequest().authenticated().and().
                 exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
