@@ -1,8 +1,4 @@
 spring:
-  application:
-    bane: user-service
-  main:
-    allow-circular-references: true
   sql:
     init:
       mode: always
