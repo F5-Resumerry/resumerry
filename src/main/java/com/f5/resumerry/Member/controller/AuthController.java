@@ -36,6 +36,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -47,7 +48,6 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @CrossOrigin
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final MemberServiceImpl memberServiceImpl;
     private final JwtUtil jwtUtil;
     private final MyUserDetailsService userDetailsService;
@@ -78,58 +78,27 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody SignInDTO memberDTO) throws Exception {
-        log.info("hi\n");
         Map<String, String> result = new HashMap<>();
-//        try {
-//            String id = new String(memberDTO.getAccountName());
-//            String pw = new String(memberDTO.getPassword());
-//            final Member member = MemberServiceImpl.checkLogin(id, pw);
-//            final String token = jwtUtil.generateToken(member);
-//            final String refreshJwt = jwtUtil.generateRefreshToken(member);
-//            Cookie accessToken = cookieUtil.createCookie(JwtUtil.ACCESS_TOKEN_NAME, token);
-//            Cookie refreshToken = cookieUtil.createCookie(JwtUtil.REFRESH_TOKEN_NAME, refreshJwt);
-//            //redisUtil.setDataExpire(refreshJwt, member.getUsername(), JwtUtil.REFRESH_TOKEN_VALIDATION_SECOND);
-//            res.addCookie(accessToken);
-//            res.addCookie(refreshToken);
-//            result.put("result", "SUCCESS");
-//            result.put("token", token);
-//        } catch (Exception e) {
-//            result.put("result", "FAIL");
-//        }
+        AtomicBoolean check = new AtomicBoolean(false);
         try {
-            log.info("hi\n");
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            memberDTO.getAccountName(),
-                            memberDTO.getPassword())
-            );
-            log.info("hi\n");
-        } catch (BadCredentialsException e) {
+            if (memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword()))
+            {
+                check.set(true);
+            }
+        } catch (Exception e) {
             throw new Exception("Incorrect username or password", e);
         }
-        log.info("hi\n");
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(memberDTO.getAccountName());
-        final String jwt = jwtUtil.generateToken(userDetails);
-        result.put("result", "SUCCESS");
-        result.put("token", jwt);
-        log.info("hi\n");
+
+        if(check.get()) {
+            final UserDetails userDetails = userDetailsService
+                    .loadUserByUsername(memberDTO.getAccountName());
+            final String jwt = jwtUtil.generateToken(userDetails);
+            result.put("result", "SUCCESS");
+            result.put("token", jwt);
+        }
+
         return ResponseEntity.ok().body(result);
     }
-//    public ResponseEntity<Map<String, String>> signIn(@Valid @RequestBody SignInDTO memberDTO) throws Exception {
-//        Map<String, String> result = new HashMap<>();
-//        log.info("hi\n");
-//        if(memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword())){
-//            result.put("result", "SUCCESS");
-//            result.put("access token", "df");
-//            result.put("refresh token", "adfa");
-//        }
-//        else{
-//            result.put("result", "FAIL");
-//        }
-//        return ResponseEntity.ok().body(result);
-//    }
-
 
     @GetMapping("/test")
     public String test() {

@@ -53,14 +53,10 @@ public class SignUpDTO {
 
     private String salt;
 
-    private String access_token;
-
-    private String refresh_token;
-
     private MemberInfo memberInfo;
 
     @Builder
-    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, Role role, String salt, String access_token, String refresh_token, MemberInfo memberInfo) {
+    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, Role role, String salt,  MemberInfo memberInfo) {
         this.id = id;
         this.accountName = accountName;
         this.nickname = nickname;
@@ -72,8 +68,7 @@ public class SignUpDTO {
         this.role = role;
         this.memberInfo = memberInfo;
         this.salt = salt;
-        this.access_token = access_token;
-        this.refresh_token = refresh_token;
+
     }
 
     public Member toEntity(){
@@ -89,8 +84,6 @@ public class SignUpDTO {
                 .role(role)
                 .memberInfo(memberInfo)
                 .salt(salt)
-                .access_token(access_token)
-                .refresh_token(refresh_token)
                 .build();
         return build;
     }

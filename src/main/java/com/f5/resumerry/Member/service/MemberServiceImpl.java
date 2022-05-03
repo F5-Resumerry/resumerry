@@ -9,6 +9,7 @@ import com.f5.resumerry.Member.domain.entity.MemberInfo;
 import com.f5.resumerry.Member.repository.ConfirmationTokenRepository;
 import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
+import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,18 +37,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class MemberServiceImpl implements MemberService, UserDetailsService {
 
-    private static MemberRepository memberRepository;
+
+    private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
     private final ConfirmationTokenService confirmationTokenService;
-    private static SaltUtil saltUtil;
+    private final SaltUtil saltUtil;
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     @Transactional
     public Member saveMember(SignUpDTO memberDTO) {
-
-        memberDTO.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
+        String salt = saltUtil.genSalt();
+        memberDTO.setSalt(salt);
+        memberDTO.setPassword(saltUtil.encodePassword(salt, memberDTO.getPassword()));
         MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder().build();
 
         MemberInfo memberInfo = memberInfoDTO.toEntity();
@@ -78,22 +81,6 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return memberRepository.existsByNickname(nickname);
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
-//        Member member = memberRepository.findByAccountName(accountName);
-//
-//        if (member == null) {
-//            log.error("Member not found in the database");
-//            throw new UsernameNotFoundException("Member not found in the database");
-//        }
-//
-//        log.info("≈@@accountName : {}", accountName);
-//
-//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        return new org.springframework.security.core.userdetails.User(member.getAccountName(), member.getPassword(), authorities);
-//    }
-
-
     public Optional<Member> findById(Long mbrNo)
     {
         Optional<Member> member = memberRepository.findById(mbrNo);
@@ -114,30 +101,21 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return check.get();
     }
 
-//    public boolean checkLogin(String accountName, String password){
-//
-//        String encodePassword = passwordEncoder.encode(password);
-//        Member member = memberRepository.findByAccountName(accountName);
-//        log.info("checkLogin\n");
-//        log.info(member.getPassword());
-//        log.info("\n");
-//        log.info(encodePassword);
-//        log.info("\n");
-//        AtomicBoolean check = new AtomicBoolean(false);
-//        if (member.getPassword().equals(encodePassword)) {
-//            check.set(true);
-//        }
-//        return check.get();
-//    }
 
-    public static Member checkLogin(String id, String pw) throws Exception{
-        Member member = memberRepository.findByAccountName(id);
-        if(member==null) throw new Exception ("멤버가 조회되지 않음");
+    public boolean checkLogin(String accountName, String password) throws Exception {
+
+        Member member = memberRepository.findByAccountName(accountName);
+        if(member==null) {
+            throw new Exception ("멤버가 조회되지 않음");
+        }
         String salt = member.getSalt();
-        pw = saltUtil.encodePassword(salt,pw);
-        if(!member.getPassword().equals(pw))
-            throw new Exception ("비밀번호가 틀립니다.");
-        return member;
+        String encodePassword = saltUtil.encodePassword(salt,password);
+
+        AtomicBoolean check = new AtomicBoolean(false);
+        if (member.getPassword().equals(encodePassword)) {
+            check.set(true);
+        }
+        return check.get();
     }
 
     @Override
