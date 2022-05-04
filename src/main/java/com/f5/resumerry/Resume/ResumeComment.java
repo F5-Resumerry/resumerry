@@ -23,7 +23,7 @@ import java.util.List;
 public class ResumeComment extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_comment_id")
     private Long id;
 

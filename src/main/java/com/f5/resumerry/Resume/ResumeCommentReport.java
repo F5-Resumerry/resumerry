@@ -19,7 +19,7 @@ import javax.persistence.*;
 public class ResumeCommentReport{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_comment_report_id")
     private Long id;
 
