@@ -36,6 +36,8 @@ logging:
     org.hibernate.SQL: debug
 jwt:
   secret: sdfasdfa
+
+
 #
 #spring:
 #  datasource:
