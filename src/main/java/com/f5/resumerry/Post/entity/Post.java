@@ -57,6 +57,9 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_post"))
     private Resume resume;
 
+    @Column(name = "resume_id")
+    private Long resumeId;
+
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
     private List<PostComment> postCommentList = new ArrayList<>();
 
@@ -67,5 +70,6 @@ public class Post extends BaseTimeEntity {
         this.category = category;
         this.isAnonymous = anonymous;
         this.memberId = memberId;
+
     }
 }

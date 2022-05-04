@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
     @Modifying(clearAutomatically = true)
-    @Transactional
     @Query("update Post p "
             +"set p.title = :title, p.category = :category, p.contents = :contents, p.isAnonymous = :isAnonymous "
             +"where p.id = :postId and p.memberId = :memberId "
@@ -23,7 +22,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     void updatePost(@Param("memberId") Long memberId, @Param("postId") Long postId, @Param("category") CategoryEnum category, @Param("contents") String contents, @Param("isAnonymous") Boolean isAnonymous, @Param("title") String title);
 
     @Modifying(clearAutomatically = true)
-    @Transactional
     @Query("update Post p set p.views = p.views+1 where p.id = :postId and p.memberId = :memberId")
     void updateViewCnt(@Param("memberId") Long memberId, @Param("postId") Long postId);
+
+    void deleteAllByMemberIdAndId(Long memberId, Long postId);
 }

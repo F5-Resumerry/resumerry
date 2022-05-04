@@ -51,6 +51,12 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/post/{member_id}/{post_id}")
+    public ResponseEntity DeletePost(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody UpdatePostDTO putPostDTO) {
+        // 토큰 requstbody 사용안함
+        postService.deletePost(memberId,postId);
+        return ResponseEntity.ok().build();
+    }
     @GetMapping(value = "/post/test")
     public String TestPosts(@RequestParam(name = "category",required = false, defaultValue = "DEVELOPMENT") String category,
                             @RequestParam(name = "title", required = false, defaultValue = "") String title,

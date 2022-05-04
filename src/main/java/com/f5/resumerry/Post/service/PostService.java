@@ -39,4 +39,8 @@ public class PostService {
     public void updatePost(Long memberId, Long postId, UpdatePostDTO req) {
         postRepository.updatePost(memberId,postId,req.getCategory(),req.getContents(),req.getIsAnonymous(),req.getTitle());
     }
+
+    public void deletePost (Long memberId, Long postId) {
+        postRepository.deleteAllByMemberIdAndId(memberId, postId);
+    }
 }
