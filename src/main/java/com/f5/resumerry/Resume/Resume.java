@@ -27,7 +27,7 @@ import java.util.List;
 public class Resume extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_id")
     private Long id;
 

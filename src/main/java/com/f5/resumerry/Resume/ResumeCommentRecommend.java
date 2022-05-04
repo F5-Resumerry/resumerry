@@ -19,7 +19,7 @@ import javax.persistence.*;
 public class ResumeCommentRecommend{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_comment_recommend_id")
     private Long id;
 

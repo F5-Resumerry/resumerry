@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 public class TokenHistory {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_history_id")
     private Long id;
 

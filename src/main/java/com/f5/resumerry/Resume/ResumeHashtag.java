@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class ResumeHashtag{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_hashtag_id")
     private Long id;
 
