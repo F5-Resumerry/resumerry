@@ -22,7 +22,7 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByAccountName(username);
         if(member == null){
-            throw new UsernameNotFoundException(username + " : 사용자 존재하지 않음");
+            return new User("fail", "fail", new ArrayList<>());
         }
             return new User(username, member.getPassword(),new ArrayList<>());
     }
