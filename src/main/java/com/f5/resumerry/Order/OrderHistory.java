@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderHistory {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_history_id")
     private Long id;
 

@@ -19,7 +19,7 @@ import javax.persistence.*;
 public class MemberCategory{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_category_id")
     private Long id;
 

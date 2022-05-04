@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class ResumeScrap{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_scrap_id")
     private Long id;
 
