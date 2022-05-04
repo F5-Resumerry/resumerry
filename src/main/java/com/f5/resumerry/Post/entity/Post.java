@@ -1,4 +1,4 @@
-package com.f5.resumerry.Post;
+package com.f5.resumerry.Post.entity;
 
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Member.domain.entity.Member;
@@ -25,7 +25,7 @@ import java.util.List;
 public class Post extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private Long id;
 
@@ -38,6 +38,7 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer views;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CategoryEnum category;
 
@@ -45,15 +46,26 @@ public class Post extends BaseTimeEntity {
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean isAnonymous;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_post"))
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_post"),insertable = false, updatable = false)
     private Member member;
+
+    @Column(name = "member_id")
+    private Long memberId;
 
     @ManyToOne
     @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_post"))
     private Resume resume;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
     private List<PostComment> postCommentList = new ArrayList<>();
 
+    public Post(String title, String contents, int i, CategoryEnum category, boolean anonymous, Long memberId) {
+        this.title = title;
+        this.contents = contents;
+        this.views = i;
+        this.category = category;
+        this.isAnonymous = anonymous;
+        this.memberId = memberId;
+    }
 }
