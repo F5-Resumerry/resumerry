@@ -7,9 +7,12 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:mysql://resumerry.cfwdtllyytwh.ap-northeast-2.rds.amazonaws.com:3306/resumerry
-    username: admin
-    password: dkwneo12!
+#    url: jdbc:mysql://resumerry.cfwdtllyytwh.ap-northeast-2.rds.amazonaws.com:3306/resumerry
+#    username: admin
+#    password: dkwneo12!
+    password: 9520awdr0259!
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
@@ -36,8 +39,11 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+    org.springframework.security: debug
 jwt:
   secret: sdfasdfa
+server:
+  port: 8081
 #
 #spring:
 #  datasource:
