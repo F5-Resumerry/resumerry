@@ -1,7 +1,7 @@
 package com.f5.resumerry.Resume;
 
 import com.f5.resumerry.Member.domain.entity.Member;
-import com.f5.resumerry.Post.Post;
+import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.AllArgsConstructor;

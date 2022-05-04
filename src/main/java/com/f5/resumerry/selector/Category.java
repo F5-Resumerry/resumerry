@@ -27,6 +27,7 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CategoryEnum category;
 
