@@ -1,12 +1,6 @@
 spring:
-  security:
-    user:
-      name: user
-      password: 1234
   application:
     bane: user-service
-  main:
-    allow-circular-references: true
   sql:
     init:
       mode: always
@@ -40,7 +34,6 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
-    org.springframework.security: debug
 jwt:
   secret: sdfasdfa
 #

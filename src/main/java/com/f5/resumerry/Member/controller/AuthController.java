@@ -38,7 +38,7 @@ public class AuthController {
 
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Member> signUp(@Validated(ValidationSequence.class) @RequestBody SignUpDTO memberDTO) throws Exception {
+    public ResponseEntity<Member> signUp(@Validated(ValidationSequence.class) @RequestBody SignUpDTO memberDTO) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/auth/sign-in").toUriString());
 
         if (!memberServiceImpl.checkEmail(memberDTO.getEmail())) {
@@ -61,19 +61,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody SignInDTO memberDTO) throws Exception {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody SignInDTO memberDTO) {
         Map<String, String> result = new HashMap<>();
         AtomicBoolean check = new AtomicBoolean(false);
-        try {
+//        try {
             if (memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword()))
             {
                 check.set(true);
             }
-        } catch (Exception e) {
-            throw new Exception("Incorrect username or password", e);
-        }
+//        } catch (Exception e) {
+//            throw new Exception("Incorrect username or password", e);
+//        }
 
         if(check.get()) {
+            //예외처리 필요
             final UserDetails userDetails = userDetailsService
                     .loadUserByUsername(memberDTO.getAccountName());
             final String jwt = jwtUtil.generateToken(userDetails);
