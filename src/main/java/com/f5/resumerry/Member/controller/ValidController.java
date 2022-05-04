@@ -20,6 +20,7 @@ import java.util.Map;
 @RequestMapping("/valid")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class ValidController {
 
     private final MemberServiceImpl memberServiceImpl;
@@ -58,13 +59,13 @@ public class ValidController {
     }
 
     @GetMapping("/email/confirm")
-    public String confirmEmail(@RequestParam String token) throws Exception {
+    public String confirmEmail(@RequestParam String token){
         memberServiceImpl.confirmEmail(token);
         return "이메일 인증이 완료되었습니다";
     }
 
     @PostMapping("/email/check")
-    public ResponseEntity<Map<String, Boolean>> checkEmail(@Valid @RequestBody ConfirmationTokenDTO confirmationTokenDTO) throws Exception {
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@Valid @RequestBody ConfirmationTokenDTO confirmationTokenDTO){
         Map<String, Boolean> result = new HashMap<>();
         result.put("result", memberServiceImpl.checkEmail(confirmationTokenDTO.getReceiverEmail()));
         return ResponseEntity.ok().body(result);
