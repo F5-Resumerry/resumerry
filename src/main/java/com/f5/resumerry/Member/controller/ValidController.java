@@ -1,6 +1,8 @@
 package com.f5.resumerry.Member.controller;
 
+import com.f5.resumerry.Member.domain.dto.AccountNameDTO;
 import com.f5.resumerry.Member.domain.dto.ConfirmationTokenDTO;
+import com.f5.resumerry.Member.domain.dto.NicknameDTO;
 import com.f5.resumerry.Member.domain.dto.SignUpDTO;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.exception.DuplicateException;
@@ -26,17 +28,25 @@ public class ValidController {
     private final MemberServiceImpl memberServiceImpl;
     private final ConfirmationTokenService confirmationTokenService;
 
-    @PostMapping("/email/exists")
-    public ResponseEntity<Boolean> checkEmailDuplicate(@RequestBody Member member) {
-        return ResponseEntity.ok(memberServiceImpl.checkExistsEmail(member.getEmail()));
-    }
+//    @PostMapping("/email/exists")
+//    public ResponseEntity<Boolean> checkEmailDuplicate(@RequestBody Member member) {
+//        return ResponseEntity.ok(memberServiceImpl.checkExistsEmail(member.getEmail()));
+//    }
 
     @PostMapping("/account/exists")
-    public ResponseEntity<Map<String, Boolean>> checkAccountNameDuplicate(@RequestBody SignUpDTO memberDTO) {
+    public ResponseEntity<Map<String, Boolean>> checkAccountNameDuplicate(@RequestBody AccountNameDTO memberDTO) {
         Map<String, Boolean> result = new HashMap<>();
         result.put("result", memberServiceImpl.checkExistsAccountName(memberDTO.getAccountName()));
         return ResponseEntity.ok().body(result);
     }
+
+    @PostMapping("/nickname/exists")
+    public ResponseEntity<Map<String, Boolean>> checkNickNameDuplicate(@RequestBody NicknameDTO memberDTO) {
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("result", memberServiceImpl.checkExistsNickname(memberDTO.getNickname()));
+        return ResponseEntity.ok().body(result);
+    }
+
 
     @PostMapping("/email/send")
     public ResponseEntity<Map<String, Boolean>> emailSend(@Valid @RequestBody ConfirmationTokenDTO confirmationTokenDTO) {

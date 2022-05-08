@@ -9,6 +9,7 @@ import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
+import com.f5.resumerry.selector.CategoryEnum;
 import com.f5.resumerry.selector.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +69,10 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String salt;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CategoryEnum category;
+
     @OneToOne
     @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"))
     private MemberInfo memberInfo;
@@ -107,8 +112,5 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member")
     private List<TokenHistory> tokenHistoryList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private List<MemberCategory> memberCategoryList = new ArrayList<>();
 
 }

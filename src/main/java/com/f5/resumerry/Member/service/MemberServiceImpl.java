@@ -61,12 +61,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Boolean checkExistsAccountName(String accountName) {
-        return memberRepository.existsByAccountName(accountName);
+        return !memberRepository.existsByAccountName(accountName);
     }
 
     @Override
     public Boolean checkExistsNickname(String nickname) {
-        return memberRepository.existsByNickname(nickname);
+        return !memberRepository.existsByNickname(nickname);
     }
 
     @Transactional

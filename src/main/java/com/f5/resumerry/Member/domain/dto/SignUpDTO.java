@@ -1,7 +1,7 @@
 package com.f5.resumerry.Member.domain.dto;
 import com.f5.resumerry.Member.domain.entity.Member;
-import com.f5.resumerry.Member.domain.entity.MemberCategory;
 import com.f5.resumerry.Member.domain.entity.MemberInfo;
+import com.f5.resumerry.selector.CategoryEnum;
 import com.f5.resumerry.selector.Role;
 import lombok.*;
 
@@ -42,9 +42,6 @@ public class SignUpDTO {
     @NotNull(message = "연차는 필수 입력 값입니다.")
     private Integer years;
 
-//    @NotNull(message = "카테고리는 필수 입력 값입니다.")
-    private List<MemberCategory> memberCategoryList = new ArrayList<>();
-
     @NotNull(message = "재직 여부는 필수 입력 값입니다.")
     private Boolean isWorking;
 
@@ -55,19 +52,22 @@ public class SignUpDTO {
 
     private MemberInfo memberInfo;
 
+    @NotNull(message = "카테고리는 필수 입력 값입니다.")
+    private CategoryEnum category;
+
     @Builder
-    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, List<MemberCategory> memberCategoryList, Boolean isWorking, Role role, String salt,  MemberInfo memberInfo) {
+    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, Boolean isWorking, Role role, String salt,  MemberInfo memberInfo, CategoryEnum category) {
         this.id = id;
         this.accountName = accountName;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.years = years;
-        this.memberCategoryList = memberCategoryList;
         this.isWorking = isWorking;
         this.role = role;
         this.memberInfo = memberInfo;
         this.salt = salt;
+        this.category = category;
 
     }
 
@@ -79,11 +79,11 @@ public class SignUpDTO {
                 .email(email)
                 .password(password)
                 .years(years)
-                .memberCategoryList(memberCategoryList)
                 .isWorking(isWorking)
                 .role(role)
                 .memberInfo(memberInfo)
                 .salt(salt)
+                .category(category)
                 .build();
         return build;
     }
