@@ -73,8 +73,8 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;
 
-    @OneToOne
-    @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"))
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"), insertable = false, updatable = false)
     private MemberInfo memberInfo;
 
     @OneToMany(mappedBy = "member")
