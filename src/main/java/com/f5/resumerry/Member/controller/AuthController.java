@@ -49,11 +49,11 @@ public class AuthController {
             throw new DuplicateException("email", "email duplicated", ErrorCode.DUPLICATION);
         }
 
-        if (memberServiceImpl.checkExistsAccountName(memberDTO.getAccountName())) {
+        if (!memberServiceImpl.checkExistsAccountName(memberDTO.getAccountName())) {
             throw new DuplicateException("id", "id duplicated", ErrorCode.DUPLICATION);
         }
 
-        if (memberServiceImpl.checkExistsNickname(memberDTO.getNickname())) {
+        if (!memberServiceImpl.checkExistsNickname(memberDTO.getNickname())) {
             throw new DuplicateException("nickname", "nickname duplicated", ErrorCode.DUPLICATION);
         }
 
