@@ -41,8 +41,8 @@ logging:
     org.hibernate.SQL: debug
 jwt:
   secret: sdfasdfa
-server:
-  port: 8081
+
+
 #
 #spring:
 #  datasource:
