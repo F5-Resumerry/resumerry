@@ -2,6 +2,9 @@ package com.f5.resumerry.Member.repository;
 
 import com.f5.resumerry.Member.domain.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 
@@ -9,4 +12,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Boolean existsByEmail(String email);
     Boolean existsByAccountName(String accountName);
     Boolean existsByNickname(String nickname);
+
+
 }

@@ -1,8 +1,9 @@
 package com.f5.resumerry.Post.controller;
 
 import com.f5.resumerry.Post.dto.FindPostDTO;
-import com.f5.resumerry.Post.dto.UpdatePostDTO;
+import com.f5.resumerry.Post.dto.PostCommentDTO;
 import com.f5.resumerry.Post.dto.RegisterPostDTO;
+import com.f5.resumerry.Post.dto.UpdatePostDTO;
 import com.f5.resumerry.Post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class PostController {
         return ResponseEntity.ok(viewPostResponse);
     }
 
-    @PostMapping(value = "/post/{user_id}")
-    public ResponseEntity registerPost(@PathVariable("user_id") Long id, @RequestBody RegisterPostDTO registerPostDTO) {
+    @PostMapping(value = "/post/{member_id}")
+    public ResponseEntity registerPost(@PathVariable("member_id") Long id, @RequestBody RegisterPostDTO registerPostDTO) {
         postService.registerPosts(id, registerPostDTO);
         return ResponseEntity.ok().build();
     }
@@ -52,15 +53,26 @@ public class PostController {
     }
 
     @DeleteMapping("/post/{member_id}/{post_id}")
-    public ResponseEntity DeletePost(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody UpdatePostDTO putPostDTO) {
-        // 토큰 requstbody 사용안함
+    public ResponseEntity DeletePost(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId) {
         postService.deletePost(memberId,postId);
         return ResponseEntity.ok().build();
     }
-    @GetMapping(value = "/post/test")
-    public String TestPosts(@RequestParam(name = "category",required = false, defaultValue = "DEVELOPMENT") String category,
-                            @RequestParam(name = "title", required = false, defaultValue = "") String title,
-                            @RequestParam(name = "sort", required = false, defaultValue = "recent") String sort){
-        return "postTest";
+
+    // comment controller
+    @PostMapping("/post/{member_id}/{post_id}/comment")
+    public ResponseEntity registerPostComment(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody PostCommentDTO postCommentDTO) {
+        postService.registerPostComment(memberId, postId, postCommentDTO);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/post/{member_id}/{post_id}/comment/{comment_id}")
+    public ResponseEntity deletePostComment(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @PathVariable("comment_id") Long commentId) {
+        postService.deletePostComment(memberId,postId,commentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/post/{member_id}/{post_id}/comment")
+    public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody String req) {
+        List<PostCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
+        return ResponseEntity.ok(viewPostComments);
     }
 }

@@ -44,9 +44,18 @@ public class PostComment extends BaseTimeEntity {
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_postcomment"))
     private Member member;
 
+    @Column(name = "member_id", insertable = false , updatable = false)
+    private Long memberId;
+
     @ManyToOne
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_post_postcomment"))
     private Post post;
+
+    @Column(name = "post_id", insertable = false, updatable = false)
+    private Long postId;
+
+    @Column(name = "is_delete")
+    private String isDelete;
 
     @OneToMany(mappedBy = "postComment")
     private List<PostCommentRecommend> postCommentRecommendList = new ArrayList<>();

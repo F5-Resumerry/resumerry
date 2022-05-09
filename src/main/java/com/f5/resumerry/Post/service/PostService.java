@@ -1,14 +1,15 @@
 package com.f5.resumerry.Post.service;
 
-import com.f5.resumerry.Post.dto.FindPostDTO;
-import com.f5.resumerry.Post.dto.UpdatePostDTO;
-import com.f5.resumerry.Post.dto.RegisterPostDTO;
-import com.f5.resumerry.Post.entity.Post;
+import com.f5.resumerry.Post.dto.*;
+import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Post.repository.PostRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.stream.events.Comment;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,8 +24,8 @@ public class PostService {
     }
 
     public void registerPosts(Long memberId, RegisterPostDTO req){
-        Post registerPost = new Post(req.getTitle(), req.getContents(), 0, req.getCategory(), req.isAnonymous(), memberId);
-        postRepository.save(registerPost);
+        RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId, req.getResumeId());
+        postRepository.registerPost(insertPost);
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId) {
@@ -41,6 +42,39 @@ public class PostService {
     }
 
     public void deletePost (Long memberId, Long postId) {
-        postRepository.deleteAllByMemberIdAndId(memberId, postId);
+        //is_delete 컬럼 기본값 n update 형식으로 y로 수정
+        postRepository.updateIsDelete(memberId, postId);
     }
+
+    // 댓글 controller 시작
+    public void registerPostComment(Long memberId, Long postId, PostCommentDTO req) {
+        PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getPostCommentGroup(), req.getPostCommentDepth(), req.getIsAnonymous(), memberId, postId);
+        postRepository.registerPostComment(postCommentDTO);
+    }
+
+    public void deletePostComment(Long memberId, Long postId, Long commentId) {
+        postRepository.updateCommentIsDelete(memberId, postId,commentId);
+    }
+
+    public List<PostCommentDTO> viewComments(Long memberId, Long postId) {
+        // 대댓글 리스트
+        //ObjectMapper mapper = new ObjectMapper();
+        List<PostCommentDTO> comments = new ArrayList<PostCommentDTO>();
+    // 반복문 수정하기
+        for(int i = 0; i < 5 ; i++) {
+            // i 번째 그룹의 대댓글들을 가져옴
+           List<PostCommentDepthDTO> commentDepthList = postRepository.findCommentDepth(i, postId);
+           // 그룹 i번의 댓글을 가져옴
+           PostCommentDTO comment = postRepository.findComment(i,postId);
+           // 그룹 i번쨰 댓글에 depthlist 주입
+           comment.setPostCommentDepthList(commentDepthList);
+           comments.add(comment);
+            System.out.println(comment);
+        }
+
+        return comments;
+
+    }
+
+
 }

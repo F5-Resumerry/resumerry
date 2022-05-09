@@ -25,5 +25,17 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     @Query("update Post p set p.views = p.views+1 where p.id = :postId and p.memberId = :memberId")
     void updateViewCnt(@Param("memberId") Long memberId, @Param("postId") Long postId);
 
-    void deleteAllByMemberIdAndId(Long memberId, Long postId);
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update Post p set p.isDelete = 'Y' where p.id = :postId and p.memberId = :memberId")
+    void updateIsDelete(@Param("memberId") Long memberId, @Param("postId") Long postId);
+
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update PostComment pc set pc.isDelete = 'Y' where pc.postId = :postId and pc.memberId = :memberId and pc.id = :commentId")
+    void updateCommentIsDelete(Long memberId, Long postId, Long commentId);
+
+
+
+
 }

@@ -1,26 +1,19 @@
 package com.f5.resumerry.Post.dto;
 
 import com.f5.resumerry.selector.CategoryEnum;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@AllArgsConstructor
 @Data
-@NoArgsConstructor
 public class RegisterPostDTO {
-
     private String title;
     private CategoryEnum category;
     private String contents;
     private String fileLink;
-    private boolean isAnonymous;
-
-
-    @Builder
-    public RegisterPostDTO(String title, CategoryEnum category, String contents, String fileLink, boolean isAnonymous) {
-        this.title = title;
-        this.category = category;
-        this.contents = contents;
-        this.fileLink = fileLink;
-        this.isAnonymous = isAnonymous;
-    }
+    private Boolean isAnonymous;
+    private Integer views;
+    private Long memberId;
+    private Long resumeId;
 
 }
