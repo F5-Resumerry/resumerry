@@ -1,6 +1,6 @@
 package com.f5.resumerry.Member.domain.entity;
 
-import com.f5.resumerry.Order.Order;
+import com.f5.resumerry.Order.entity.Order;
 import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Post.entity.PostCommentRecommend;
@@ -107,8 +107,14 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<ResumeScrap> resumeScrapList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Order> orderList = new ArrayList<>();
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private List<Order> orders = new ArrayList<>();
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+        order.setClient(this);
+    }
 
     @OneToMany(mappedBy = "member")
     private List<TokenHistory> tokenHistoryList = new ArrayList<>();
