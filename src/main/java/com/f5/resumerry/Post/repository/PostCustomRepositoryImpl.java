@@ -1,8 +1,6 @@
 package com.f5.resumerry.Post.repository;
 
 import com.f5.resumerry.Post.dto.*;
-import com.f5.resumerry.Post.entity.PostComment;
-import com.f5.resumerry.converter.BooleanToYNConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,22 +15,28 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
 
     @Autowired
     private EntityManager entityManager;
-    private BooleanToYNConverter ynConverter;
 
+//    public List<PostDTO> viewPosts(PostDTO p) {
+//        String anonymous = p.getIsAnonymous() == true ? "Y" : "N";
+//        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostDTO(p.id, p.title, p.contents, p.views, p.category, p.a , p.isDelete, p.isDelete, p.memberId, p.resumeId )"
+//                + "from Post p",PostDTO.class)
+//                .getResultList();
+//    }
     @Override
     public List<FindPostDTO> findPosts(@Param("title") String title, @Param("category") String category, @Param("sort") String sort) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category) "
-                        + "from Post p "
-                        + "join p.member m "
-                        + "join m.memberInfo mi "
-                        + "join p.postCommentList pc "
-                        + "group by p.id ", FindPostDTO.class)
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+                        + "from Post p join  p.member m "
+                                + "group by p.contents having p.contents > :title "
+                        + "order by p.createdDate desc "
+                        , FindPostDTO.class)
+                .setParameter("title", title)
+                .setMaxResults(10)
                 .getResultList();
     }
-    public List<FindPostDTO> findPostsInMypage(Long memberId) {
+    public List<FindPostDTO> findPostsInMyPage(Long memberId) {
         return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
                         + "from Post p "
-                        + "join p.member m "
+                        + "join fetch p.member m "
                         + "where m.id in (:memberId) "
                         + "group by p.id ", FindPostDTO.class)
                 .setParameter("memberId",memberId)
@@ -42,7 +46,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     public FindPostDTO viewPost(Long memberId, Long postId) {
         return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
                         + "from Post p "
-                        + "join p.member m "
+                        + "join fetch p.member m "
                         + "where m.id in (:memberId) and p.id in (:postId) "
                         + "group by p.id ", FindPostDTO.class)
                 .setParameter("memberId", memberId)
@@ -97,6 +101,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                         + "where :postId = pc.postId and :index = pc.postCommentGroup "
                         + "order by pc.createdDate",PostCommentDTO.class )
                 .getSingleResult();
+    }
+
+    public void registerRecommendComment(PostCommentRecommendDTO pcr) {
+        entityManager.createNativeQuery("insert into post_comment_recommend (member_id, post_comment_id) values (?, ?)")
+                .setParameter(1, pcr.getMemberId())
+                .setParameter(2, pcr.getCommentId())
+                .executeUpdate();
     }
 
 

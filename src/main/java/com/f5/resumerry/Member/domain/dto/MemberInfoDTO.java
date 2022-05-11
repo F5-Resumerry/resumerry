@@ -26,7 +26,7 @@ public class MemberInfoDTO {
         this.token = 0;
         this.stack = 0;
         this.emailVerified = true;
-        this.imageSrc = "imageSrc";
+        //this.imageSrc = "imageSrc";
 
     }
 
@@ -36,7 +36,7 @@ public class MemberInfoDTO {
                 .token(token)
                 .stack(stack)
                 .emailVerified(emailVerified)
-                .imageSrc(imageSrc)
+                //.imageSrc(imageSrc)
                 .build();
         return build;
     }

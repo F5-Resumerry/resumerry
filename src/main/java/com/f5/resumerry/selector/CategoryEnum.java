@@ -1,5 +1,5 @@
 package com.f5.resumerry.selector;
 
 public enum CategoryEnum {
-    DEVELOPER, MARKETER, SINGER, ADVERTISER, PRODUCT_OWNER, DESIGNER
+    ALL, IT, BUSINESS, MARKETING, DESIGN, MEDIA, ENGINEERING, EDU, DEVELOPER
 }
