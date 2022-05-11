@@ -24,7 +24,7 @@ public class SwaggerConfig {
                 .produces(getProduceContentTypes())
                 .apiInfo(getApiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ddaja.ddaja.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.f5.resumerry"))
                 .paths(PathSelectors.ant("/**"))
                 .build();
     }
@@ -45,8 +45,8 @@ public class SwaggerConfig {
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
                 .title("API")
-                .description("[DDaJa] REST API")
-                .contact(new Contact("[DDaja Swagger]", "https://github.com/swgil007/DDaJa", "BNG"))
+                .description("[Resumerry] REST API")
+                .contact(new Contact("[Resumerry Swagger]", "https://github.com/swgil007/DDaJa", "BNG"))
                 .version("1.0")
                 .build();
     }

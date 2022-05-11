@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   application:
     bane: user-service
   sql:
@@ -41,6 +44,13 @@ logging:
     org.hibernate.SQL: debug
 jwt:
   secret: sdfasdfa
+payments:
+  toss:
+    test_client_api_key: test_ck_dP9BRQmyarY5ZMaNvv7rJ07KzLNk
+    test_secret_api_key: test_sk_YZ1aOwX7K8mBgqjwD6q3yQxzvNPG
+    success_url: /orders/success
+    fail_url: /orders/fail
+    origin_url: /orders/webhook
 
 
 #

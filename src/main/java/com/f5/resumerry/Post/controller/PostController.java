@@ -5,6 +5,7 @@ import com.f5.resumerry.Post.dto.PostCommentDTO;
 import com.f5.resumerry.Post.dto.RegisterPostDTO;
 import com.f5.resumerry.Post.dto.UpdatePostDTO;
 import com.f5.resumerry.Post.service.PostService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ public class PostController {
     private PostService postService;
 
     @GetMapping(value = "/post")
+    @ApiOperation(value = "test", notes = "결제 요청에 필요한 값들을 반환합니다.")
     public ResponseEntity findPosts(@RequestParam(name = "title", required = false, defaultValue = "temp") String title,
                                     @RequestParam(name = "category",required = false, defaultValue = "DEVELOPMENT") String category,
                                     @RequestParam(name = "sort", required = false, defaultValue = "recent") String sort
