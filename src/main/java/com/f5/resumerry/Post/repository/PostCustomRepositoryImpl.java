@@ -1,6 +1,7 @@
 package com.f5.resumerry.Post.repository;
 
 import com.f5.resumerry.Post.dto.*;
+import com.f5.resumerry.selector.CategoryEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,25 +17,53 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     @Autowired
     private EntityManager entityManager;
 
-//    public List<PostDTO> viewPosts(PostDTO p) {
-//        String anonymous = p.getIsAnonymous() == true ? "Y" : "N";
-//        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostDTO(p.id, p.title, p.contents, p.views, p.category, p.a , p.isDelete, p.isDelete, p.memberId, p.resumeId )"
-//                + "from Post p",PostDTO.class)
-//                .getResultList();
-//    }
     @Override
-    public List<FindPostDTO> findPosts(@Param("title") String title, @Param("category") String category, @Param("sort") String sort) {
+    public List<FindPostDTO> findPosts(@Param("title") String title, @Param("category") String category) {
         return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
-                        + "from Post p join  p.member m "
-                +"where p.category = :category "
-                                + "group by p.contents having p.contents > :title "
-                        + "order by p.createdDate desc "
+                        + "from Post p inner join p.member m "
+                + "where p.title like concat('%', :title, '%')  "
+                + "order by p.createdDate desc "
                         , FindPostDTO.class)
                 .setParameter("title", title)
-                .setParameter("category", category)
                 .setMaxResults(10)
                 .getResultList();
     }
+    public List<FindPostDTO> findPostsNotAll(String title, String category) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+                                + "from Post p inner join p.member m "
+                                + "where p.category = :category "
+                                + "and p.title like concat('%', :title, '%')  "
+                                + "order by p.createdDate desc "
+                        , FindPostDTO.class)
+                .setParameter("category", CategoryEnum.valueOf(category))
+                .setParameter("title", title)
+                .setMaxResults(10)
+                .getResultList();
+    }
+    public List<FindPostDTO> findPostsView(String title, String category) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+                                + "from Post p left join p.member m "
+                                + "where p.title like concat('%', :title, '%')  "
+                                + "order by p.views desc "
+                        , FindPostDTO.class)
+                .setParameter("title", title)
+                .setMaxResults(10)
+                .getResultList();
+    }
+
+    public List<FindPostDTO> findPostsViewNotAll(String title, String category){
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+                                + "from Post p left join p.member m "
+                                + "where p.category = :category "
+                                + "and p.title like concat('%', :title, '%')  "
+                                + "order by p.views desc "
+                        , FindPostDTO.class)
+                .setParameter("category", CategoryEnum.valueOf(category))
+                .setParameter("title", title)
+                .setMaxResults(10)
+                .getResultList();
+    }
+
     public List<FindPostDTO> findPostsInMyPage(Long memberId) {
         return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
                         + "from Post p, Member m "
@@ -46,12 +75,22 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category, true) "
                         + "from Post p "
                         + "join p.member m "
                         + "where m.id in (:memberId) and p.id in (:postId) "
                         + "group by p.id ", FindPostDTO.class)
                 .setParameter("memberId", memberId)
+                .setParameter("postId", postId)
+                .getSingleResult();
+    }
+
+    public FindPostDTO viewNotOwnPost(Long postId) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category, false) "
+                        + "from Post p "
+                        + "join p.member m "
+                        + "where p.id in (:postId) "
+                        + "group by p.id ", FindPostDTO.class)
                 .setParameter("postId", postId)
                 .getSingleResult();
     }

@@ -21,5 +21,5 @@ public class FindPostDTO {
     private String nickname;
     private LocalDateTime modifiedDate;
     private CategoryEnum category;
-
+    private Boolean isOwner;
 }

@@ -24,9 +24,25 @@ public class PostService {
 
 
     public List<FindPostDTO> findPosts(String title, String category, String sort) {
-
-        List<FindPostDTO> posts = postRepository.findPosts(title, category, sort);
-        return posts;
+        /**
+         * ToDo
+         * recent / view
+         * 1. 조건이 최신순(recent)이다.
+         *  1.1. 카테고리가 전체이거나 혹은 특정 카테고리거나.
+         * 2. 조건이 (view)이다.
+         *  2.1. 카테고리가 전체이거나 혹은 특정 카테고리거나.
+         */
+        if (sort.equals("recent")) {
+            if(category.equals("ALL")) {
+                return postRepository.findPosts(title, category);
+            }
+            return postRepository.findPostsNotAll(title, category);
+        } else {
+            if (category.equals("ALL")) {
+                return postRepository.findPostsView(title, category);
+            }
+            return postRepository.findPostsViewNotAll(title, category);
+        }
 
     }
 
@@ -35,9 +51,15 @@ public class PostService {
         postRepository.registerPost(insertPost);
     }
 
-    public FindPostDTO viewPost(Long memberId, Long postId) {
+    public FindPostDTO viewPost(Long memberId, Long postId, Long tokenId) {
+        Boolean is_owner = false;
         postRepository.updateViewCnt(memberId, postId);
-        return postRepository.viewPost(memberId, postId);
+        if (memberId != tokenId) {
+            // 소유자가 아닌경우
+            return postRepository.viewNotOwnPost(postId);
+        } else {
+            return postRepository.viewPost(tokenId,postId);
+        }
      }
 
     public List<FindPostDTO> findPostsInMyPage(Long memberId) {
