@@ -8,11 +8,11 @@ import java.util.function.Predicate;
 
 
 public class PostSpecification {
-    public static Specification<FindPostDTO> customerHasBirthday() {
-        return new Specification<FindPostDTO>() {
-            public Predicate toPredicate(Root<T> root, CriteriaQuery query, CriteriaBuilder cb) {
-                return cb.equal(root.get(Customer_.birthday), today);
-            }
-        };
-    }
+//    public static Specification<FindPostDTO> customerHasBirthday() {
+//        return new Specification<FindPostDTO>() {
+//            public Predicate toPredicate(Root<T> root, CriteriaQuery query, CriteriaBuilder cb) {
+//                return cb.equal(root.get(Customer_.birthday), today);
+//            }
+//        };
+//    }
 }

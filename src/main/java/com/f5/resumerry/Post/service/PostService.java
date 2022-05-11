@@ -32,6 +32,7 @@ public class PostService {
 
         List<FindPostDTO> posts = postRepository.findPosts(title, category, sort);
         //
+        return posts;
 
     }
 
