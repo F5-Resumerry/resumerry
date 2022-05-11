@@ -1,8 +1,6 @@
 package com.f5.resumerry.Post.repository;
 
 import com.f5.resumerry.Post.dto.*;
-import com.f5.resumerry.Post.entity.PostComment;
-import com.f5.resumerry.converter.BooleanToYNConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,22 +15,30 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
 
     @Autowired
     private EntityManager entityManager;
-    private BooleanToYNConverter ynConverter;
 
+//    public List<PostDTO> viewPosts(PostDTO p) {
+//        String anonymous = p.getIsAnonymous() == true ? "Y" : "N";
+//        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostDTO(p.id, p.title, p.contents, p.views, p.category, p.a , p.isDelete, p.isDelete, p.memberId, p.resumeId )"
+//                + "from Post p",PostDTO.class)
+//                .getResultList();
+//    }
     @Override
     public List<FindPostDTO> findPosts(@Param("title") String title, @Param("category") String category, @Param("sort") String sort) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category) "
-                        + "from Post p "
-                        + "join p.member m "
-                        + "join m.memberInfo mi "
-                        + "join p.postCommentList pc "
-                        + "group by p.id ", FindPostDTO.class)
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+                        + "from Post p join  p.member m "
+                +"where p.category = :category "
+                                + "group by p.contents having p.contents > :title "
+                        + "order by p.createdDate desc "
+                        , FindPostDTO.class)
+                .setParameter("title", title)
+                .setParameter("category", category)
+                .setMaxResults(10)
                 .getResultList();
     }
-    public List<FindPostDTO> findPostsInMypage(Long memberId) {
+    public List<FindPostDTO> findPostsInMyPage(Long memberId) {
         return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
-                        + "from Post p "
-                        + "join p.member m "
+                        + "from Post p, Member m "
+                        //+ "join fetch p.member m "
                         + "where m.id in (:memberId) "
                         + "group by p.id ", FindPostDTO.class)
                 .setParameter("memberId",memberId)
@@ -78,17 +84,17 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .executeUpdate();
     }
 
-    // 대댓글 리스트 반환
-    public List<PostCommentDepthDTO> findCommentDepth(Integer index, Long postId) {
-        // 특정 postid를 가진 commend list 출력
-        // member post id에 해당하는 depth에 해당하는 요소들을 뽑아옴 commendgroup에 해당하는 depthlist 반환
-//        public PostCommentDepthDTO(Long memberId, String imageSrc, String nickname, String contents, Integer recommendCnt, Integer banCnt, Boolean isAnonymous, LocalDateTime modifiedDate)
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostCommentDepthDTO(pc.memberId, (select mi.imageSrc from MemberInfo mi where mi.member.id = pc.memberId), (select m.nickname from Member m where m.id = pc.memberId), pc.contents, size(pc.postCommentRecommendList), size(pc.postCommentReportList), pc.isAnonymous, pc.createdDate)  "
-                + "from PostComment pc "
-                + "where :postId = pc.postId and :index = pc.postCommentGroup "
-                + "order by pc.createdDate",PostCommentDepthDTO.class )
-                . getResultList();
-    }
+//    todo.대댓글 리스트 반환
+//    public List<PostCommentDepthDTO> findCommentDepth(Integer index, Long postId) {
+//        // 특정 postid를 가진 commend list 출력
+//        // member post id에 해당하는 depth에 해당하는 요소들을 뽑아옴 commendgroup에 해당하는 depthlist 반환
+////        public PostCommentDepthDTO(Long memberId, String imageSrc, String nickname, String contents, Integer recommendCnt, Integer banCnt, Boolean isAnonymous, LocalDateTime modifiedDate)
+//        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostCommentDepthDTO(pc.memberId, (select mi.imageSrc from MemberInfo mi where mi.member.id = pc.memberId), (select m.nickname from Member m where m.id = pc.memberId), pc.contents, size(pc.postCommentRecommendList), size(pc.postCommentReportList), pc.isAnonymous, pc.createdDate)  "
+//                + "from PostComment pc "
+//                + "where :postId = pc.postId and :index = pc.postCommentGroup "
+//                + "order by pc.createdDate",PostCommentDepthDTO.class )
+//                . getResultList();
+//    }
 
     public PostCommentDTO findComment(Integer index, Long postId) {
 //        contents, postCommentGroup, postCommentDepth, isAnonymous, Long memberId, Long postId
@@ -99,6 +105,21 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .getSingleResult();
     }
 
+    public void registerRecommendComment(PostCommentRecommendDTO pcr) {
+        entityManager.createNativeQuery("insert into post_comment_recommend (member_id, post_comment_id, post_id) values (?, ?, ?)")
+                .setParameter(1, pcr.getMemberId())
+                .setParameter(2, pcr.getCommentId())
+                .setParameter(3, pcr.getPostId())
+                .executeUpdate();
+    }
+
+    public void banComment( Long postId, Long commentId, Long reportMember) {
+        entityManager.createNativeQuery("insert into post_comment_report (member_id, post_comment_id, post_id) values (?, ?, ?)")
+                .setParameter(1, reportMember)
+                .setParameter(2, commentId)
+                .setParameter(3, postId)
+                .executeUpdate();
+    }
 
 
 
