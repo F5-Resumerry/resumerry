@@ -1,17 +1,22 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   application:
     bane: user-service
   sql:
     init:
       mode: always
   datasource:
-#    url: jdbc:mysql://localhost:3306/resumerry
-#    username: root
-#    password: dkwneo12!
     url: jdbc:mysql://resumerry.cfwdtllyytwh.ap-northeast-2.rds.amazonaws.com:3306/resumerry
     username: admin
     password: dkwneo12!
     driver-class-name: com.mysql.cj.jdbc.Driver
+  #  datasource:
+  #    url: jdbc:mysql://localhost:3306/resumerry?serverTimezone=Asia/Seoul
+  #    username: root
+  #    password: 12341234
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -39,6 +44,8 @@ logging:
     org.hibernate.SQL: debug
 jwt:
   secret: sdfasdfa
+
+
 #
 #spring:
 #  datasource:
