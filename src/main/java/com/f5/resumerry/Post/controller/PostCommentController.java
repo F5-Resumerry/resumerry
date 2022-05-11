@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RestController
 public class PostCommentController {
@@ -35,8 +38,17 @@ public class PostCommentController {
         String jwt = token.substring(7);
         String account_name = jwtUtil.extractUsername(jwt);
         Member memberIdByToken = memberService.getMember(account_name);
-        postService.registerPostComment(memberIdByToken.getId(), postId, getCommentDTO);
-        return ResponseEntity.ok().build();
+
+        Map<String, Boolean> param = new HashMap<>();
+        try {
+            postService.registerPostComment(memberIdByToken.getId(), postId, getCommentDTO);
+        } catch (Exception e) {
+            param.put("result", false);
+            return ResponseEntity.ok(param);
+        }
+
+        param.put("result", true);
+        return ResponseEntity.ok(param);
     }
     @DeleteMapping("/post/{member_id}/{post_id}/comment/{comment_id}")
     @ApiOperation(value = "게시글 답변 삭제")
@@ -52,8 +64,16 @@ public class PostCommentController {
         if (!memberId.equals(memberIdByToken.getId())) {
             throw new AuthenticateException("삭제하기 위한 회원의 아이디가 같지 않습니다.");
         }
-        postService.deletePostComment(memberId,postId,commentId);
-        return ResponseEntity.ok().build();
+        Map<String, Boolean> param = new HashMap<>();
+        try {
+            postService.deletePostComment(memberId,postId,commentId);
+        } catch (Exception e) {
+            param.put("result", false);
+            return ResponseEntity.ok(param);
+        }
+
+        param.put("result", true);
+        return ResponseEntity.ok(param);
     }
 //todo.  댓글 리스트 확인
 //    @GetMapping("/post/{member_id}/{post_id}/comment")
@@ -73,8 +93,17 @@ public class PostCommentController {
         String jwt = token.substring(7);
         String account_name = jwtUtil.extractUsername(jwt);
         Member memberIdByToken = memberService.getMember(account_name);
-        postService.registerRecommendComment(memberIdByToken.getId(), postId, commentId);
-        return ResponseEntity.ok().build();
+
+        Map<String, Boolean> param = new HashMap<>();
+        try {
+            postService.registerRecommendComment(memberIdByToken.getId(), postId, commentId);
+        } catch(Exception e) {
+            param.put("result", false);
+            return ResponseEntity.ok(param);
+        }
+
+        param.put("result", true);
+        return ResponseEntity.ok(param);
     }
 
     @PostMapping("/post/{user_id}/{post_id}/comment/{comment_id}/ban")
@@ -89,7 +118,16 @@ public class PostCommentController {
         String account_name = jwtUtil.extractUsername(jwt);
         Member memberIdByToken = memberService.getMember(account_name);
         Long reportMember = memberIdByToken.getId();
-        postService.banComment(memberId,postId,commentId,reportMember);
-        return ResponseEntity.ok().build();
+
+        Map<String, Boolean> param = new HashMap<>();
+        try {
+            postService.banComment(memberId,postId,commentId,reportMember);
+        } catch (Exception e) {
+            param.put("result", false);
+            return ResponseEntity.ok(param);
+        }
+
+        param.put("result", true);
+        return ResponseEntity.ok(param);
     }
 }
