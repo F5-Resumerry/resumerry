@@ -23,15 +23,9 @@ public class PostService {
     }
 
 
-//    public List<PostDTO> viewPosts() {
-//        PostDTO p = new PostDTO();
-//        return postRepository.viewPosts(p);
-//    }
-
     public List<FindPostDTO> findPosts(String title, String category, String sort) {
 
         List<FindPostDTO> posts = postRepository.findPosts(title, category, sort);
-        //
         return posts;
 
     }
@@ -60,7 +54,7 @@ public class PostService {
     }
 
     // 댓글 controller 시작
-    public void registerPostComment(Long memberId, Long postId, PostCommentDTO req) {
+    public void registerPostComment(Long memberId, Long postId, GetCommentDTO req) {
         PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getPostCommentGroup(), req.getPostCommentDepth(), req.getIsAnonymous(), memberId, postId);
         postRepository.registerPostComment(postCommentDTO);
     }
@@ -74,6 +68,10 @@ public class PostService {
         PostCommentRecommendDTO pcr = new PostCommentRecommendDTO(memberId, postId, commentId);
         postRepository.registerRecommendComment(pcr);
 
+    }
+
+    public void banComment(Long memberId, Long postId, Long commentId, Long reportMember) {
+        postRepository.banComment(postId,commentId,reportMember);
     }
 
 //    public List<PostCommentDTO> viewComments(Long memberId, Long postId) {

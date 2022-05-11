@@ -17,7 +17,7 @@ public class MemberInfoDTO {
 
     private Boolean emailVerified;
 
-    private String imageSrc;
+    //private String imageSrc;
 
 
     @Builder

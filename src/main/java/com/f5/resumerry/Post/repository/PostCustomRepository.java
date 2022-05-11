@@ -22,6 +22,8 @@ public interface PostCustomRepository {
 
     void registerRecommendComment(PostCommentRecommendDTO pcr);
 
+    void banComment(Long postId, Long commentId, Long reportMember);
+
 
 
 

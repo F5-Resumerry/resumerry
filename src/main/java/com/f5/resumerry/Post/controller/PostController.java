@@ -1,10 +1,12 @@
 package com.f5.resumerry.Post.controller;
 
 import com.f5.resumerry.Member.domain.entity.Member;
+import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
 import com.f5.resumerry.Post.dto.*;
 import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.service.PostService;
+import com.f5.resumerry.exception.AuthenticateException;
 import com.f5.resumerry.exception.DuplicateException;
 import com.f5.resumerry.exception.ErrorCode;
 import com.f5.resumerry.security.AuthController;
@@ -28,14 +30,8 @@ public class PostController {
     @Autowired
     private MemberService memberService;
 
-    private AuthController authController;
-
-//    @GetMapping(value = "/posts")
-//    public ResponseEntity viewPosts() {
-//        List<PostDTO> viewPostsResponse = postService.viewPosts();
-//        return ResponseEntity.ok(viewPostsResponse);
-//    }
-
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping(value = "/posts")
     @ApiOperation(value = "게시글 목록 조회")
@@ -49,8 +45,15 @@ public class PostController {
 
     @GetMapping(value = "/post/{user_id}")
     @ApiOperation(value = "내 페이지에서 게시글 조회")
-    public ResponseEntity findPostsInMyPage(@ApiParam(value = "회원 번호") @PathVariable("user_id") Long id) {
-        List<FindPostDTO> findPostsInMypageResponse =postService.findPostsInMyPage(id);
+    public ResponseEntity findPostsInMyPage(@ApiParam(value = "회원 번호") @PathVariable("user_id") Long user_id,
+                                            @ApiParam(value = "인증 토큰") @RequestHeader String token) {
+        String jwt = token.substring(7);
+        String account_name = jwtUtil.extractUsername(jwt);
+        Member memberByToken = memberService.getMember(account_name);
+        if(!user_id.equals(memberByToken.getId())) {
+            throw new AuthenticateException("잘못된 회원입니다.");
+        }
+        List<FindPostDTO> findPostsInMypageResponse =postService.findPostsInMyPage(memberByToken.getId());
         return ResponseEntity.ok(findPostsInMypageResponse);
     }
 
@@ -70,9 +73,10 @@ public class PostController {
             @ApiParam(value = "게시글 DTO") @RequestBody RegisterPostDTO registerPostDTO,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
-        String account_name = authController.Token2Username(token); // token 을 통해 받은 account_name
-        Member memberIdByToken = memberService.getMember(account_name);
-        postService.registerPosts(memberIdByToken.getId(), registerPostDTO);
+        String jwt = token.substring(7);
+        String account_name = jwtUtil.extractUsername(jwt);
+        Member memberByToken = memberService.getMember(account_name);
+        postService.registerPosts(memberByToken.getId(), registerPostDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -84,11 +88,11 @@ public class PostController {
             @ApiParam(value = "게시글 수정 DTO") @RequestBody UpdatePostDTO putPostDTO,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
-        String account_name = authController.Token2Username(token); // token 을 통해 받은 account_name
+        String jwt = token.substring(7);
+        String account_name = jwtUtil.extractUsername(jwt);
         Member memberIdByToken = memberService.getMember(account_name);
-        if(memberId != memberIdByToken.getId()) {
-                //게시글 수정 권한이 없습니다.
-            throw new DuplicateException("modify", "게시글 수정 권한이 없습니다", ErrorCode.INVALID_INPUT_VALUE);
+        if (!memberId.equals(memberIdByToken.getId())) {
+            throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
         postService.updatePost(memberId, postId, putPostDTO);
         return ResponseEntity.ok().build();
@@ -98,50 +102,20 @@ public class PostController {
     @ApiOperation(value = "게시글 삭제")
     public ResponseEntity DeletePost(
             @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
-            @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId
+            @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
+            @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
     ) {
-        postService.deletePost(memberId,postId);
+        String jwt = token.substring(7);
+        String account_name = jwtUtil.extractUsername(jwt);
+        Member memberIdByToken = memberService.getMember(account_name);
+        if (!memberId.equals(memberIdByToken.getId())) {
+            throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
+        }
+        postService.deletePost(memberIdByToken.getId(),postId);
         return ResponseEntity.ok().build();
     }
 
-    // comment controller
-    @PostMapping("/post/{member_id}/{post_id}/comment")
-    @ApiOperation(value = "게시글 답변 등록")
-    public ResponseEntity registerPostComment(
-            @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
-            @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
-            @ApiParam(value = "게시글 답변 DTO") @RequestBody PostCommentDTO postCommentDTO
-    ) {
-        postService.registerPostComment(memberId, postId, postCommentDTO);
-        return ResponseEntity.ok().build();
-    }
-    @DeleteMapping("/post/{member_id}/{post_id}/comment/{comment_id}")
-    @ApiOperation(value = "게시글 답변 삭제")
-    public ResponseEntity deletePostComment(
-            @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
-            @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
-            @ApiParam(value = "답변 번호") @PathVariable("comment_id") Long commentId
-    ) {
-        postService.deletePostComment(memberId,postId,commentId);
-        return ResponseEntity.ok().build();
-    }
 
-//    @GetMapping("/post/{member_id}/{post_id}/comment")
-//    public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody String req) {
-//        List<PostCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
-//        return ResponseEntity.ok(viewPostComments);
-//    }
-
-    @PostMapping("/post/{member_id}/{post_id}/comment/{comment_id}/recommend")
-    @ApiOperation(value = "추천 답변 등록")
-    public ResponseEntity registerRecommendComment(
-            @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
-            @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
-            @ApiParam(value = "답변 번호") @PathVariable("comment_id") Long commentId
-    ) {
-        postService.registerRecommendComment(memberId, postId, commentId);
-        return ResponseEntity.ok().build();
-    }
 
 
 }

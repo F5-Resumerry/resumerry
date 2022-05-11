@@ -14,12 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository , JpaSpecificationExecutor<Post> {
 
     //Specification을 인자로 받는 findAll 함수를 사용하기 위해서는 인터페이스에 JpaSpecificationExecutor를 상속받아야 한다. -> 검색을 위해
+    @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Post p "
             +"set p.title = :title, p.category = :category, p.contents = :contents, p.isAnonymous = :isAnonymous "
             +"where p.id = :postId and p.memberId = :memberId ")
     void updatePost(@Param("memberId") Long memberId, @Param("postId") Long postId, @Param("category") CategoryEnum category, @Param("contents") String contents, @Param("isAnonymous") Boolean isAnonymous, @Param("title") String title);
 
+    @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.views = p.views+1 where p.id = :postId and p.memberId = :memberId")
     void updateViewCnt(@Param("memberId") Long memberId, @Param("postId") Long postId);
