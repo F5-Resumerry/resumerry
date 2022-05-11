@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,10 +39,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManager();
     }
 
+    private static final String[] AUTH_WHITELIST = {
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/webjars/**"
+    };
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(AUTH_WHITELIST);
+    }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/auth/token/refresh/**", "/auth/sign-up", "/auth/login", "/member/exists", "/valid/**","/post", "/post/**").permitAll().
+                .authorizeRequests().antMatchers("/auth/token/refresh/**", "/auth/sign-up", "/auth/login", "/member/exists", "/valid/**","/post", "/post/**","/posts", "/swagger-resources/**", "/swagger-ui.html/swagger-resources/configuration/ui").permitAll().
                 anyRequest().authenticated().and().
                 exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

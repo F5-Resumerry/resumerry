@@ -48,6 +48,7 @@ public class Resume extends BaseTimeEntity {
     private Integer views;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private CategoryEnum category;
 
     @Column(name = "is_delete", nullable = false)

@@ -35,10 +35,8 @@ public class MemberInfo {
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean emailVerified = true;
 
-    @Column(name = "image_src")
-    private String imageSrc;
-
     @OneToOne(mappedBy = "memberInfo")
     private Member member;
+
 
 }
