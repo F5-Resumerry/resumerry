@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class PostCustomRepositoryImpl implements PostCustomRepository{
+public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Autowired
     private EntityManager entityManager;
@@ -123,13 +123,14 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .executeUpdate();
     }
 
-    public List<PostParentCommentDTO> findComments(Long postId, List<PostChildCommentDTO> pcc) {
-        return entityManager.createQuery(" select new com.f5.resumerry.Post.dto.PostParentCommentDTO(pc.id, pc.memberId, pc.member.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true, pc.modifiedDate, pc.postCommentGroup,pc.postCommentDepth, :pcc)"
-                + "from PostComment pc join pc.member m "
-                        +"where pc.postCommentDepth = 0 ", PostParentCommentDTO.class)
-                .setParameter("pcc", pcc)
-                .getResultList();
-    }
+//    public List<PostParentCommentDTO> findComments(Long postId, List<PostChildCommentDTO> pcc) {
+//        Object PostChildCommentDTO = pcc;
+//        return entityManager.createQuery(" select new com.f5.resumerry.Post.dto.PostParentCommentDTO(pc.id, pc.memberId, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true, pc.modifiedDate, pc.postCommentGroup,pc.postCommentDepth, pc.postChildComments)"
+//                + "from PostComment pc join pc.member m "
+//                        +"where pc.postCommentDepth = 0 ", PostParentCommentDTO.class)
+//                .setParameterList(List<PostChildCommentDTO>, )
+//                .getResultList();
+//    }
     public  List<PostChildCommentDTO> findChildComments(Integer groupNum, Long postId) {
         return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.imageSrc, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, 1)"
                 + "from PostComment pc join pc.member m "

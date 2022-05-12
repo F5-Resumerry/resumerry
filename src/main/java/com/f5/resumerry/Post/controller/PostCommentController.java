@@ -74,7 +74,8 @@ public class PostCommentController {
     }
 
     @GetMapping("/post/{member_id}/{post_id}/comment")
-    public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody String req) {
+    @ApiOperation(value = "댓글 조회")
+    public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId) {
         List<PostParentCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
         return ResponseEntity.ok(viewPostComments);
     }

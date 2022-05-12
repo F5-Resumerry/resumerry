@@ -46,7 +46,7 @@ public class PostController {
     @GetMapping(value = "/post/{user_id}")
     @ApiOperation(value = "내 페이지에서 게시글 조회")
     public ResponseEntity findPostsInMyPage(@ApiParam(value = "회원 번호") @PathVariable("user_id") Long user_id,
-                                            @ApiParam(value = "인증 토큰") @RequestHeader String token) {
+                                            @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token) {
 
         Member memberByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         if(!user_id.equals(memberByToken.getId())) {
@@ -61,7 +61,7 @@ public class PostController {
     public ResponseEntity viewPost(
             @ApiParam(value = "회원 번호") @PathVariable("user_id") Long userId,
             @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
-            @ApiParam(value = "유저 토큰") @RequestHeader String token
+            @ApiParam(value = "유저 토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         FindPostDTO viewPostResponse = postService.viewPost(userId, postId, memberByToken.getId());

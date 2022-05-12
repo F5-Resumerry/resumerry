@@ -107,9 +107,12 @@ public class PostService {
         List<PostParentCommentDTO> comments = new ArrayList<PostParentCommentDTO>();
 
         Integer maxGroupId = postCommentRepository.findByPostId(postId);
+        if (maxGroupId == null) {
+            return comments;
+        }
         for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
             List<PostChildCommentDTO> childLists = postRepository.findChildComments(groupNum, postId);
-            comments = postRepository.findComments(postId,childLists);
+            //comments = postRepository.findComments(postId,childLists);
         }
         return comments;
 
