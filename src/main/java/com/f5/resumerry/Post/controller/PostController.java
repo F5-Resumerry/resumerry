@@ -3,27 +3,19 @@ package com.f5.resumerry.Post.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
-import com.f5.resumerry.Post.dto.*;
-import com.f5.resumerry.Post.entity.Post;
-import com.f5.resumerry.Post.repository.PostRepository;
+import com.f5.resumerry.Post.dto.FindPostDTO;
+import com.f5.resumerry.Post.dto.PostsDTO;
+import com.f5.resumerry.Post.dto.RegisterPostDTO;
+import com.f5.resumerry.Post.dto.UpdatePostDTO;
 import com.f5.resumerry.Post.service.PostService;
 import com.f5.resumerry.exception.AuthenticateException;
-import com.f5.resumerry.exception.DuplicateException;
-import com.f5.resumerry.exception.ErrorCode;
-import com.f5.resumerry.security.AuthController;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +39,7 @@ public class PostController {
                                     @ApiParam(value = "직종") @RequestParam(name = "category",required = false, defaultValue = "ALL") String category,
                                     @ApiParam(value = "정렬기준") @RequestParam(name = "sort", required = false, defaultValue = "recent") String sort
                                     ) {
-        List<FindPostDTO> findPostResponse = postService.findPosts(title, category, sort);
+        List<PostsDTO> findPostResponse = postService.findPosts(title, category, sort);
         return  ResponseEntity.ok(findPostResponse);
     }
 
@@ -61,8 +53,8 @@ public class PostController {
         if(!user_id.equals(memberByToken.getId())) {
             throw new AuthenticateException("잘못된 회원입니다.");
         }
-        List<FindPostDTO> findPostsInMypageResponse =postService.findPostsInMyPage(memberByToken.getId());
-        return ResponseEntity.ok(findPostsInMypageResponse);
+        List<PostsDTO> findPostsInMyPageResponse =postService.findPostsInMyPage(memberByToken.getId());
+        return ResponseEntity.ok(findPostsInMyPageResponse);
     }
 
     @GetMapping(value = "/post/{user_id}/{post_id}")
@@ -75,7 +67,7 @@ public class PostController {
         String jwt = token.substring(7);
         String account_name = jwtUtil.extractUsername(jwt);
         Member memberByToken = memberService.getMember(account_name);
-        FindPostDTO viewPostResponse = postService.viewPost(userId, postId,memberByToken.getId());
+        FindPostDTO viewPostResponse = postService.viewPost(userId, postId, memberByToken.getId());
         return ResponseEntity.ok(viewPostResponse);
     }
 
