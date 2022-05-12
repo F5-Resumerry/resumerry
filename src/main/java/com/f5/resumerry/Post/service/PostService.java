@@ -23,7 +23,7 @@ public class PostService {
     }
 
 
-    public List<FindPostDTO> findPosts(String title, String category, String sort) {
+    public List<PostsDTO> findPosts(String title, String category, String sort) {
         /**
          * ToDo
          * recent / view
@@ -62,7 +62,7 @@ public class PostService {
         }
      }
 
-    public List<FindPostDTO> findPostsInMyPage(Long memberId) {
+    public List<PostsDTO> findPostsInMyPage(Long memberId) {
         return postRepository.findPostsInMyPage(memberId);
     }
 
