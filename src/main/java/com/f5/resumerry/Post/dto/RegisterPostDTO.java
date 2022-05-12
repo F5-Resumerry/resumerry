@@ -14,6 +14,5 @@ public class RegisterPostDTO {
     private Boolean isAnonymous;
     private Integer viewCnt;
     private Long memberId;
-    private Long resumeId;
 
 }

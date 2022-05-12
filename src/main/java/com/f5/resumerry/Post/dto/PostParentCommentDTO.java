@@ -2,12 +2,14 @@ package com.f5.resumerry.Post.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostParentCommentDTO {
     private Long commentId;
     private Long memberId;

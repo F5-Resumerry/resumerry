@@ -4,15 +4,19 @@ import com.f5.resumerry.Post.dto.*;
 import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -53,7 +57,7 @@ public class PostService {
     }
 
     public void registerPosts(Long memberId, RegisterPostDTO req){
-        RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId, req.getResumeId());
+        RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId);
         postRepository.registerPost(insertPost);
     }
 
@@ -104,17 +108,33 @@ public class PostService {
 
     public List<PostParentCommentDTO> viewComments(Long memberId, Long postId) {
 
-        List<PostParentCommentDTO> comments = new ArrayList<PostParentCommentDTO>();
+        ObjectMapper mapper = new ObjectMapper();
+        List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
+        PostParentCommentDTO i = new PostParentCommentDTO();
 
         Integer maxGroupId = postCommentRepository.findByPostId(postId);
         if (maxGroupId == null) {
-            return comments;
+            return result;
         }
         for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
             List<PostChildCommentDTO> childLists = postRepository.findChildComments(groupNum, postId);
-            //comments = postRepository.findComments(postId,childLists);
+            PostChildCommentDTO p = postRepository.findParentComment(groupNum,postId);
+            i.setCommentId(p.getCommentId());
+            i.setMemberId(p.getMemberId());
+            i.setImageSrc(p.getNickname());
+            i.setNickname(p.getNickname());
+            i.setContents(p.getContents());
+            i.setRecommendCnt(p.getRecommendCnt());
+            i.setBanCnt(p.getBanCnt());
+            i.setIsAnonymous(p.getIsAnonymous());
+            i.setIsAnonymous(p.getIsOwner());
+            i.setPostCommentGroup(p.getPostCommentGroup());
+            i.setModifiedDate(p.getModifiedDate());
+            i.setPostCommentDepth(p.getPostCommentDepth());
+            i.setPostChildComments(childLists);
+            result.add(i);
         }
-        return comments;
+        return result;
 
     }
 

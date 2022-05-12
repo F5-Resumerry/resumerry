@@ -3,7 +3,9 @@ package com.f5.resumerry.Post.repository;
 import com.f5.resumerry.Post.dto.*;
 
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 public interface PostCustomRepository {
 
@@ -36,4 +38,6 @@ public interface PostCustomRepository {
     //List<PostParentCommentDTO> findComments(Long postId, List<PostChildCommentDTO> pcc);
 
     List<PostChildCommentDTO> findChildComments(Integer groupNum, Long postId);
+
+    PostChildCommentDTO findParentComment(Integer groupNum, Long postId);
 }

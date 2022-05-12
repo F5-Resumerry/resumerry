@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -75,7 +76,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category, true) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, m.imageSrc, p.memberId, m.nickname, p.modifiedDate, p.category, true) "
                         + "from Post p "
                         + "join p.member m "
                         + "where m.id in (:memberId) and p.id in (:postId) and p.isDelete = true "
@@ -86,7 +87,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     public FindPostDTO viewNotOwnPost(Long postId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category, false) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, m.imageSrc, p.memberId, m.nickname, p.modifiedDate, p.category, false) "
                         + "from Post p "
                         + "join p.member m "
                         + "where p.id in (:postId) and p.isDelete = true "
@@ -98,14 +99,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     @Transactional
     public void registerPost(RegisterPostDTO r) {
         String anonymous = r.getIsAnonymous() ? "Y" : "N";
-        entityManager.createNativeQuery("insert into post (title, category, contents, is_anonymous, viewCnt, member_id, resume_id) values (?, ?, ?, ?, ?, ?, ?)")
+        entityManager.createNativeQuery("insert into post (title, category, contents, is_anonymous, view_cnt, member_id) values (?, ?, ?, ?, ?, ?)")
                 .setParameter(1, r.getTitle() )
                 .setParameter(2, String.valueOf(r.getCategory()))
                 .setParameter(3, r.getContents())
                 .setParameter(4, anonymous)
                 .setParameter(5, r.getViewCnt())
                 .setParameter(6, r.getMemberId())
-                .setParameter(7, r.getResumeId())
                 .executeUpdate();
     }
 
@@ -123,21 +123,26 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .executeUpdate();
     }
 
-//    public List<PostParentCommentDTO> findComments(Long postId, List<PostChildCommentDTO> pcc) {
-//        Object PostChildCommentDTO = pcc;
-//        return entityManager.createQuery(" select new com.f5.resumerry.Post.dto.PostParentCommentDTO(pc.id, pc.memberId, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true, pc.modifiedDate, pc.postCommentGroup,pc.postCommentDepth, pc.postChildComments)"
-//                + "from PostComment pc join pc.member m "
-//                        +"where pc.postCommentDepth = 0 ", PostParentCommentDTO.class)
-//                .setParameterList(List<PostChildCommentDTO>, )
-//                .getResultList();
-//    }
+
+
+    // 댓글 내부의 대댓글 리스트 생성
     public  List<PostChildCommentDTO> findChildComments(Integer groupNum, Long postId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.imageSrc, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, 1)"
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, 1, pc.postCommentGroup)"
                 + "from PostComment pc join pc.member m "
                         + "where pc.postCommentGroup = :groupNum and pc.postCommentDepth = 1", PostChildCommentDTO.class)
                 .setParameter("groupNum", groupNum)
                 .getResultList();
     }
+
+    public PostChildCommentDTO findParentComment(Integer groupNum, Long postId) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, 0, pc.postCommentGroup)"
+                        + "from PostComment pc join pc.member m "
+                        + "where pc.postCommentGroup = :groupNum and pc.postCommentDepth = 0 and pc.postId = :postId ", PostChildCommentDTO.class)
+                .setParameter("groupNum", groupNum)
+                .setParameter("postId", postId)
+                .getSingleResult();
+    }
+
 
 
     public void registerRecommendComment(PostCommentRecommendDTO pcr) {

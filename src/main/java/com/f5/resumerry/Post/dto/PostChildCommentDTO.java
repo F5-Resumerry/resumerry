@@ -21,5 +21,6 @@ public class PostChildCommentDTO {
     private Boolean isOwner;
     private LocalDateTime modifiedDate;
     private Integer postCommentDepth;
+    private Integer PostCommentGroup;
 
 }

@@ -77,7 +77,7 @@ public class PostController {
         Member memberByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         Map<String, Boolean> param = new HashMap<>();
         try {
-            postService.registerPosts(memberByToken.getId(), registerPostDTO);
+           postService.registerPosts(memberByToken.getId(), registerPostDTO);
         } catch (Exception e) {
             param.put("result", false);
             return ResponseEntity.ok(param);
