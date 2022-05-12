@@ -129,7 +129,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public  List<PostChildCommentDTO> findChildComments(Integer groupNum, Long postId) {
         return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, 1, pc.postCommentGroup)"
                 + "from PostComment pc join pc.member m "
-                        + "where pc.postCommentGroup = :groupNum and pc.postCommentDepth = 1", PostChildCommentDTO.class)
+                        + "where pc.postCommentGroup = :groupNum and pc.postCommentDepth = 1 and pc.postId = :postId "
+                        + "order by pc.modifiedDate asc ", PostChildCommentDTO.class)
+                .setParameter("postId", postId)
                 .setParameter("groupNum", groupNum)
                 .getResultList();
     }

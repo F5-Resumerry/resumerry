@@ -110,6 +110,7 @@ public class PostService {
 
         ObjectMapper mapper = new ObjectMapper();
         List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
+
         PostParentCommentDTO i = new PostParentCommentDTO();
 
         Integer maxGroupId = postCommentRepository.findByPostId(postId);
@@ -117,7 +118,9 @@ public class PostService {
             return result;
         }
         for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
-            List<PostChildCommentDTO> childLists = postRepository.findChildComments(groupNum, postId);
+            int k = 0 ;
+            List<PostChildCommentDTO> child = postRepository.findChildComments(groupNum, postId);
+
             PostChildCommentDTO p = postRepository.findParentComment(groupNum,postId);
             i.setCommentId(p.getCommentId());
             i.setMemberId(p.getMemberId());
@@ -131,7 +134,7 @@ public class PostService {
             i.setPostCommentGroup(p.getPostCommentGroup());
             i.setModifiedDate(p.getModifiedDate());
             i.setPostCommentDepth(p.getPostCommentDepth());
-            i.setPostChildComments(childLists);
+            i.setPostChildComments(child);
             result.add(i);
         }
         return result;
