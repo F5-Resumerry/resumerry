@@ -8,8 +8,8 @@ import java.util.List;
 public interface PostCustomRepository {
 
     //List<PostDTO> viewPosts(PostDTO p);
-    List<FindPostDTO> findPosts(String title, String category);
-    List<FindPostDTO> findPostsInMyPage(Long id);
+    List<PostsDTO> findPosts(String title, String category);
+    List<PostsDTO> findPostsInMyPage(Long id);
     FindPostDTO viewPost(Long memberId, Long postId);
     void registerPost(RegisterPostDTO r);
 
@@ -25,11 +25,11 @@ public interface PostCustomRepository {
     void banComment(Long postId, Long commentId, Long reportMember);
 
 
-    List<FindPostDTO> findPostsView(String title, String category);
+    List<PostsDTO> findPostsView(String title, String category);
 
-    List<FindPostDTO> findPostsNotAll(String title, String category);
+    List<PostsDTO> findPostsNotAll(String title, String category);
 
-    List<FindPostDTO> findPostsViewNotAll(String title, String category);
+    List<PostsDTO> findPostsViewNotAll(String title, String category);
 
     FindPostDTO viewNotOwnPost(Long postId);
 }
