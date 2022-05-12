@@ -1,12 +1,15 @@
 package com.f5.resumerry.Post.service;
 
 import com.f5.resumerry.Post.dto.*;
+import com.f5.resumerry.Post.entity.PostComment;
+import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +24,9 @@ public class PostService {
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
+
+    @Autowired
+    private PostCommentRepository postCommentRepository;
 
 
     public List<PostsDTO> findPosts(String title, String category, String sort) {
@@ -96,24 +102,18 @@ public class PostService {
         postRepository.banComment(postId,commentId,reportMember);
     }
 
-//    public List<PostCommentDTO> viewComments(Long memberId, Long postId) {
-//        // 대댓글 리스트
-//        //ObjectMapper mapper = new ObjectMapper();
-//        List<PostCommentDTO> comments = new ArrayList<PostCommentDTO>();
-//    // 반복문 수정하기
-//        for(int i = 0; i < postRepository. ; i++) {
-//            // i 번째 그룹의 대댓글들을 가져옴
-//           List<PostCommentDepthDTO> commentDepthList = postRepository.findCommentDepth(i, postId);
-//           // 그룹 i번의 댓글을 가져옴
-//           PostCommentDTO comment = postRepository.findComment(i,postId);
-//           // 그룹 i번쨰 댓글에 depthlist 주입
-//           comment.setPostCommentDepthList(commentDepthList);
-//           comments.add(comment);
-//            System.out.println(comment);
-//        }
-//        return comments;
-//
-//    }
+    public List<PostParentCommentDTO> viewComments(Long memberId, Long postId) {
+
+        List<PostParentCommentDTO> comments = new ArrayList<PostParentCommentDTO>();
+
+        Integer maxGroupId = postCommentRepository.findByPostId(postId);
+        for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
+            List<PostChildCommentDTO> childLists = postRepository.findChildComments(groupNum, postId);
+            comments = postRepository.findComments(postId,childLists);
+        }
+        return comments;
+
+    }
 
 
 }

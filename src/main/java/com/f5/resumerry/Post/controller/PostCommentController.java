@@ -5,6 +5,7 @@ import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
 import com.f5.resumerry.Post.dto.GetCommentDTO;
 import com.f5.resumerry.Post.dto.PostCommentDTO;
+import com.f5.resumerry.Post.dto.PostParentCommentDTO;
 import com.f5.resumerry.Post.service.PostService;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -35,10 +37,7 @@ public class PostCommentController {
             @ApiParam(value = "게시글 답변 DTO") @RequestBody GetCommentDTO getCommentDTO,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
     ) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberIdByToken = memberService.getMember(account_name);
-
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         Map<String, Boolean> param = new HashMap<>();
         try {
             postService.registerPostComment(memberIdByToken.getId(), postId, getCommentDTO);
@@ -46,7 +45,6 @@ public class PostCommentController {
             param.put("result", false);
             return ResponseEntity.ok(param);
         }
-
         param.put("result", true);
         return ResponseEntity.ok(param);
     }
@@ -58,9 +56,8 @@ public class PostCommentController {
             @ApiParam(value = "답변 번호") @PathVariable("comment_id") Long commentId,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberIdByToken = memberService.getMember(account_name);
+
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         if (!memberId.equals(memberIdByToken.getId())) {
             throw new AuthenticateException("삭제하기 위한 회원의 아이디가 같지 않습니다.");
         }
@@ -75,12 +72,12 @@ public class PostCommentController {
         param.put("result", true);
         return ResponseEntity.ok(param);
     }
-//todo.  댓글 리스트 확인
-//    @GetMapping("/post/{member_id}/{post_id}/comment")
-//    public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody String req) {
-//        List<PostCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
-//        return ResponseEntity.ok(viewPostComments);
-//    }
+
+    @GetMapping("/post/{member_id}/{post_id}/comment")
+    public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId, @RequestBody String req) {
+        List<PostParentCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
+        return ResponseEntity.ok(viewPostComments);
+    }
 
     @PostMapping("/post/{member_id}/{post_id}/comment/{comment_id}/recommend")
     @ApiOperation(value = "추천 답변 등록")
@@ -90,9 +87,8 @@ public class PostCommentController {
             @ApiParam(value = "답변 번호") @PathVariable("comment_id") Long commentId,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberIdByToken = memberService.getMember(account_name);
+
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
 
         Map<String, Boolean> param = new HashMap<>();
         try {
@@ -114,11 +110,8 @@ public class PostCommentController {
             @ApiParam(value = "답변 번호") @PathVariable("comment_id") Long commentId,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberIdByToken = memberService.getMember(account_name);
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         Long reportMember = memberIdByToken.getId();
-
         Map<String, Boolean> param = new HashMap<>();
         try {
             postService.banComment(memberId,postId,commentId,reportMember);

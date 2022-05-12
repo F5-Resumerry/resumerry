@@ -12,7 +12,7 @@ public class RegisterPostDTO {
     private String contents;
     private String fileLink;
     private Boolean isAnonymous;
-    private Integer views;
+    private Integer viewCnt;
     private Long memberId;
     private Long resumeId;
 

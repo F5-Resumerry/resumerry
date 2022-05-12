@@ -32,4 +32,8 @@ public interface PostCustomRepository {
     List<PostsDTO> findPostsViewNotAll(String title, String category);
 
     FindPostDTO viewNotOwnPost(Long postId);
+
+    List<PostParentCommentDTO> findComments(Long postId, List<PostChildCommentDTO> pcc);
+
+    List<PostChildCommentDTO> findChildComments(Integer groupNum, Long postId);
 }
