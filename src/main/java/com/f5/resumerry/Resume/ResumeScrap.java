@@ -29,9 +29,14 @@ public class ResumeScrap{
     @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumescrap"))
     private Resume resume;
 
+    @Column(name = "resume_id",insertable = false, updatable = false)
+    private Long resumeId;
     @ManyToOne
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumescrap"))
     private Member member;
+
+    @Column(name = "member_id", insertable = false, updatable = false)
+    private Long memberId;
 
     @CreatedDate
     @Column(name = "created_date", nullable = false)

@@ -37,4 +37,6 @@ out/
 .vscode/
 
 
-### post init file ###
+### aws credential  ###
+!**/src/main/resources/application-aws-credential.yml
+

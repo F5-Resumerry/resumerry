@@ -35,7 +35,7 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private String contents;
 
-    private Integer views;
+    private Integer viewCnt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

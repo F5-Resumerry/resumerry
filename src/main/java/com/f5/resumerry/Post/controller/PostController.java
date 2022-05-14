@@ -46,10 +46,9 @@ public class PostController {
     @GetMapping(value = "/post/{user_id}")
     @ApiOperation(value = "내 페이지에서 게시글 조회")
     public ResponseEntity findPostsInMyPage(@ApiParam(value = "회원 번호") @PathVariable("user_id") Long user_id,
-                                            @ApiParam(value = "인증 토큰") @RequestHeader String token) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberByToken = memberService.getMember(account_name);
+                                            @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token) {
+
+        Member memberByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         if(!user_id.equals(memberByToken.getId())) {
             throw new AuthenticateException("잘못된 회원입니다.");
         }
@@ -62,11 +61,9 @@ public class PostController {
     public ResponseEntity viewPost(
             @ApiParam(value = "회원 번호") @PathVariable("user_id") Long userId,
             @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
-            @ApiParam(value = "유저 토큰") @RequestHeader String token
+            @ApiParam(value = "유저 토큰") @RequestHeader("Authorization") String token
     ) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberByToken = memberService.getMember(account_name);
+        Member memberByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         FindPostDTO viewPostResponse = postService.viewPost(userId, postId, memberByToken.getId());
         return ResponseEntity.ok(viewPostResponse);
     }
@@ -77,13 +74,10 @@ public class PostController {
             @ApiParam(value = "게시글 DTO") @RequestBody RegisterPostDTO registerPostDTO,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     )  {
-        Map<String, Boolean> result = new HashMap<>();
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberByToken = memberService.getMember(account_name);
+        Member memberByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         Map<String, Boolean> param = new HashMap<>();
         try {
-            postService.registerPosts(memberByToken.getId(), registerPostDTO);
+           postService.registerPosts(memberByToken.getId(), registerPostDTO);
         } catch (Exception e) {
             param.put("result", false);
             return ResponseEntity.ok(param);
@@ -100,9 +94,7 @@ public class PostController {
             @ApiParam(value = "게시글 수정 DTO") @RequestBody UpdatePostDTO putPostDTO,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberIdByToken = memberService.getMember(account_name);
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         if (!memberId.equals(memberIdByToken.getId())) {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
@@ -122,14 +114,14 @@ public class PostController {
     public ResponseEntity DeletePost(
             @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
             @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
-            @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
+            @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
-        String jwt = token.substring(7);
-        String account_name = jwtUtil.extractUsername(jwt);
-        Member memberIdByToken = memberService.getMember(account_name);
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+
         if (!memberId.equals(memberIdByToken.getId())) {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
+
         Map<String, Boolean> param = new HashMap<>();
         try {
             postService.deletePost(memberIdByToken.getId(),postId);

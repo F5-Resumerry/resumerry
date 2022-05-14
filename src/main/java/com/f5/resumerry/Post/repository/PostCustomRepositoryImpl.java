@@ -9,19 +9,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
-public class PostCustomRepositoryImpl implements PostCustomRepository{
+public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Autowired
     private EntityManager entityManager;
 
     @Override
     public List<PostsDTO> findPosts(@Param("title") String title, @Param("category") String category) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.viewCnt, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
                         + "from Post p inner join p.member m "
-                + "where p.title like concat('%', :title, '%')  "
+                + "where p.title like concat('%', :title, '%') and p.isDelete = true "
                 + "order by p.createdDate desc "
                         , PostsDTO.class)
                 .setParameter("title", title)
@@ -29,10 +30,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .getResultList();
     }
     public List<PostsDTO> findPostsNotAll(String title, String category) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.viewCnt, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
                                 + "from Post p inner join p.member m "
                                 + "where p.category = :category "
-                                + "and p.title like concat('%', :title, '%')  "
+                                + "and p.title like concat('%', :title, '%') and p.isDelete = true "
                                 + "order by p.createdDate desc "
                         , PostsDTO.class)
                 .setParameter("category", CategoryEnum.valueOf(category))
@@ -41,10 +42,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .getResultList();
     }
     public List<PostsDTO> findPostsView(String title, String category) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.viewCnt, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
                                 + "from Post p left join p.member m "
-                                + "where p.title like concat('%', :title, '%')  "
-                                + "order by p.views desc "
+                                + "where p.title like concat('%', :title, '%') and p.isDelete = true "
+                                + "order by p.viewCnt desc "
                         , PostsDTO.class)
                 .setParameter("title", title)
                 .setMaxResults(10)
@@ -52,11 +53,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     public List<PostsDTO> findPostsViewNotAll(String title, String category){
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.views, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, p.postCommentList.size, p.viewCnt, p.isAnonymous, m.imageSrc , p.memberId, m.nickname, p.modifiedDate, p.category) "
                                 + "from Post p left join p.member m "
                                 + "where p.category = :category "
-                                + "and p.title like concat('%', :title, '%')  "
-                                + "order by p.views desc "
+                                + "and p.title like concat('%', :title, '%') and p.isDelete = true  "
+                                + "order by p.viewCnt desc "
                         , PostsDTO.class)
                 .setParameter("category", CategoryEnum.valueOf(category))
                 .setParameter("title", title)
@@ -65,7 +66,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     public List<PostsDTO> findPostsInMyPage(Long memberId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
                         + "from Post p, Member m "
                         //+ "join fetch p.member m "
                         + "where m.id in (:memberId) "
@@ -75,10 +76,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category, true) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, m.imageSrc, p.memberId, m.nickname, p.modifiedDate, p.category, true) "
                         + "from Post p "
                         + "join p.member m "
-                        + "where m.id in (:memberId) and p.id in (:postId) "
+                        + "where m.id in (:memberId) and p.id in (:postId) and p.isDelete = true "
                         + "group by p.id ", FindPostDTO.class)
                 .setParameter("memberId", memberId)
                 .setParameter("postId", postId)
@@ -86,10 +87,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     public FindPostDTO viewNotOwnPost(Long postId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.views, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category, false) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.FindPostDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, m.imageSrc, p.memberId, m.nickname, p.modifiedDate, p.category, false) "
                         + "from Post p "
                         + "join p.member m "
-                        + "where p.id in (:postId) "
+                        + "where p.id in (:postId) and p.isDelete = true "
                         + "group by p.id ", FindPostDTO.class)
                 .setParameter("postId", postId)
                 .getSingleResult();
@@ -98,14 +99,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     @Transactional
     public void registerPost(RegisterPostDTO r) {
         String anonymous = r.getIsAnonymous() ? "Y" : "N";
-        entityManager.createNativeQuery("insert into post (title, category, contents, is_anonymous, views, member_id, resume_id) values (?, ?, ?, ?, ?, ?, ?)")
+        entityManager.createNativeQuery("insert into post (title, category, contents, is_anonymous, view_cnt, member_id) values (?, ?, ?, ?, ?, ?)")
                 .setParameter(1, r.getTitle() )
                 .setParameter(2, String.valueOf(r.getCategory()))
                 .setParameter(3, r.getContents())
                 .setParameter(4, anonymous)
-                .setParameter(5, r.getViews())
+                .setParameter(5, r.getViewCnt())
                 .setParameter(6, r.getMemberId())
-                .setParameter(7, r.getResumeId())
                 .executeUpdate();
     }
 
@@ -123,26 +123,39 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .executeUpdate();
     }
 
-//    todo.대댓글 리스트 반환
-//    public List<PostCommentDepthDTO> findCommentDepth(Integer index, Long postId) {
-//        // 특정 postid를 가진 commend list 출력
-//        // member post id에 해당하는 depth에 해당하는 요소들을 뽑아옴 commendgroup에 해당하는 depthlist 반환
-////        public PostCommentDepthDTO(Long memberId, String imageSrc, String nickname, String contents, Integer recommendCnt, Integer banCnt, Boolean isAnonymous, LocalDateTime modifiedDate)
-//        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostCommentDepthDTO(pc.memberId, (select mi.imageSrc from MemberInfo mi where mi.member.id = pc.memberId), (select m.nickname from Member m where m.id = pc.memberId), pc.contents, size(pc.postCommentRecommendList), size(pc.postCommentReportList), pc.isAnonymous, pc.createdDate)  "
-//                + "from PostComment pc "
-//                + "where :postId = pc.postId and :index = pc.postCommentGroup "
-//                + "order by pc.createdDate",PostCommentDepthDTO.class )
-//                . getResultList();
-//    }
 
-    public PostCommentDTO findComment(Integer index, Long postId) {
-//        contents, postCommentGroup, postCommentDepth, isAnonymous, Long memberId, Long postId
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostCommentDTO(pc.contents, pc.postCommentGroup, pc.isAnonymous, pc.memberId, pc.postId)  "
-                        + "from PostComment pc "
-                        + "where :postId = pc.postId and :index = pc.postCommentGroup "
-                        + "order by pc.createdDate",PostCommentDTO.class )
+
+    // 댓글 내부의 대댓글 리스트 생성
+    public  List<PostChildCommentDTO> findChildComments(Integer groupNum, Long postId) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, 1, pc.postCommentGroup)"
+                + "from PostComment pc join pc.member m "
+                        + "where pc.postCommentGroup = :groupNum and pc.postCommentDepth = 1 and pc.postId = :postId "
+                        + "order by pc.modifiedDate asc ", PostChildCommentDTO.class)
+                .setParameter("postId", postId)
+                .setParameter("groupNum", groupNum)
+                .getResultList();
+    }
+
+    public PostChildCommentDTO findParentComment(Integer groupNum, Long postId) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, 0, pc.postCommentGroup)"
+                        + "from PostComment pc join pc.member m "
+                        + "where pc.postCommentGroup = :groupNum and pc.postCommentDepth = 0 and pc.postId = :postId ", PostChildCommentDTO.class)
+                .setParameter("groupNum", groupNum)
+                .setParameter("postId", postId)
                 .getSingleResult();
     }
+
+    // 찐 댓글 - 그룹 순서 -> 0-> 1 오름차순 - createDate desc
+    public List<PostChildCommentDTO> stCommentsByGroup(Long postId) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, pc.postCommentDepth, pc.postCommentGroup)"
+                        + "from PostComment pc join pc.member m "
+                        + "where pc.postCommentDepth = 0 and pc.postId = :postId "
+                        + "order by pc.postCommentGroup asc , pc.postCommentDepth , pc.createdDate desc ", PostChildCommentDTO.class)
+                .setParameter("postId", postId)
+                .getResultList();
+    }
+
+
 
     public void registerRecommendComment(PostCommentRecommendDTO pcr) {
         entityManager.createNativeQuery("insert into post_comment_recommend (member_id, post_comment_id, post_id) values (?, ?, ?)")

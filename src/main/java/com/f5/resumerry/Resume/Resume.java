@@ -45,7 +45,7 @@ public class Resume extends BaseTimeEntity {
     private String fileLink;
 
     @Column(nullable = false)
-    private Integer views;
+    private Integer viewCnt;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -76,7 +76,7 @@ public class Resume extends BaseTimeEntity {
 
 //    @OneToMany(mappedBy = "resume")
 //    private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
-    @Column(name = "hashtag")
-    private String hashtag;
+//    @Column(name = "hashtag")
+//    private String hashtag;
 
 }

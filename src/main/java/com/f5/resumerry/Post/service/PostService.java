@@ -1,15 +1,22 @@
 package com.f5.resumerry.Post.service;
 
 import com.f5.resumerry.Post.dto.*;
+import com.f5.resumerry.Post.entity.PostComment;
+import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +28,9 @@ public class PostService {
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
+
+    @Autowired
+    private PostCommentRepository postCommentRepository;
 
 
     public List<PostsDTO> findPosts(String title, String category, String sort) {
@@ -47,13 +57,12 @@ public class PostService {
     }
 
     public void registerPosts(Long memberId, RegisterPostDTO req){
-        RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId, req.getResumeId());
+        RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId);
         postRepository.registerPost(insertPost);
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId, Long tokenId) {
-        Boolean is_owner = false;
-        postRepository.updateViewCnt(memberId, postId);
+        postRepository.viewCnt(memberId, postId);
         if (memberId != tokenId) {
             // 소유자가 아닌경우
             return postRepository.viewNotOwnPost(postId);
@@ -96,24 +105,43 @@ public class PostService {
         postRepository.banComment(postId,commentId,reportMember);
     }
 
-//    public List<PostCommentDTO> viewComments(Long memberId, Long postId) {
-//        // 대댓글 리스트
-//        //ObjectMapper mapper = new ObjectMapper();
-//        List<PostCommentDTO> comments = new ArrayList<PostCommentDTO>();
-//    // 반복문 수정하기
-//        for(int i = 0; i < postRepository. ; i++) {
-//            // i 번째 그룹의 대댓글들을 가져옴
-//           List<PostCommentDepthDTO> commentDepthList = postRepository.findCommentDepth(i, postId);
-//           // 그룹 i번의 댓글을 가져옴
-//           PostCommentDTO comment = postRepository.findComment(i,postId);
-//           // 그룹 i번쨰 댓글에 depthlist 주입
-//           comment.setPostCommentDepthList(commentDepthList);
-//           comments.add(comment);
-//            System.out.println(comment);
-//        }
-//        return comments;
+    public List<PostChildCommentDTO> viewComments(Long memberId, Long postId) {
+
+//        ObjectMapper mapper = new ObjectMapper();
+//        List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
 //
-//    }
+//        PostParentCommentDTO i = new PostParentCommentDTO();
+//
+//        Integer maxGroupId = postCommentRepository.findByPostId(postId);
+//        if (maxGroupId == null) {
+//            return result;
+//        }
+//        for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
+//            int k = 0 ;
+//            List<PostChildCommentDTO> child = postRepository.findChildComments(groupNum, postId);
+//
+//            PostChildCommentDTO p = postRepository.findParentComment(groupNum,postId);
+//            i.setCommentId(p.getCommentId());
+//            i.setMemberId(p.getMemberId());
+//            i.setImageSrc(p.getNickname());
+//            i.setNickname(p.getNickname());
+//            i.setContents(p.getContents());
+//            i.setRecommendCnt(p.getRecommendCnt());
+//            i.setBanCnt(p.getBanCnt());
+//            i.setIsAnonymous(p.getIsAnonymous());
+//            i.setIsAnonymous(p.getIsOwner());
+//            i.setPostCommentGroup(p.getPostCommentGroup());
+//            i.setModifiedDate(p.getModifiedDate());
+//            i.setPostCommentDepth(p.getPostCommentDepth());
+//            i.setPostChildComments(child);
+//            result.add(i);
+//        }
+//        return result;
+
+        return postRepository.stCommentsByGroup(postId);
+
+
+    }
 
 
 }

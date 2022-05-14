@@ -5,7 +5,7 @@
       "title" : "title1",
       "category" : "DEVELOPER",
       "contents" : "sampel1",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : false
     },
     {
@@ -13,7 +13,7 @@
       "title" : "title2",
       "category" : "MARKETER",
       "contents" : "sampel2",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : true
     },
     {
@@ -21,7 +21,7 @@
       "title" : "title3",
       "category" : "DEVELOPER",
       "contents" : "sampel3",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : false
     },
     {
@@ -29,7 +29,7 @@
       "title" : "title3",
       "category" : "DEVELOPER",
       "contents" : "sampel1",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : true
     },
     {
@@ -37,7 +37,7 @@
       "title" : "title1",
       "category" : "MARKETER",
       "contents" : "sampel1",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : false
     },
     {
@@ -45,7 +45,7 @@
       "title" : "title1",
       "category" : "DEVELOPER",
       "contents" : "sampel1",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : false
     },
     {
@@ -53,7 +53,7 @@
       "title" : "title3",
       "category" : "MARKETER",
       "contents" : "sampel3",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : true
     },
     {
@@ -61,7 +61,7 @@
       "title" : "title3",
       "category" : "DEVELOPER",
       "contents" : "sampel1",
-      "views" : 8,
+      "viewCnt" : 8,
       "isAnonymous" : true
     }
   ]
