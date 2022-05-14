@@ -1,6 +1,7 @@
 package com.f5.resumerry.Resume.service;
 
 import com.f5.resumerry.Resume.dto.ResumeDTO;
+import com.f5.resumerry.Resume.dto.UploadResumeDTO;
 import com.f5.resumerry.Resume.dto.ViewResumeDTO;
 import com.f5.resumerry.Resume.repository.ResumeRepository;
 import com.f5.resumerry.selector.CategoryEnum;
@@ -36,7 +37,11 @@ public class ResumeService {
         }
     }
 
-    public void uploadResume(Long id, String fullFileLink, String title, String contents, CategoryEnum category, Integer years) {
+    public void uploadResume(Long id, String fullFileLink, UploadResumeDTO uploadResumeDTO) {
+        String title = uploadResumeDTO.getTitle();
+        String contents = uploadResumeDTO.getContents();
+        CategoryEnum category = uploadResumeDTO.getCategory();
+        Integer years = uploadResumeDTO.getYears();
         resumeRepository.uploadResume(id, fullFileLink, title, contents, category, years);
     }
 }

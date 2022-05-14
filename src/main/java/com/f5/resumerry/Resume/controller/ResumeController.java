@@ -4,42 +4,32 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
 import com.f5.resumerry.Resume.dto.ResumeDTO;
+import com.f5.resumerry.Resume.dto.UploadResumeDTO;
 import com.f5.resumerry.Resume.dto.ViewResumeDTO;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.exception.AuthenticateException;
-import com.f5.resumerry.selector.CategoryEnum;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDate;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
 @RestController
+@RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
     private final AwsS3Service awsS3Service;
-
-    public ResumeController(ResumeService resumeService, MemberService memberService, JwtUtil jwtUtil,AwsS3Service awsS3Service) {
-        this.resumeService = resumeService;
-        this.memberService = memberService;
-        this.jwtUtil = jwtUtil;
-        this.awsS3Service = awsS3Service;
-    }
 
     @GetMapping("/resume")
     @ApiOperation(value = "이력서 목록 조회")
@@ -54,14 +44,11 @@ public class ResumeController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/resume", produces = "application/octet-stream")
+    @PostMapping(value = "/resume", consumes = {"multipart/form-data", MediaType.MULTIPART_FORM_DATA_VALUE })
     @ApiOperation(value = "이력서 업로드")
     public ResponseEntity uploadResume(@ApiParam("유저 토큰") @RequestHeader String token,
-                                       @ApiParam("이력서 제목") @RequestPart(required = false) String title,
-                                       @ApiParam("이력서 내용") @RequestPart(required = false) String contents,
-                                       @ApiParam("카테고리") @RequestPart(required = false) String category,
-                                       @ApiParam("years") @RequestPart(required = false) Integer years,
-                                       @ApiParam("파일") @RequestPart(value = "file",required = false) MultipartFile file) throws IOException {
+                                       @ModelAttribute UploadResumeDTO uploadResumeDTO,
+                                       @ApiParam("파일") @RequestPart(required = false) MultipartFile file) throws IOException , IllegalAccessException {
         // Todo. 이력서 업로드
         // 1. s3에 링크 업로드
         // 2. 업로드 위치 가져와서 repo를 통해 업로드
@@ -75,15 +62,15 @@ public class ResumeController {
         } else {dateMonth = String.valueOf(date.getMonthOfYear());}
 
         String today = String.valueOf(date.getYear()) + "/" + dateMonth + "/" + String.valueOf(date.getDayOfMonth());
+
         awsS3Service.upload(file, today);
+
         String fileOriginalFilename = file.getOriginalFilename();
-        System.out.println(fileOriginalFilename);
+
+        //String fileOriginalFilename ="test.pdf";
         String fullFileLink = today + "/" + fileOriginalFilename;
 
-        CategoryEnum c = CategoryEnum.valueOf(category);
-        System.out.println(c);
-
-        resumeService.uploadResume(member.getId(), fullFileLink, title, contents,c, years );
+        resumeService.uploadResume(member.getId(), fullFileLink, uploadResumeDTO);
         return ResponseEntity.ok().build();
     }
 

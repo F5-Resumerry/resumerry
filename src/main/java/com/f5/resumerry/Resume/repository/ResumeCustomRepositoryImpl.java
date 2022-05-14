@@ -57,7 +57,7 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
        entityManager.createNativeQuery("insert resume(category, contents, file_link, title, years, member_id) values (?, ?, ?, ?, ?, ?)")
                .setParameter(1, String.valueOf(category))
                .setParameter(2, contents)
-               .setParameter(3, fullFileLink)
+               .setParameter(3, "/"+fullFileLink)
                .setParameter(4, title)
                .setParameter(5, years)
                .setParameter(6, id)
