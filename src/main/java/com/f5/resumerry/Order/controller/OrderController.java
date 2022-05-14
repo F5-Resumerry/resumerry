@@ -24,10 +24,9 @@ public class OrderController {
     private final CommonService commonService;
 
     @PostMapping
-    @ApiOperation(
-            value = "결제 요청", notes = "결제 요청에 필요한 값들을 반환합니다.")
+    @ApiOperation(value = "결제 요청")
     public ResponseDto<OrderResponseDto> requestPayments(
-            @ApiParam(value = "요청 객체", required = true) @ModelAttribute OrderRequest paymentReq
+            @ApiParam(value = "결제요청모델", required = true) @ModelAttribute OrderRequest paymentReq
     ) throws Exception {
         try {
             return commonService.getResponseDto(

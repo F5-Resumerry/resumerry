@@ -33,19 +33,19 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-    @Value("${payments.toss.test_client_api_key}")
+    @Value("${payments.toss.client-api-key}")
     private String testClientApiKey;
 
-    @Value("${payments.toss.test_secret_api_key}")
+    @Value("${payments.toss.secret-api-key}")
     private String testSecretApiKey;
 
-    @Value("${payments.toss.success_url}")
+    @Value("${payments.toss.success-url}")
     private String successCallBackUrl;
 
-    @Value("${payments.toss.fail_url}")
+    @Value("${payments.toss.fail-url}")
     private String failCallBackUrl;
 
-    @Value("${payments.toss.origin_url}")
+    @Value("${payments.toss.origin-url}")
     private String tossOriginUrl;
 
     @Transactional
@@ -79,34 +79,10 @@ public class OrderService {
         }
     }
 
-//    @Transactional
-//    public String sendPaymentApproveRequest(String paymentKey, Long amount, String orderId) {
-//        RestTemplate restTemplate = new RestTemplate();
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//
-//        String encodedAuth = new String(Base64.getEncoder().encode((testSecretApiKey + ":").getBytes(StandardCharsets.UTF_8)));
-//
-//        httpHeaders.setBasicAuth(encodedAuth);
-//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//        JSONObject parameter = new JSONObject();
-//        parameter.put("orderId", orderId);
-//        parameter.put("amount", amount);
-//
-//        return restTemplate.postForEntity(
-//                tossOriginUrl + "/payments/" + paymentKey,
-//                new HttpEntity<>(parameter, httpHeaders),
-//                String.class
-//        ).getBody();
-//    }
-
     @Transactional
     public OrderResponseHandleDto sendPaymentApproveRequest(String paymentKey, Long amount, String orderId) {
         Order order = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new BusinessException("주문이 없습니다."));
-
-        PayType payType = order.getPayType();
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
