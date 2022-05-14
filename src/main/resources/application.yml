@@ -52,8 +52,8 @@ jwt:
 cloud:
   aws:
     credentials:
-      accessKey:   # slack 확인요망
-      secretKey:  # slack 확인요망
+      accessKey: AKIAZFBQMW2O2LYWNE6U  # slack 확인요망
+      secretKey: 5M8r71jdlCkLPNXWW+85lAzYMH3KlHSq7tajjVsY # slack 확인요망
     s3:
       bucket: resume-file-storage
     region:

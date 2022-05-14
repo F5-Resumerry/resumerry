@@ -1,14 +1,11 @@
 package com.f5.resumerry.Resume.service;
 
+import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberRepository;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeRecommend;
 import com.f5.resumerry.Resume.ResumeScrap;
-import com.f5.resumerry.Resume.dto.ResumeDTO;
-import com.f5.resumerry.Resume.dto.ResumeRecommendDTO;
-import com.f5.resumerry.Resume.dto.ResumeScrapDTO;
-import com.f5.resumerry.Resume.dto.ViewResumeDTO;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.repository.ResumeRepository;
 import com.f5.resumerry.Resume.repository.ResumeScrapRepository;
@@ -53,7 +50,11 @@ public class ResumeService {
         }
     }
 
-    public void uploadResume(Long id, String fullFileLink, String title, String contents, CategoryEnum category, Integer years) {
+    public void uploadResume(Long id, String fullFileLink, UploadResumeDTO uploadResumeDTO) {
+        String title = uploadResumeDTO.getTitle();
+        String contents = uploadResumeDTO.getContents();
+        CategoryEnum category = uploadResumeDTO.getCategory();
+        Integer years = uploadResumeDTO.getYears();
         resumeRepository.uploadResume(id, fullFileLink, title, contents, category, years);
     }
 
@@ -118,5 +119,17 @@ public class ResumeService {
         resumeScrapDTO.setMember(member);
         ResumeScrap resumeScrap = resumeScrapDTO.toEntity();
         return resumeScrapRepository.save(resumeScrap);
+    }
+
+    public void updateResume(Long memberId, Long resumeId, UploadResumeDTO uploadResumeDTO, String fullFileNamePath) {
+        String title = uploadResumeDTO.getTitle();
+        String contents = uploadResumeDTO.getContents();
+        CategoryEnum category = uploadResumeDTO.getCategory();
+        Integer years = uploadResumeDTO.getYears();
+        resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
+    }
+
+    public List<FilterViewResumeDTO> viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
+        return resumeRepository.examViewResumes(memberId);
     }
 }

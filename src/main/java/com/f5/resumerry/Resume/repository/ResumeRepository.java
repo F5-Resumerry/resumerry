@@ -1,6 +1,7 @@
 package com.f5.resumerry.Resume.repository;
 
 import com.f5.resumerry.Resume.Resume;
+import com.f5.resumerry.selector.CategoryEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCustomRepository {
+
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Resume r set r.viewCnt = r.viewCnt+1 where r.id = :resumeId and r.memberId = :memberId")
@@ -25,9 +27,10 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCus
     @Query("update Resume r set r.isDelete = 'Y' where r.id = :resumeId and r.memberId = :memberId")
     void updateIsDelete(@Param("memberId") Long memberId, @Param("resumeId") Long resumeId);
 
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update Resume r set r.title = ?3 , r.contents = ?4 , r.category = ?5, r.years = ?6, r.fileLink = ?7 where r.id = ?2 and r.memberId = ?1")
+    void updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);
+
     Optional<Resume> findById(Long id);
-
-//    @Query(value = "select case when rs.memberId = ?1 and rs.resumeId = ?2 then true else false end from ResumeScrap rs")
-//    Boolean existScrapByMemberIdAndResumeId(Long memberId, Long resumeId);
-
 }

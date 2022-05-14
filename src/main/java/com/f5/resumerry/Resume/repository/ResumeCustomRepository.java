@@ -1,5 +1,6 @@
 package com.f5.resumerry.Resume.repository;
 
+import com.f5.resumerry.Resume.dto.FilterViewResumeDTO;
 import com.f5.resumerry.Resume.dto.ResumeDTO;
 import com.f5.resumerry.Resume.dto.ViewResumeDTO;
 import com.f5.resumerry.selector.CategoryEnum;
@@ -20,6 +21,11 @@ public interface ResumeCustomRepository {
 
     void uploadResume(Long id, String fullFileLink, String title, String contents, CategoryEnum category, Integer years);
 
+    List<FilterViewResumeDTO> examViewResumes(Long memberId);
+
     // 이 멤버가 해당 이력서를 스크랩 했는가
+
+   // void updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);
+
 
 }
