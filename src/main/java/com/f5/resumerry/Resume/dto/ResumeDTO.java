@@ -18,7 +18,7 @@ public class ResumeDTO {
     private Integer commentCnt;
     private Integer viewCnt;
     private LocalDateTime modifiedDate;
-    private String Hashtag;
+//    private String Hashtag;
     private Long memberId;
     private String imageSrc;
     private String nickname;

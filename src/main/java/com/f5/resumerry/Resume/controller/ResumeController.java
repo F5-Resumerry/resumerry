@@ -3,28 +3,28 @@ package com.f5.resumerry.Resume.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
+import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.dto.ResumeDTO;
+import com.f5.resumerry.Resume.dto.ResumeRecommendDTO;
 import com.f5.resumerry.Resume.dto.ViewResumeDTO;
+import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
+import com.f5.resumerry.Resume.repository.ResumeRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.exception.AuthenticateException;
 import com.f5.resumerry.selector.CategoryEnum;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.joda.time.LocalDate;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RestController
@@ -33,12 +33,14 @@ public class ResumeController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
     private final AwsS3Service awsS3Service;
+    private final ResumeRecommendRepository resumeRecommendRepository;
 
-    public ResumeController(ResumeService resumeService, MemberService memberService, JwtUtil jwtUtil,AwsS3Service awsS3Service) {
+    public ResumeController(ResumeService resumeService, MemberService memberService, JwtUtil jwtUtil, AwsS3Service awsS3Service, ResumeRecommendRepository resumeRecommendRepository) {
         this.resumeService = resumeService;
         this.memberService = memberService;
         this.jwtUtil = jwtUtil;
         this.awsS3Service = awsS3Service;
+        this.resumeRecommendRepository = resumeRecommendRepository;
     }
 
     @GetMapping("/resume")
@@ -54,7 +56,7 @@ public class ResumeController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/resume", produces = "application/octet-stream")
+    @PostMapping(value = "/resume", produces = "multipart/form-data")
     @ApiOperation(value = "이력서 업로드")
     public ResponseEntity uploadResume(@ApiParam("유저 토큰") @RequestHeader String token,
                                        @ApiParam("이력서 제목") @RequestPart(required = false) String title,
@@ -111,7 +113,65 @@ public class ResumeController {
         return ResponseEntity.ok(resumeResponse);
     }
 
+    @DeleteMapping("/resume/{user_id}/{resume_id}")
+    @ApiOperation(value = "이력서 삭제")
+    public ResponseEntity deleteResume(
+            @ApiParam(value = "회원 번호") @PathVariable("user_id") Long memberId,
+            @ApiParam(value = "이력서 번호") @PathVariable("resume_id") Long resumeId,
+            @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
+    ) {
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
 
+        if (!memberId.equals(memberIdByToken.getId())) {
+            throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
+        }
+
+        Map<String, Boolean> param = new HashMap<>();
+        try {
+            resumeService.deleteResume(memberIdByToken.getId(),resumeId);
+        } catch (Exception e) {
+            param.put("result", false);
+            return ResponseEntity.ok(param);
+        }
+        param.put("result", true);
+        return ResponseEntity.ok(param);
+    }
+
+    @PostMapping("/resume/{user_id}/{resume_id}")
+    @ApiOperation(value = "이력서 추천")
+    public ResponseEntity recommendResume(
+            @ApiParam(value = "회원 번호") @PathVariable("user_id") Long memberId,
+            @ApiParam(value = "게시글 번호") @PathVariable("resume_id") Long resumeId,
+            @ApiParam(value = "이력서 토큰") @RequestHeader("Authorization") String token) {
+        Map<String, Boolean> param = new HashMap<>();
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        try {
+            resumeService.recommendResume(memberIdByToken.getAccountName(), resumeId);
+        } catch (Exception e) {
+            param.put("result", false);
+            return ResponseEntity.ok(param);
+        }
+        param.put("result", true);
+        return ResponseEntity.ok().body(param);
+    }
+
+    @PostMapping("/resume/{user_id}/{resume_id}/scrap")
+    @ApiOperation(value = "이력서 스크랩")
+    public ResponseEntity scrapResume(
+            @ApiParam(value = "회원 번호") @PathVariable("user_id") Long memberId,
+            @ApiParam(value = "게시글 번호") @PathVariable("resume_id") Long resumeId,
+            @ApiParam(value = "이력서 토큰") @RequestHeader("Authorization") String token) {
+        Map<String, Boolean> param = new HashMap<>();
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        try {
+            resumeService.scrapResume(memberIdByToken.getAccountName(), resumeId);
+        } catch (Exception e) {
+            param.put("result", false);
+            return ResponseEntity.ok(param);
+        }
+        param.put("result", true);
+        return ResponseEntity.ok().body(param);
+    }
 
 
 }
