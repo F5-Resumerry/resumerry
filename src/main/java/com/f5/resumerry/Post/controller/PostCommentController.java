@@ -11,6 +11,7 @@ import com.f5.resumerry.Post.service.PostService;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -75,10 +76,15 @@ public class PostCommentController {
     }
 
     @GetMapping("/post/{member_id}/{post_id}/comment")
-    @ApiOperation(value = "댓글 조회")
-    public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId) {
-        List<PostChildCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
-        return ResponseEntity.ok(viewPostComments);
+    @ApiOperation(value = "게시글 답변 조회")
+    public JSONObject viewPostComments(
+            @PathVariable("member_id") Long memberId,
+            @PathVariable("post_id") Long postId,
+            @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
+
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        JSONObject jsonObject = postService.viewComments(postId, memberIdByToken.getAccountName());
+        return jsonObject;
     }
 
     @PostMapping("/post/{member_id}/{post_id}/comment/{comment_id}/recommend")

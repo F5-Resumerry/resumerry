@@ -1,25 +1,26 @@
 package com.f5.resumerry.Post.service;
 
 import com.f5.resumerry.Post.dto.*;
+import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PostService {
 
     private PostRepository postRepository;
@@ -104,9 +105,40 @@ public class PostService {
     public void banComment(Long memberId, Long postId, Long commentId, Long reportMember) {
         postRepository.banComment(postId,commentId,reportMember);
     }
+    public JSONObject viewComments(Long postId, String accountName) {
+        JSONObject jsonObject = new JSONObject();
+        ArrayList<Long>[] arrayList = new ArrayList[100];
+        for(int i = 0; i <  100; i++){
+            arrayList[i] = new ArrayList<Long>();
+        }
+        Optional<Post> postOptional = postRepository.findById(postId);
+        log.info("hi\n");
+        Post post = postOptional.orElse(null);
+        log.info("hi\n");
+        List<PostComment> postComments = postCommentRepository.findByPost(post);
+        for(PostComment postComment: postComments){
+            arrayList[postComment.getPostCommentGroup()].add(postComment.getId());
+        }
+        for(ArrayList arrayList1: arrayList){
+//            if(!arrayList1.isEmpty()){
+//                break;
+//            }
+            int count = 0;
+            for(Object id: arrayList1){
+                if(count == 0){
 
-    public List<PostChildCommentDTO> viewComments(Long memberId, Long postId) {
-
+                    count += 1;
+                    continue;
+                }
+                log.info(String.valueOf(id));
+            }
+            log.info("hi\n");
+        }
+        log.info(String.valueOf(arrayList));
+        log.info("hi\n");
+        log.info(String.valueOf(postComments));
+        jsonObject.put("hello", "hello");
+        return jsonObject;
 //        ObjectMapper mapper = new ObjectMapper();
 //        List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
 //
@@ -138,7 +170,7 @@ public class PostService {
 //        }
 //        return result;
 
-        return postRepository.stCommentsByGroup(postId);
+//        return postRepository.stCommentsByGroup(postId);
 
 
     }
