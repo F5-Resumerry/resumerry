@@ -11,6 +11,7 @@ import com.f5.resumerry.Post.service.PostService;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -77,14 +78,14 @@ public class PostCommentController {
 
     @GetMapping("/post/{member_id}/{post_id}/comment")
     @ApiOperation(value = "게시글 답변 조회")
-    public JSONObject viewPostComments(
+    public JSONArray viewPostComments(
             @PathVariable("member_id") Long memberId,
             @PathVariable("post_id") Long postId,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONObject jsonObject = postService.viewComments(postId, memberIdByToken.getAccountName());
-        return jsonObject;
+        JSONArray jsonArray = postService.viewComments(postId, memberIdByToken.getAccountName());
+        return jsonArray;
     }
 
     @PostMapping("/post/{member_id}/{post_id}/comment/{comment_id}/recommend")

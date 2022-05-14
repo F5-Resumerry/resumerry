@@ -5,9 +5,11 @@ import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
+import com.f5.resumerry.Resume.Resume;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,8 +107,8 @@ public class PostService {
     public void banComment(Long memberId, Long postId, Long commentId, Long reportMember) {
         postRepository.banComment(postId,commentId,reportMember);
     }
-    public JSONObject viewComments(Long postId, String accountName) {
-        JSONObject jsonObject = new JSONObject();
+    public JSONArray viewComments(Long postId, String accountName) {
+
         ArrayList<Long>[] arrayList = new ArrayList[100];
         for(int i = 0; i <  100; i++){
             arrayList[i] = new ArrayList<Long>();
@@ -119,26 +121,64 @@ public class PostService {
         for(PostComment postComment: postComments){
             arrayList[postComment.getPostCommentGroup()].add(postComment.getId());
         }
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
         for(ArrayList arrayList1: arrayList){
 //            if(!arrayList1.isEmpty()){
 //                break;
 //            }
             int count = 0;
+            JSONObject group = new JSONObject();
+            JSONArray depth = new JSONArray();
+
             for(Object id: arrayList1){
+                Optional<PostComment> postCommentOptional = postCommentRepository.findById((Long) id);
+                PostComment postComment = postCommentOptional.orElse(null);
+                JSONObject depthIn = new JSONObject();
                 if(count == 0){
+                    group.put("commentId", id);
+                    group.put("memberId", postComment.getMember().getId());
+                    group.put("imageSrc", postComment.getMember().getImageSrc());
+                    group.put("nickname", postComment.getMember().getNickname());
+                    group.put("contents", postComment.getContents());
+                    group.put("recommendCnt", postComment.getPostCommentRecommendList().size());
+                    group.put("banCnt", postComment.getPostCommentReportList().size());
+                    group.put("isAnnonymous", postComment.getIsAnonymous());
+                    group.put("modifiedDate", postComment.getModifiedDate());
+                    group.put("postCommentGroup", postComment.getPostCommentGroup());
+                    group.put("postCommentDepth", postComment.getPostCommentDepth());
+                    group.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
 
                     count += 1;
                     continue;
                 }
-                log.info(String.valueOf(id));
+                depthIn.put("commentId", id);
+                depthIn.put("memberId", postComment.getMember().getId());
+                depthIn.put("imageSrc", postComment.getMember().getImageSrc());
+                depthIn.put("nickname", postComment.getMember().getNickname());
+                depthIn.put("contents", postComment.getContents());
+                depthIn.put("recommendCnt", postComment.getPostCommentRecommendList().size());
+                depthIn.put("banCnt", postComment.getPostCommentReportList().size());
+                depthIn.put("isAnnonymous", postComment.getIsAnonymous());
+                depthIn.put("modifiedDate", postComment.getModifiedDate());
+                depthIn.put("postCommentGroup", postComment.getPostCommentGroup());
+                depthIn.put("postCommentDepth", postComment.getPostCommentDepth());
+                depthIn.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
+                depth.add(depthIn);
+            }
+            log.info(String.valueOf(depth));
+            if(group.size() > 0) {
+                group.put("postChildComments", depth);
+                jsonArray.add(group);
             }
             log.info("hi\n");
         }
+
         log.info(String.valueOf(arrayList));
         log.info("hi\n");
         log.info(String.valueOf(postComments));
         jsonObject.put("hello", "hello");
-        return jsonObject;
+        return jsonArray;
 //        ObjectMapper mapper = new ObjectMapper();
 //        List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
 //
