@@ -145,6 +145,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .getSingleResult();
     }
 
+    // 찐 댓글 - 그룹 순서 -> 0-> 1 오름차순 - createDate desc
+    public List<PostChildCommentDTO> stCommentsByGroup(Long postId) {
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostChildCommentDTO(pc.id, m.id, m.imageSrc, m.nickname, pc.contents, pc.postCommentRecommendList.size, pc.postCommentReportList.size, pc.isAnonymous, true , pc.modifiedDate, pc.postCommentDepth, pc.postCommentGroup)"
+                        + "from PostComment pc join pc.member m "
+                        + "where pc.postCommentDepth = 0 and pc.postId = :postId "
+                        + "order by pc.postCommentGroup asc , pc.postCommentDepth , pc.createdDate desc ", PostChildCommentDTO.class)
+                .setParameter("postId", postId)
+                .getResultList();
+    }
+
 
 
     public void registerRecommendComment(PostCommentRecommendDTO pcr) {

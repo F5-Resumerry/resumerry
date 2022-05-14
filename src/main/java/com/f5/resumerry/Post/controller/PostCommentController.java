@@ -4,6 +4,7 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
 import com.f5.resumerry.Post.dto.GetCommentDTO;
+import com.f5.resumerry.Post.dto.PostChildCommentDTO;
 import com.f5.resumerry.Post.dto.PostCommentDTO;
 import com.f5.resumerry.Post.dto.PostParentCommentDTO;
 import com.f5.resumerry.Post.service.PostService;
@@ -76,7 +77,7 @@ public class PostCommentController {
     @GetMapping("/post/{member_id}/{post_id}/comment")
     @ApiOperation(value = "댓글 조회")
     public ResponseEntity viewPostComments(@PathVariable("member_id") Long memberId, @PathVariable("post_id") Long postId) {
-        List<PostParentCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
+        List<PostChildCommentDTO> viewPostComments = postService.viewComments(memberId, postId);
         return ResponseEntity.ok(viewPostComments);
     }
 

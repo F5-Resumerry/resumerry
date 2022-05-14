@@ -62,8 +62,7 @@ public class PostService {
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId, Long tokenId) {
-        Boolean is_owner = false;
-        postRepository.updateViewCnt(memberId, postId);
+        postRepository.viewCnt(memberId, postId);
         if (memberId != tokenId) {
             // 소유자가 아닌경우
             return postRepository.viewNotOwnPost(postId);
@@ -106,38 +105,41 @@ public class PostService {
         postRepository.banComment(postId,commentId,reportMember);
     }
 
-    public List<PostParentCommentDTO> viewComments(Long memberId, Long postId) {
+    public List<PostChildCommentDTO> viewComments(Long memberId, Long postId) {
 
-        ObjectMapper mapper = new ObjectMapper();
-        List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
+//        ObjectMapper mapper = new ObjectMapper();
+//        List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
+//
+//        PostParentCommentDTO i = new PostParentCommentDTO();
+//
+//        Integer maxGroupId = postCommentRepository.findByPostId(postId);
+//        if (maxGroupId == null) {
+//            return result;
+//        }
+//        for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
+//            int k = 0 ;
+//            List<PostChildCommentDTO> child = postRepository.findChildComments(groupNum, postId);
+//
+//            PostChildCommentDTO p = postRepository.findParentComment(groupNum,postId);
+//            i.setCommentId(p.getCommentId());
+//            i.setMemberId(p.getMemberId());
+//            i.setImageSrc(p.getNickname());
+//            i.setNickname(p.getNickname());
+//            i.setContents(p.getContents());
+//            i.setRecommendCnt(p.getRecommendCnt());
+//            i.setBanCnt(p.getBanCnt());
+//            i.setIsAnonymous(p.getIsAnonymous());
+//            i.setIsAnonymous(p.getIsOwner());
+//            i.setPostCommentGroup(p.getPostCommentGroup());
+//            i.setModifiedDate(p.getModifiedDate());
+//            i.setPostCommentDepth(p.getPostCommentDepth());
+//            i.setPostChildComments(child);
+//            result.add(i);
+//        }
+//        return result;
 
-        PostParentCommentDTO i = new PostParentCommentDTO();
+        return postRepository.stCommentsByGroup(postId);
 
-        Integer maxGroupId = postCommentRepository.findByPostId(postId);
-        if (maxGroupId == null) {
-            return result;
-        }
-        for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
-            int k = 0 ;
-            List<PostChildCommentDTO> child = postRepository.findChildComments(groupNum, postId);
-
-            PostChildCommentDTO p = postRepository.findParentComment(groupNum,postId);
-            i.setCommentId(p.getCommentId());
-            i.setMemberId(p.getMemberId());
-            i.setImageSrc(p.getNickname());
-            i.setNickname(p.getNickname());
-            i.setContents(p.getContents());
-            i.setRecommendCnt(p.getRecommendCnt());
-            i.setBanCnt(p.getBanCnt());
-            i.setIsAnonymous(p.getIsAnonymous());
-            i.setIsAnonymous(p.getIsOwner());
-            i.setPostCommentGroup(p.getPostCommentGroup());
-            i.setModifiedDate(p.getModifiedDate());
-            i.setPostCommentDepth(p.getPostCommentDepth());
-            i.setPostChildComments(child);
-            result.add(i);
-        }
-        return result;
 
     }
 

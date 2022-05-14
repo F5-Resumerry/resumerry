@@ -40,4 +40,6 @@ public interface PostCustomRepository {
     List<PostChildCommentDTO> findChildComments(Integer groupNum, Long postId);
 
     PostChildCommentDTO findParentComment(Integer groupNum, Long postId);
+
+    List<PostChildCommentDTO> stCommentsByGroup(Long postId);
 }
