@@ -14,7 +14,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderRequestDto {
+public class OrderRequest {
 
     @ApiModelProperty("지불방법")
     private PayType payType;
@@ -39,6 +39,7 @@ public class OrderRequestDto {
                 .orderName(orderName)
                 .clientName(clientName)
                 .clientEmail(clientEmail)
+                .paySuccessYn("N")
                 .createdDate(LocalDateTime.now())
                 .build();
     }

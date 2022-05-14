@@ -23,6 +23,7 @@ public class OrderResponseDto {
     private String successCallbackEndpoint;
     private String failCallbackEndpoint;
     private LocalDateTime createdDate;
+    private String paySuccessYn;
     private String successYn;
     private String successUrl;
     private String failUrl;

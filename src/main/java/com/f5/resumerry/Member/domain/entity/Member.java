@@ -109,10 +109,10 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @Builder.Default
-    private List<Order> orders = new ArrayList<>();
+    private List<Order> orderList = new ArrayList<>();
 
     public void addOrder(Order order) {
-        this.orders.add(order);
+        this.orderList.add(order);
         order.setClient(this);
     }
 

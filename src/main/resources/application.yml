@@ -50,10 +50,8 @@ payments:
     test_secret_api_key: test_sk_YZ1aOwX7K8mBgqjwD6q3yQxzvNPG
     success_url: /orders/success
     fail_url: /orders/fail
-    origin_url: /orders/webhook
+    origin_url: https://api.tosspayments.com/v1
 
-
-#
 #spring:
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver

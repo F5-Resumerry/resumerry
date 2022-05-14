@@ -9,7 +9,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "orders")
 @Getter
 @Table(name = "orders")
 @Builder
@@ -36,11 +36,11 @@ public class Order {
 
     @Setter
     @Column
-    private String cardCompany;			// 카드회사
+    private String cardCompany;
 
     @Setter
     @Column
-    private String cardNumber;			// "949129******7058"
+    private String cardNumber;
 
     @Setter
     @Column
@@ -66,10 +66,6 @@ public class Order {
     @Setter
     @Column
     private String payFailReason;
-
-    @Setter
-    @Column(nullable = false)
-    private String cancelYn;				// 결제 취소 여부
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
