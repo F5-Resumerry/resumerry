@@ -3,6 +3,7 @@ package com.f5.resumerry.Resume.dto;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeRecommend;
+import com.f5.resumerry.Resume.ResumeScrap;
 import lombok.*;
 
 
@@ -25,8 +26,8 @@ public class ResumeScrapDTO {
         this.member = member;
     }
 
-    public ResumeRecommend toEntity(){
-        ResumeRecommend build = ResumeRecommend.builder()
+    public ResumeScrap toEntity(){
+        ResumeScrap build = ResumeScrap.builder()
                 .id(id)
                 .resume(resume)
                 .member(member)

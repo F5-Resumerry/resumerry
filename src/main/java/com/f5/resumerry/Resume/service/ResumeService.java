@@ -95,7 +95,7 @@ public class ResumeService {
         Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
         Member member = memberRepository.findByAccountName(accountName);
         Resume resume = resumeOptional.orElse(null);
-        if (resumeRecommendRepository.existsByMemberAndResume(member, resume)){
+        if (resumeScrapRepository.existsByMemberAndResume(member, resume)){
             deleteResumeScrap(resume, member);
         } else{
             saveResumeScrap(resume, member);
@@ -112,11 +112,11 @@ public class ResumeService {
 
 
     @Transactional
-    public ResumeRecommend saveResumeScrap(Resume resume, Member member) {
+    public ResumeScrap saveResumeScrap(Resume resume, Member member) {
         ResumeScrapDTO resumeScrapDTO = new ResumeScrapDTO();
         resumeScrapDTO.setResume(resume);
         resumeScrapDTO.setMember(member);
-        ResumeRecommend resumeRecommend = resumeScrapDTO.toEntity();
-        return resumeRecommendRepository.save(resumeRecommend);
+        ResumeScrap resumeScrap = resumeScrapDTO.toEntity();
+        return resumeScrapRepository.save(resumeScrap);
     }
 }
