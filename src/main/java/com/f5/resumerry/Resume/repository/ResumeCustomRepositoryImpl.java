@@ -25,7 +25,7 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
    }
 
     public ViewResumeDTO viewResumeMine(Long memberId, Long resumeId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ViewResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size, r.resumeCommentList.size, r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname, r.years, true, false) "
+        return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ViewResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size, r.resumeCommentList.size, r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname, r.years, true, false,r.fileLink) "
                 + "from Resume r join r.member m "
                 + "where r.id = :resumeId "
                 , ViewResumeDTO.class)
@@ -37,7 +37,7 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
 
     // 스크랩한 이력이 없는 경우
     public ViewResumeDTO noOwnerResumeAndNoScrap(Long tokenId, Long resumeId) {
-       return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ViewResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size, r.resumeCommentList.size, r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname, r.years, false, false ) "
+       return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ViewResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size, r.resumeCommentList.size, r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname, r.years, false, false ,r.fileLink) "
                                + "from Resume r join r.member m "
                                + "where r.id = :resumeId "
                             , ViewResumeDTO.class)
@@ -46,7 +46,7 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
     }
 
     public ViewResumeDTO noOwnerResumeCanScrap(Long tokenId, Long resumeId){
-        return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ViewResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size, r.resumeCommentList.size, r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname, r.years, false, true ) "
+        return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ViewResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size, r.resumeCommentList.size, r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname, r.years, false, true ,r.fileLink) "
                                 + "from Resume r join r.member m "
                                 + "where r.id = :resumeId "
                         , ViewResumeDTO.class)
