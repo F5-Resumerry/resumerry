@@ -3,19 +3,15 @@ package com.f5.resumerry.Resume.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
-import com.f5.resumerry.Resume.Resume;
-import com.f5.resumerry.Resume.dto.ResumeDTO;
-import com.f5.resumerry.Resume.dto.ResumeRecommendDTO;
-import com.f5.resumerry.Resume.dto.ViewResumeDTO;
+import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
-import com.f5.resumerry.Resume.repository.ResumeRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.exception.AuthenticateException;
-import com.f5.resumerry.selector.CategoryEnum;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.joda.time.LocalDate;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @Controller
 @RestController
@@ -45,47 +42,32 @@ public class ResumeController {
 
     @GetMapping("/resume")
     @ApiOperation(value = "이력서 목록 조회")
-    public ResponseEntity viewResumes(@ApiParam("유저 토큰") @RequestHeader String token,
-                                      @ApiParam(value = "글 제목") @RequestParam(name = "title", required = false, defaultValue = "") String title,
-                                      @ApiParam(value = "직종(카테고리)") @RequestParam(name = "category",required = false, defaultValue = "ALL") String category,
-                                      @ApiParam(value = "정렬기준") @RequestParam(name = "sort", required = false, defaultValue = "recent") String sort,
-                                      @ApiParam(value = "해시태그 기준") @RequestParam(name = "hashtag", required = false) String hashtag,
-                                      @ApiParam(value = "연차기준") @RequestParam(name = "years", required = false, defaultValue = "0") Integer years) {
-        //Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        //List<ResumeDTO> resumes = resumeService.viewResumes();
-        return ResponseEntity.ok().build();
+    public ResponseEntity viewResumes(@ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
+                                      @ModelAttribute ResumeFilterDTO resumeFilterDTO) {
+        Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        List<FilterViewResumeDTO> resumes = resumeService.viewResumes(resumeFilterDTO, member.getId());
+        return ResponseEntity.ok(resumes);
     }
 
-    @PostMapping(value = "/resume", produces = "multipart/form-data")
+    @PostMapping(value = "/resume", consumes = {"multipart/form-data", MediaType.MULTIPART_FORM_DATA_VALUE })
     @ApiOperation(value = "이력서 업로드")
-    public ResponseEntity uploadResume(@ApiParam("유저 토큰") @RequestHeader String token,
-                                       @ApiParam("이력서 제목") @RequestPart(required = false) String title,
-                                       @ApiParam("이력서 내용") @RequestPart(required = false) String contents,
-                                       @ApiParam("카테고리") @RequestPart(required = false) String category,
-                                       @ApiParam("years") @RequestPart(required = false) Integer years,
-                                       @ApiParam("파일") @RequestPart(value = "file",required = false) MultipartFile file) throws IOException {
+    public ResponseEntity uploadResume(@ApiParam("유저 토큰") @RequestHeader(value = "Authorization") String token,
+                                       @ModelAttribute UploadResumeDTO uploadResumeDTO,
+                                       @ApiParam("이력서 파일") @RequestPart(required = false) MultipartFile file) throws IOException {
         // Todo. 이력서 업로드
         // 1. s3에 링크 업로드
         // 2. 업로드 위치 가져와서 repo를 통해 업로드
         Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
 
         LocalDate date = LocalDate.now();
-        String dateMonth;
+        String filePath = String.valueOf(date.getYear()) + "/" + member.getNickname();
 
-        if (date.getMonthOfYear() < 10) {
-            dateMonth = "0" + String.valueOf(date.getMonthOfYear());
-        } else {dateMonth = String.valueOf(date.getMonthOfYear());}
+        // 해당 filePath에 파일 업로드
+        awsS3Service.upload(file, filePath);
 
-        String today = String.valueOf(date.getYear()) + "/" + dateMonth + "/" + String.valueOf(date.getDayOfMonth());
-        awsS3Service.upload(file, today);
-        String fileOriginalFilename = file.getOriginalFilename();
-        System.out.println(fileOriginalFilename);
-        String fullFileLink = today + "/" + fileOriginalFilename;
+        String fullFileLink = "/" +filePath + "/" + file.getOriginalFilename();
 
-        CategoryEnum c = CategoryEnum.valueOf(category);
-        System.out.println(c);
-
-        resumeService.uploadResume(member.getId(), fullFileLink, title, contents,c, years );
+        resumeService.uploadResume(member.getId(), fullFileLink, uploadResumeDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -101,7 +83,7 @@ public class ResumeController {
         return ResponseEntity.ok(myResumes);
     }
 
-    @GetMapping("/resume/{user_id}/{resume_id}")
+    @GetMapping(value = "/resume/{user_id}/{resume_id}")
     @ApiOperation(value = "이력서 세부조회")
     public ResponseEntity viewResume(@ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token,
                                    @ApiParam(value = "이력서 주인 아이디") @PathVariable("user_id") Long userId,
@@ -173,5 +155,30 @@ public class ResumeController {
         return ResponseEntity.ok().body(param);
     }
 
+    @PutMapping(value = "/resume/{user_id}/{resume_id}")
+    @ApiOperation("이력서 수정")
+    public ResponseEntity putResume(@ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token,
+                                    @ApiParam("이력서 변경사항들") @ModelAttribute UploadResumeDTO uploadResumeDTO,
+                                    @ApiParam(value = "이력서 주인 아이디") @PathVariable(name = "user_id") Long userId,
+                                    @ApiParam(value = "이력서 아이디") @PathVariable(name = "resume_id") Long resumeId,
+                                    @ApiParam("이력서 파일") @RequestPart(required = false) MultipartFile file) throws IOException
+    {
+        Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
 
+
+        LocalDate date = LocalDate.now();
+        String filePath = String.valueOf(date.getYear()) + "/" + member.getNickname();
+
+        String fullFileLink = "/" + filePath + "/" + file.getOriginalFilename();
+
+
+        if (!userId.equals(member.getId())) {
+            throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
+        }
+
+        resumeService.updateResume(member.getId(), resumeId, uploadResumeDTO, fullFileLink);
+        awsS3Service.upload(file, filePath);
+
+        return ResponseEntity.ok().build();
+    }
 }
