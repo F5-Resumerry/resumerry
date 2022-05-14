@@ -1,13 +1,19 @@
 package com.f5.resumerry.Resume.dto;
 
 import com.f5.resumerry.selector.CategoryEnum;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiParam;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UploadResumeDTO {
     private String title;
     private String contents;

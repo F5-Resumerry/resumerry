@@ -1,5 +1,6 @@
 package com.f5.resumerry.Resume.repository;
 
+import com.f5.resumerry.Resume.dto.FilterViewResumeDTO;
 import com.f5.resumerry.Resume.dto.ResumeDTO;
 import com.f5.resumerry.Resume.dto.ViewResumeDTO;
 import com.f5.resumerry.selector.CategoryEnum;
@@ -57,17 +58,28 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
        entityManager.createNativeQuery("insert resume(category, contents, file_link, title, years, member_id) values (?, ?, ?, ?, ?, ?)")
                .setParameter(1, String.valueOf(category))
                .setParameter(2, contents)
-               .setParameter(3, "/"+fullFileLink)
+               .setParameter(3, fullFileLink)
                .setParameter(4, title)
                .setParameter(5, years)
                .setParameter(6, id)
                .executeUpdate();
     }
 
-//    public Boolean existScrapByMemberIdAndResumeId(Long memberId, Long resumeId) {
-//       return entityManager.createQuery("select rs from ResumeScrap rs where rs.memberId = :memberId and rs.resumeId = :resumeId")
-//               .
-//    }
+    public List<FilterViewResumeDTO> examViewResumes(Long memberId){
+       return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.FilterViewResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size, r.resumeCommentList.size, r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname, r.years ) "
+                       + "from Resume r "
+                       + "join r.member m "
+               ,FilterViewResumeDTO.class)
+               .getResultList();
+    }
+
+
+
+
+
+
+
+
 
 
 

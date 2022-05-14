@@ -1,12 +1,11 @@
 package com.f5.resumerry.Resume.service;
 
-import com.f5.resumerry.Resume.dto.ResumeDTO;
-import com.f5.resumerry.Resume.dto.UploadResumeDTO;
-import com.f5.resumerry.Resume.dto.ViewResumeDTO;
+import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.ResumeRepository;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,5 +42,17 @@ public class ResumeService {
         CategoryEnum category = uploadResumeDTO.getCategory();
         Integer years = uploadResumeDTO.getYears();
         resumeRepository.uploadResume(id, fullFileLink, title, contents, category, years);
+    }
+
+    public void updateResume(Long memberId, Long resumeId, UploadResumeDTO uploadResumeDTO, String fullFileNamePath) {
+        String title = uploadResumeDTO.getTitle();
+        String contents = uploadResumeDTO.getContents();
+        CategoryEnum category = uploadResumeDTO.getCategory();
+        Integer years = uploadResumeDTO.getYears();
+        resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
+    }
+
+    public List<FilterViewResumeDTO> viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
+        return resumeRepository.examViewResumes(memberId);
     }
 }
