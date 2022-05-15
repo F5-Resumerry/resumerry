@@ -143,7 +143,7 @@ public class PostService {
                     group.put("recommendCnt", postComment.getPostCommentRecommendList().size());
                     group.put("banCnt", postComment.getPostCommentReportList().size());
                     group.put("isAnonymous", postComment.getIsAnonymous());
-                    group.put("modifiedDate", postComment.getModifiedDate());
+                    group.put("modifiedDate", postComment.getModifiedDate().toString());
                     group.put("postCommentGroup", postComment.getPostCommentGroup());
                     group.put("postCommentDepth", postComment.getPostCommentDepth());
                     group.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
@@ -159,7 +159,7 @@ public class PostService {
                 depthIn.put("recommendCnt", postComment.getPostCommentRecommendList().size());
                 depthIn.put("banCnt", postComment.getPostCommentReportList().size());
                 depthIn.put("isAnonymous", postComment.getIsAnonymous());
-                depthIn.put("modifiedDate", postComment.getModifiedDate());
+                depthIn.put("modifiedDate", postComment.getModifiedDate().toString());
                 depthIn.put("postCommentGroup", postComment.getPostCommentGroup());
                 depthIn.put("postCommentDepth", postComment.getPostCommentDepth());
                 depthIn.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);

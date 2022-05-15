@@ -198,7 +198,7 @@ public class ResumeService {
                     group.put("recommendCnt", resumeComment.getResumeCommentRecommendList().size());
                     group.put("banCnt", resumeComment.getResumeCommentReportList().size());
                     group.put("isAnonymous", resumeComment.getIsAnonymous());
-                    group.put("modifiedDate", resumeComment.getModifiedDate());
+                    group.put("modifiedDate", resumeComment.getModifiedDate().toString());
                     group.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
                     group.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());
                     group.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);
@@ -214,7 +214,7 @@ public class ResumeService {
                 depthIn.put("recommendCnt", resumeComment.getResumeCommentRecommendList().size());
                 depthIn.put("banCnt", resumeComment.getResumeCommentReportList().size());
                 depthIn.put("isAnonymous", resumeComment.getIsAnonymous());
-                depthIn.put("modifiedDate", resumeComment.getModifiedDate());
+                depthIn.put("modifiedDate", resumeComment.getModifiedDate().toString());
                 depthIn.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
                 depthIn.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());
                 depthIn.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);

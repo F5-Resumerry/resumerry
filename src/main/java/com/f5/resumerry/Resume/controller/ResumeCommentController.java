@@ -66,6 +66,6 @@ public class ResumeCommentController {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         JSONArray jsonArray = resumeService.viewComments(resumeId, memberIdByToken.getAccountName());
-        return new ResponseEntity<>(jsonArray.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
     }
 }
