@@ -107,6 +107,7 @@ public class PostService {
     public void banComment(Long memberId, Long postId, Long commentId, Long reportMember) {
         postRepository.banComment(postId,commentId,reportMember);
     }
+
     public JSONArray viewComments(Long postId, String accountName) {
 
         ArrayList<Long>[] arrayList = new ArrayList[100];
@@ -114,9 +115,7 @@ public class PostService {
             arrayList[i] = new ArrayList<Long>();
         }
         Optional<Post> postOptional = postRepository.findById(postId);
-        log.info("hi\n");
         Post post = postOptional.orElse(null);
-        log.info("hi\n");
         List<PostComment> postComments = postCommentRepository.findByPost(post);
         for(PostComment postComment: postComments){
             arrayList[postComment.getPostCommentGroup()].add(postComment.getId());
@@ -148,7 +147,7 @@ public class PostService {
                     group.put("postCommentGroup", postComment.getPostCommentGroup());
                     group.put("postCommentDepth", postComment.getPostCommentDepth());
                     group.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
-
+                    group.put("isDelete", postComment.getIsDelete());
                     count += 1;
                     continue;
                 }
@@ -164,6 +163,7 @@ public class PostService {
                 depthIn.put("postCommentGroup", postComment.getPostCommentGroup());
                 depthIn.put("postCommentDepth", postComment.getPostCommentDepth());
                 depthIn.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
+                depthIn.put("isDelete", postComment.getIsDelete());
                 depth.add(depthIn);
             }
             log.info(String.valueOf(depth));
@@ -171,48 +171,9 @@ public class PostService {
                 group.put("postChildComments", depth);
                 jsonArray.add(group);
             }
-            log.info("hi\n");
         }
-
-        log.info(String.valueOf(arrayList));
-        log.info("hi\n");
-        log.info(String.valueOf(postComments));
-        jsonObject.put("hello", "hello");
+        log.info(String.valueOf(jsonArray));
         return jsonArray;
-//        ObjectMapper mapper = new ObjectMapper();
-//        List<PostParentCommentDTO> result = new ArrayList<PostParentCommentDTO>();
-//
-//        PostParentCommentDTO i = new PostParentCommentDTO();
-//
-//        Integer maxGroupId = postCommentRepository.findByPostId(postId);
-//        if (maxGroupId == null) {
-//            return result;
-//        }
-//        for(int groupNum = 1 ; groupNum <= maxGroupId ; groupNum++ ) {
-//            int k = 0 ;
-//            List<PostChildCommentDTO> child = postRepository.findChildComments(groupNum, postId);
-//
-//            PostChildCommentDTO p = postRepository.findParentComment(groupNum,postId);
-//            i.setCommentId(p.getCommentId());
-//            i.setMemberId(p.getMemberId());
-//            i.setImageSrc(p.getNickname());
-//            i.setNickname(p.getNickname());
-//            i.setContents(p.getContents());
-//            i.setRecommendCnt(p.getRecommendCnt());
-//            i.setBanCnt(p.getBanCnt());
-//            i.setIsAnonymous(p.getIsAnonymous());
-//            i.setIsAnonymous(p.getIsOwner());
-//            i.setPostCommentGroup(p.getPostCommentGroup());
-//            i.setModifiedDate(p.getModifiedDate());
-//            i.setPostCommentDepth(p.getPostCommentDepth());
-//            i.setPostChildComments(child);
-//            result.add(i);
-//        }
-//        return result;
-
-//        return postRepository.stCommentsByGroup(postId);
-
-
     }
 
 

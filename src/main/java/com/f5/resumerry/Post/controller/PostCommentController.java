@@ -4,26 +4,24 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
 import com.f5.resumerry.Post.dto.GetCommentDTO;
-import com.f5.resumerry.Post.dto.PostChildCommentDTO;
-import com.f5.resumerry.Post.dto.PostCommentDTO;
-import com.f5.resumerry.Post.dto.PostParentCommentDTO;
 import com.f5.resumerry.Post.service.PostService;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
 @RestController
+@Slf4j
 public class PostCommentController {
     @Autowired
     private PostService postService;
@@ -78,14 +76,14 @@ public class PostCommentController {
 
     @GetMapping("/post/{member_id}/{post_id}/comment")
     @ApiOperation(value = "게시글 답변 조회")
-    public JSONArray viewPostComments(
+    public ResponseEntity<?> viewPostComments(
             @PathVariable("member_id") Long memberId,
             @PathVariable("post_id") Long postId,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         JSONArray jsonArray = postService.viewComments(postId, memberIdByToken.getAccountName());
-        return jsonArray;
+        return new ResponseEntity<>(jsonArray.toString(), HttpStatus.OK);
     }
 
     @PostMapping("/post/{member_id}/{post_id}/comment/{comment_id}/recommend")

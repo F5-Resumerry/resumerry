@@ -1,21 +1,28 @@
 package com.f5.resumerry.Resume.service;
 
+import com.f5.resumerry.Post.entity.Post;
+import com.f5.resumerry.Post.entity.PostComment;
+import com.f5.resumerry.Resume.ResumeComment;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberRepository;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeRecommend;
 import com.f5.resumerry.Resume.ResumeScrap;
+import com.f5.resumerry.Resume.repository.ResumeCommentRepository;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.repository.ResumeRepository;
 import com.f5.resumerry.Resume.repository.ResumeScrapRepository;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +36,7 @@ public class ResumeService {
     private final MemberRepository memberRepository;
     private final ResumeRecommendRepository resumeRecommendRepository;
     private final ResumeScrapRepository resumeScrapRepository;
+    private final ResumeCommentRepository resumeCommentRepository;
 
     public List<ResumeDTO> viewResumesInMyPage(Long memberId) {
         return resumeRepository.viewResumesInMyPage(memberId);
@@ -131,5 +139,80 @@ public class ResumeService {
 
     public List<FilterViewResumeDTO> viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
         return resumeRepository.examViewResumes(memberId);
+    }
+
+    public JSONArray viewComments(Long resumeId, String accountName) {
+
+        ArrayList<Long>[] arrayList = new ArrayList[100];
+        for(int i = 0; i <  100; i++){
+            arrayList[i] = new ArrayList<Long>();
+        }
+        Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
+        log.info("hi\n");
+        Resume resume = resumeOptional.orElse(null);
+        log.info("hi\n");
+        List<ResumeComment> resumeComments = resumeCommentRepository.findByResume(resume);
+        for(ResumeComment resumeComment: resumeComments){
+            arrayList[resumeComment.getResumeCommentGroup()].add(resumeComment.getId());
+        }
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        for(ArrayList arrayList1: arrayList){
+//            if(!arrayList1.isEmpty()){
+//                break;
+//            }
+            int count = 0;
+            JSONObject group = new JSONObject();
+            JSONArray depth = new JSONArray();
+
+            for(Object id: arrayList1){
+                Optional<ResumeComment> resumeCommentOptional = resumeCommentRepository.findById((Long) id);
+                ResumeComment resumeComment = resumeCommentOptional.orElse(null);
+                JSONObject depthIn = new JSONObject();
+                if(count == 0){
+                    group.put("commentId", id);
+                    group.put("memberId", resumeComment.getMember().getId());
+                    group.put("imageSrc", resumeComment.getMember().getImageSrc());
+                    group.put("nickname", resumeComment.getMember().getNickname());
+                    group.put("contents", resumeComment.getContents());
+                    group.put("recommendCnt", resumeComment.getResumeCommentRecommendList().size());
+                    group.put("banCnt", resumeComment.getResumeCommentReportList().size());
+                    group.put("isAnnonymous", resumeComment.getIsAnonymous());
+                    group.put("modifiedDate", resumeComment.getModifiedDate());
+                    group.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
+                    group.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());
+                    group.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);
+//                    group.put("isDelete", resumeComment.getIsDelete());
+                    count += 1;
+                    continue;
+                }
+                depthIn.put("commentId", id);
+                depthIn.put("memberId", resumeComment.getMember().getId());
+                depthIn.put("imageSrc", resumeComment.getMember().getImageSrc());
+                depthIn.put("nickname", resumeComment.getMember().getNickname());
+                depthIn.put("contents", resumeComment.getContents());
+                depthIn.put("recommendCnt", resumeComment.getResumeCommentRecommendList().size());
+                depthIn.put("banCnt", resumeComment.getResumeCommentReportList().size());
+                depthIn.put("isAnnonymous", resumeComment.getIsAnonymous());
+                depthIn.put("modifiedDate", resumeComment.getModifiedDate());
+                depthIn.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
+                depthIn.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());
+                depthIn.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);
+//                depthIn.put("isDelete", resumeComment.getIsDelete());
+                depth.add(depthIn);
+            }
+            log.info(String.valueOf(depth));
+            if(group.size() > 0) {
+                group.put("resumeChildComments", depth);
+                jsonArray.add(group);
+            }
+            log.info("hi\n");
+        }
+
+        log.info(String.valueOf(arrayList));
+        log.info("hello\n");
+        log.info(String.valueOf(resumeComments));
+        jsonObject.put("hello", "hello");
+        return jsonArray;
     }
 }
