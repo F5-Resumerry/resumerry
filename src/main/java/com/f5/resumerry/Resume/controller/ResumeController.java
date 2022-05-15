@@ -30,14 +30,14 @@ public class ResumeController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
     private final AwsS3Service awsS3Service;
-    private final ResumeRecommendRepository resumeRecommendRepository;
 
-    public ResumeController(ResumeService resumeService, MemberService memberService, JwtUtil jwtUtil, AwsS3Service awsS3Service, ResumeRecommendRepository resumeRecommendRepository) {
+
+    public ResumeController(ResumeService resumeService, MemberService memberService, JwtUtil jwtUtil, AwsS3Service awsS3Service) {
         this.resumeService = resumeService;
         this.memberService = memberService;
         this.jwtUtil = jwtUtil;
         this.awsS3Service = awsS3Service;
-        this.resumeRecommendRepository = resumeRecommendRepository;
+
     }
 
     @GetMapping("/resume")
@@ -90,7 +90,6 @@ public class ResumeController {
                                    @ApiParam(value = "이력서 아이디") @PathVariable("resume_id") Long resumeId) {
         System.out.println("print");
         Long tokenId = memberService.getMember(jwtUtil.extractUsername(token.substring(7))).getId();
-        System.out.println(tokenId);
         ViewResumeDTO resumeResponse = resumeService.viewResume(userId,resumeId,tokenId);
         return ResponseEntity.ok(resumeResponse);
     }
