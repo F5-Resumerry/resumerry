@@ -197,7 +197,7 @@ public class ResumeService {
                     group.put("contents", resumeComment.getContents());
                     group.put("recommendCnt", resumeComment.getResumeCommentRecommendList().size());
                     group.put("banCnt", resumeComment.getResumeCommentReportList().size());
-                    group.put("isAnnonymous", resumeComment.getIsAnonymous());
+                    group.put("isAnonymous", resumeComment.getIsAnonymous());
                     group.put("modifiedDate", resumeComment.getModifiedDate());
                     group.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
                     group.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());
@@ -213,7 +213,7 @@ public class ResumeService {
                 depthIn.put("contents", resumeComment.getContents());
                 depthIn.put("recommendCnt", resumeComment.getResumeCommentRecommendList().size());
                 depthIn.put("banCnt", resumeComment.getResumeCommentReportList().size());
-                depthIn.put("isAnnonymous", resumeComment.getIsAnonymous());
+                depthIn.put("isAnonymous", resumeComment.getIsAnonymous());
                 depthIn.put("modifiedDate", resumeComment.getModifiedDate());
                 depthIn.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
                 depthIn.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());

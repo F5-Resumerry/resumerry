@@ -142,7 +142,7 @@ public class PostService {
                     group.put("contents", postComment.getContents());
                     group.put("recommendCnt", postComment.getPostCommentRecommendList().size());
                     group.put("banCnt", postComment.getPostCommentReportList().size());
-                    group.put("isAnnonymous", postComment.getIsAnonymous());
+                    group.put("isAnonymous", postComment.getIsAnonymous());
                     group.put("modifiedDate", postComment.getModifiedDate());
                     group.put("postCommentGroup", postComment.getPostCommentGroup());
                     group.put("postCommentDepth", postComment.getPostCommentDepth());
@@ -158,7 +158,7 @@ public class PostService {
                 depthIn.put("contents", postComment.getContents());
                 depthIn.put("recommendCnt", postComment.getPostCommentRecommendList().size());
                 depthIn.put("banCnt", postComment.getPostCommentReportList().size());
-                depthIn.put("isAnnonymous", postComment.getIsAnonymous());
+                depthIn.put("isAnonymous", postComment.getIsAnonymous());
                 depthIn.put("modifiedDate", postComment.getModifiedDate());
                 depthIn.put("postCommentGroup", postComment.getPostCommentGroup());
                 depthIn.put("postCommentDepth", postComment.getPostCommentDepth());
