@@ -1,5 +1,7 @@
 package com.f5.resumerry.Resume.service;
 
+import com.f5.resumerry.Post.dto.GetCommentDTO;
+import com.f5.resumerry.Post.dto.PostCommentDTO;
 import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Resume.ResumeComment;
@@ -90,6 +92,24 @@ public class ResumeService {
         return;
     }
 
+
+    // 댓글 controller 시작
+    @Transactional
+    public void registerResumeComment(Long memberId, Long resumeId, GetCommentDTO req) {
+        ResumeCommentDTO resumeCommentDTO = new ResumeCommentDTO();
+        Member member = memberRepository.getById(memberId);
+        Resume resume = resumeRepository.getById(resumeId);
+
+        resumeCommentDTO.setContents(req.getContents());
+        resumeCommentDTO.setIsAnonymous(req.getIsAnonymous());
+        resumeCommentDTO.setResumeCommentGroup(req.getPostCommentGroup());
+        resumeCommentDTO.setResumeCommentDepth(req.getPostCommentDepth());
+        resumeCommentDTO.setMember(member);
+        resumeCommentDTO.setResume(resume);
+        resumeCommentDTO.setIsDelete("N");
+        ResumeComment resumeComment = resumeCommentDTO.toEntity();
+        resumeCommentRepository.save(resumeComment);
+    }
 
     @Transactional
     public ResumeRecommend saveResumeRecommend(Resume resume, Member member) {
@@ -182,7 +202,7 @@ public class ResumeService {
                     group.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
                     group.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());
                     group.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);
-//                    group.put("isDelete", resumeComment.getIsDelete());
+                    group.put("isDelete", resumeComment.getIsDelete());
                     count += 1;
                     continue;
                 }
@@ -198,7 +218,7 @@ public class ResumeService {
                 depthIn.put("resumeCommentGroup", resumeComment.getResumeCommentGroup());
                 depthIn.put("resumeCommentDepth", resumeComment.getResumeCommentDepth());
                 depthIn.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);
-//                depthIn.put("isDelete", resumeComment.getIsDelete());
+                depthIn.put("isDelete", resumeComment.getIsDelete());
                 depth.add(depthIn);
             }
             log.info(String.valueOf(depth));

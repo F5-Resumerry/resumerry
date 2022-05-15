@@ -55,5 +55,6 @@ public class ResumeComment extends BaseTimeEntity {
     @OneToMany(mappedBy = "resumeComment")
     private List<ResumeCommentReport> resumeCommentReportList = new ArrayList<>();
 
-
+    @Column(name = "is_delete")
+    private String isDelete;
 }

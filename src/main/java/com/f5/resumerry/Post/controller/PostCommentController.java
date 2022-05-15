@@ -49,6 +49,7 @@ public class PostCommentController {
         param.put("result", true);
         return ResponseEntity.ok(param);
     }
+
     @DeleteMapping("/post/{member_id}/{post_id}/comment/{comment_id}")
     @ApiOperation(value = "게시글 답변 삭제")
     public ResponseEntity deletePostComment(
