@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +33,14 @@ public class PostCommentController {
 
     @PostMapping("/post/{member_id}/{post_id}/comment")
     @ApiOperation(value = "게시글 답변 등록")
-    public ResponseEntity registerPostComment(
+    public ResponseEntity<?> registerPostComment(
             @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
             @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
             @ApiParam(value = "게시글 답변 DTO") @RequestBody GetCommentDTO getCommentDTO,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        Map<String, Boolean> param = new HashMap<>();
+        JSONObject param = new JSONObject();
         try {
             postService.registerPostComment(memberIdByToken.getId(), postId, getCommentDTO);
         } catch (Exception e) {
@@ -47,7 +48,7 @@ public class PostCommentController {
             return ResponseEntity.ok(param);
         }
         param.put("result", true);
-        return ResponseEntity.ok(param);
+        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
     }
 
     @DeleteMapping("/post/{member_id}/{post_id}/comment/{comment_id}")
