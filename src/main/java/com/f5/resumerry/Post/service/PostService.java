@@ -144,8 +144,8 @@ public class PostService {
                     group.put("banCnt", postComment.getPostCommentReportList().size());
                     group.put("isAnonymous", postComment.getIsAnonymous());
                     group.put("modifiedDate", postComment.getModifiedDate().toString());
-                    group.put("postCommentGroup", postComment.getPostCommentGroup());
-                    group.put("postCommentDepth", postComment.getPostCommentDepth());
+                    group.put("commentGroup", postComment.getPostCommentGroup());
+                    group.put("commentDepth", postComment.getPostCommentDepth());
                     group.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
                     group.put("isDelete", postComment.getIsDelete());
                     count += 1;
@@ -160,15 +160,15 @@ public class PostService {
                 depthIn.put("banCnt", postComment.getPostCommentReportList().size());
                 depthIn.put("isAnonymous", postComment.getIsAnonymous());
                 depthIn.put("modifiedDate", postComment.getModifiedDate().toString());
-                depthIn.put("postCommentGroup", postComment.getPostCommentGroup());
-                depthIn.put("postCommentDepth", postComment.getPostCommentDepth());
+                depthIn.put("commentGroup", postComment.getPostCommentGroup());
+                depthIn.put("commentDepth", postComment.getPostCommentDepth());
                 depthIn.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
                 depthIn.put("isDelete", postComment.getIsDelete());
                 depth.add(depthIn);
             }
             log.info(String.valueOf(depth));
             if(group.size() > 0) {
-                group.put("postChildComments", depth);
+                group.put("childComments", depth);
                 jsonArray.add(group);
             }
         }
