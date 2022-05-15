@@ -44,7 +44,7 @@ public class PostComment extends BaseTimeEntity {
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_postcomment"))
     private Member member;
 
-    @Column(name = "_member_id", insertable = false , updatable = false)
+    @Column(name = "member_id", insertable = false , updatable = false)
     private Long memberId;
 
     @ManyToOne

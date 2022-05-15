@@ -22,4 +22,5 @@ public class ViewResumeDTO {
     private Integer years;
     private Boolean isOwner;
     private Boolean isScrap;
+    private String fileLink;
 }
