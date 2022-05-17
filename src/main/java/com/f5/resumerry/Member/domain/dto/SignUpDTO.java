@@ -52,11 +52,13 @@ public class SignUpDTO {
 
     private MemberInfo memberInfo;
 
+    private Long memberInfoId;
+
     @NotNull(message = "카테고리는 필수 입력 값입니다.")
     private CategoryEnum category;
 
     @Builder
-    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, Boolean isWorking, Role role, String salt,  MemberInfo memberInfo, CategoryEnum category) {
+    public SignUpDTO(Long id, String accountName, String nickname, String email, String password, Integer years, Boolean isWorking, Role role, String salt,  MemberInfo memberInfo, CategoryEnum category, Long memberInfoId) {
         this.id = id;
         this.accountName = accountName;
         this.nickname = nickname;
@@ -68,7 +70,7 @@ public class SignUpDTO {
         this.memberInfo = memberInfo;
         this.salt = salt;
         this.category = category;
-
+        this.memberInfoId = memberInfoId;
     }
 
     public Member toEntity(){
@@ -84,6 +86,7 @@ public class SignUpDTO {
                 .memberInfo(memberInfo)
                 .salt(salt)
                 .category(category)
+                .memberInfoId(memberInfoId)
                 .build();
         return build;
     }

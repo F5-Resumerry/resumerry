@@ -23,6 +23,7 @@ import java.util.Map;
 @Controller
 @RestController
 @Slf4j
+@RequestMapping("/resume")
 public class ResumeCommentController {
     private final ResumeService resumeService;
     private final MemberService memberService;
@@ -37,7 +38,8 @@ public class ResumeCommentController {
         this.awsS3Service = awsS3Service;
         this.resumeRecommendRepository = resumeRecommendRepository;
     }
-    @PostMapping("/resume/{member_id}/{resume_id}/comment")
+
+    @PostMapping("/{member_id}/{resume_id}/comment")
     @ApiOperation(value = "이력서 답변 등록")
     public ResponseEntity<?> registerResumeComment(
             @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
@@ -57,7 +59,7 @@ public class ResumeCommentController {
         return new ResponseEntity<>(param.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/resume/{member_id}/{resume_id}/comment")
+    @GetMapping("/{member_id}/{resume_id}/comment")
     @ApiOperation(value = "이력서 답변 조회")
     public ResponseEntity<?> viewResumeComments(
             @PathVariable("member_id") Long memberId,
@@ -67,5 +69,67 @@ public class ResumeCommentController {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         JSONArray jsonArray = resumeService.viewComments(resumeId, memberIdByToken.getAccountName());
         return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
+    }
+
+    @PutMapping("/{member_id}/{resume_id}/comment/{comment_id}")
+    @ApiOperation(value = "이력서 답변 삭제")
+    public ResponseEntity<?> deleteResumeComments(
+            @PathVariable("member_id") Long memberId,
+            @PathVariable("resume_id") Long resumeId,
+            @PathVariable("comment_id") Long commentId,
+            @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
+
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        JSONObject param = new JSONObject();
+        try {
+            if (!resumeService.deleteResumeComment(memberIdByToken.getId(), commentId)){
+                throw new RuntimeException("삭제할 권한이 없습니다");
+            }
+        } catch (Exception e) {
+            param.put("result", false);
+            return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        }
+        param.put("result", true);
+        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+    }
+
+    @PostMapping("/{member_id}/{resume_id}/comment/{comment_id}/recommend")
+    @ApiOperation(value = "이력서 답변 추천")
+    public ResponseEntity<?> recommendResumeComment(
+            @ApiParam(value = "member_id") @PathVariable("member_id") Long memberId,
+            @ApiParam(value = "resume_id") @PathVariable("resume_id") Long resumeId,
+            @ApiParam(value = "comment_id") @PathVariable("comment_id") Long commentId,
+            @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
+    ) {
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        JSONObject param = new JSONObject();
+        try {
+            resumeService.recommendResumeComment(memberIdByToken.getId(), commentId);
+        } catch (Exception e) {
+            param.put("result", false);
+            return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        }
+        param.put("result", true);
+        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+    }
+
+    @PostMapping("/{member_id}/{resume_id}/comment/{comment_id}/bam")
+    @ApiOperation(value = "이력서 답변 신고")
+    public ResponseEntity<?> reportResumeComment(
+            @ApiParam(value = "member_id") @PathVariable("member_id") Long memberId,
+            @ApiParam(value = "resume_id") @PathVariable("resume_id") Long resumeId,
+            @ApiParam(value = "comment_id") @PathVariable("comment_id") Long commentId,
+            @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
+    ) {
+        Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        JSONObject param = new JSONObject();
+        try {
+            resumeService.reportResumeComment(memberIdByToken.getId(), commentId);
+        } catch (Exception e) {
+            param.put("result", false);
+            return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        }
+        param.put("result", true);
+        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
     }
 }

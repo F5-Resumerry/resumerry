@@ -3,6 +3,7 @@ package com.f5.resumerry.Member.domain.entity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class MemberInfo {
 
     @Id

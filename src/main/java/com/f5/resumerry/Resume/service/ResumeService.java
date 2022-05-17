@@ -4,17 +4,11 @@ import com.f5.resumerry.Post.dto.GetCommentDTO;
 import com.f5.resumerry.Post.dto.PostCommentDTO;
 import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
-import com.f5.resumerry.Resume.ResumeComment;
+import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberRepository;
-import com.f5.resumerry.Resume.Resume;
-import com.f5.resumerry.Resume.ResumeRecommend;
-import com.f5.resumerry.Resume.ResumeScrap;
-import com.f5.resumerry.Resume.repository.ResumeCommentRepository;
-import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
-import com.f5.resumerry.Resume.repository.ResumeRepository;
-import com.f5.resumerry.Resume.repository.ResumeScrapRepository;
+import com.f5.resumerry.Resume.repository.*;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +33,8 @@ public class ResumeService {
     private final ResumeRecommendRepository resumeRecommendRepository;
     private final ResumeScrapRepository resumeScrapRepository;
     private final ResumeCommentRepository resumeCommentRepository;
+    private final ResumeCommentRecommendRepository resumeCommentRecommendRepository;
+    private final ResumeCommentReportRepository resumeCommentReportRepository;
 
     public List<ResumeDTO> viewResumesInMyPage(Long memberId) {
         return resumeRepository.viewResumesInMyPage(memberId);
@@ -109,6 +105,71 @@ public class ResumeService {
         resumeCommentDTO.setIsDelete("N");
         ResumeComment resumeComment = resumeCommentDTO.toEntity();
         resumeCommentRepository.save(resumeComment);
+    }
+
+    @Transactional
+    public Boolean deleteResumeComment(Long memberId, Long commentId) {
+        Optional<ResumeComment> resumeCommentOptional = resumeCommentRepository.findById(commentId);
+        ResumeComment resumeComment = resumeCommentOptional.orElse(null);
+        if(resumeComment.getMember().getId() == memberId) {
+
+            resumeCommentRepository.deleteResumeComment(commentId);
+        }else{
+            return false;
+        }
+        return true;
+    }
+
+    @Transactional
+    public Boolean recommendResumeComment(Long memberId, Long commentId) {
+        if (resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, commentId)){
+            deleteResumeCommentRecommend(memberId, commentId);
+        } else{
+            saveResumeCommentRecommend(memberId, commentId);
+        }
+        return true;
+    }
+
+    @Transactional
+    public void deleteResumeCommentRecommend(Long memberId, Long commentId) {
+        resumeCommentRecommendRepository.deleteByMemberIdAndResumeCommentId(memberId, commentId);
+        return;
+    }
+
+
+    @Transactional
+    public ResumeCommentRecommend saveResumeCommentRecommend(Long memberId, Long commentId) {
+        ResumeCommentRecommendDTO resumeCommentRecommendDTO = new ResumeCommentRecommendDTO();
+        resumeCommentRecommendDTO.setMemberId(memberId);
+        resumeCommentRecommendDTO.setResumeCommentId(commentId);
+        ResumeCommentRecommend resumeCommentRecommend = resumeCommentRecommendDTO.toEntity();
+        return resumeCommentRecommendRepository.save(resumeCommentRecommend);
+    }
+
+    @Transactional
+    public Boolean reportResumeComment(Long memberId, Long commentId) {
+        if (resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, commentId)){
+            deleteResumeCommentReport(memberId, commentId);
+        } else{
+            saveResumeCommentReport(memberId, commentId);
+        }
+        return true;
+    }
+
+    @Transactional
+    public void deleteResumeCommentReport(Long memberId, Long commentId) {
+        resumeCommentReportRepository.deleteByMemberIdAndResumeCommentId(memberId, commentId);
+        return;
+    }
+
+
+    @Transactional
+    public ResumeCommentReport saveResumeCommentReport(Long memberId, Long commentId) {
+        ResumeCommentReportDTO resumeCommentReportDTO = new ResumeCommentReportDTO();
+        resumeCommentReportDTO.setMemberId(memberId);
+        resumeCommentReportDTO.setResumeCommentId(commentId);
+        ResumeCommentReport resumeCommentReport = resumeCommentReportDTO.toEntity();
+        return resumeCommentReportRepository.save(resumeCommentReport);
     }
 
     @Transactional

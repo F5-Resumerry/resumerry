@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.*;
 
@@ -24,10 +25,16 @@ public class ResumeCommentRecommend{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_comment_id", foreignKey = @ForeignKey(name = "FK_resumecomment_resumecommentrecommend"))
+    @JoinColumn(name = "resume_comment_id", foreignKey = @ForeignKey(name = "FK_resumecomment_resumecommentrecommend"), insertable = false, updatable = false)
     private ResumeComment resumeComment;
 
+    @Column(name = "resume_comment_id")
+    private Long resumeCommentId;
+
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumecommentrecommend"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumecommentrecommend"), insertable = false, updatable = false)
     private Member member;
+
+    @Column(name = "member_id")
+    private Long memberId;
 }
