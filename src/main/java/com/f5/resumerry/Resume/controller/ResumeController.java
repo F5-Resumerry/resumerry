@@ -3,6 +3,7 @@ package com.f5.resumerry.Resume.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
+import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
@@ -10,7 +11,11 @@ import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +31,7 @@ import java.util.Map;
 
 @Controller
 @RestController
+@Slf4j
 public class ResumeController {
     private final ResumeService resumeService;
     private final MemberService memberService;
@@ -53,6 +60,7 @@ public class ResumeController {
     @ApiOperation(value = "이력서 업로드")
     public ResponseEntity uploadResume(@ApiParam("유저 토큰") @RequestHeader(value = "Authorization") String token,
                                        @ModelAttribute UploadResumeDTO uploadResumeDTO,
+                                       @ApiParam("해시태그")@RequestParam List<String> hashtagList,
                                        @ApiParam("이력서 파일") @RequestPart(required = false) MultipartFile file) throws IOException {
         // Todo. 이력서 업로드
         // 1. s3에 링크 업로드
@@ -67,20 +75,22 @@ public class ResumeController {
 
         String fullFileLink = "/" +filePath + "/" + file.getOriginalFilename();
 
-        resumeService.uploadResume(member.getId(), fullFileLink, uploadResumeDTO);
+
+        resumeService.uploadResume(member.getId(), fullFileLink, uploadResumeDTO, hashtagList);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/resume/{user_id}")
     @ApiOperation(value = "마이 페이지에서 이력서 조회")
-    public ResponseEntity viewResumesInMyPage(@ApiParam("유저 토큰") @RequestHeader String token,
+    public ResponseEntity<?> viewResumesInMyPage(@ApiParam("유저 토큰") @RequestHeader String token,
                                               @ApiParam("요청 회원 번호")@PathVariable Long user_id) {
         Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         if(!user_id.equals(member.getId())) {
             throw new AuthenticateException("잘못된 회원 입니다");
         }
-        List<ResumeDTO> myResumes = resumeService.viewResumesInMyPage(user_id);
-        return ResponseEntity.ok(myResumes);
+        JSONArray result = new JSONArray();
+        result = resumeService.viewResumesInMyPage(user_id);
+        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/resume/{user_id}/{resume_id}")
@@ -160,6 +170,7 @@ public class ResumeController {
                                     @ApiParam("이력서 변경사항들") @ModelAttribute UploadResumeDTO uploadResumeDTO,
                                     @ApiParam(value = "이력서 주인 아이디") @PathVariable(name = "user_id") Long userId,
                                     @ApiParam(value = "이력서 아이디") @PathVariable(name = "resume_id") Long resumeId,
+                                    @ApiParam("해시태그")@RequestParam List<String> hashtagList,
                                     @ApiParam("이력서 파일") @RequestPart(required = false) MultipartFile file) throws IOException
     {
         Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
@@ -175,7 +186,7 @@ public class ResumeController {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
 
-        resumeService.updateResume(member.getId(), resumeId, uploadResumeDTO, fullFileLink);
+        resumeService.updateResume(member.getId(), resumeId, uploadResumeDTO, fullFileLink, hashtagList);
         awsS3Service.upload(file, filePath);
 
         return ResponseEntity.ok().build();

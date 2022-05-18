@@ -23,7 +23,7 @@ import java.util.List;
 public class Hashtag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hashtag")
+    @Column(name = "hashtag_id")
     private Long id;
 
     @Column(name = "hashtag_name", nullable = false)

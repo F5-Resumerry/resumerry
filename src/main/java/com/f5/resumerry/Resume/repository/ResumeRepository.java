@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -33,4 +34,6 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCus
     void updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);
 
     Optional<Resume> findById(Long id);
+
+    List<Resume> findByMemberId(Long memberId);
 }

@@ -35,9 +35,33 @@ public class ResumeService {
     private final ResumeCommentRepository resumeCommentRepository;
     private final ResumeCommentRecommendRepository resumeCommentRecommendRepository;
     private final ResumeCommentReportRepository resumeCommentReportRepository;
+    private final HashtagRepository hashtagRepository;
+    private final ResumeHashtagRepository resumeHashtagRepository;
 
-    public List<ResumeDTO> viewResumesInMyPage(Long memberId) {
-        return resumeRepository.viewResumesInMyPage(memberId);
+    public JSONArray viewResumesInMyPage(Long memberId) {
+        JSONArray jsonArray = new JSONArray();
+        List<Resume> resumeList = resumeRepository.findByMemberId(memberId);
+        for(Resume resume: resumeList){
+            if(!resume.getIsDelete()) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("resumeId", resume.getId());
+                jsonObject.put("title", resume.getTitle());
+                jsonObject.put("modifiedDate", resume.getModifiedDate().toString());
+                jsonObject.put("category", resume.getCategory());
+                jsonObject.put("contents", resume.getContents());
+                jsonObject.put("fileLink", resume.getFileLink());
+                jsonObject.put("viewCnt", resume.getViewCnt());
+                jsonObject.put("years", resume.getYears());
+                jsonObject.put("memberId", resume.getMemberId());
+                JSONArray jsonArray1 = new JSONArray();
+                for(ResumeHashtag resumeHashtag: resume.getResumeHashtagList()){
+                    jsonArray1.add(resumeHashtag.getHashtag().getHashtagName());
+                }
+                jsonObject.put("hashtagList", jsonArray1);
+                jsonArray.add(jsonObject);
+            }
+        }
+        return jsonArray;
     }
 
     public ViewResumeDTO viewResume(Long memberId, Long resumeId, Long tokenId) {
@@ -56,12 +80,43 @@ public class ResumeService {
         }
     }
 
-    public void uploadResume(Long id, String fullFileLink, UploadResumeDTO uploadResumeDTO) {
-        String title = uploadResumeDTO.getTitle();
-        String contents = uploadResumeDTO.getContents();
-        CategoryEnum category = uploadResumeDTO.getCategory();
-        Integer years = uploadResumeDTO.getYears();
-        resumeRepository.uploadResume(id, fullFileLink, title, contents, category, years);
+    public void uploadResume(Long id, String fullFileLink, UploadResumeDTO uploadResumeDTO, List<String> hashtagList) {
+        RegisterResumeDTO registerResumeDTO = new RegisterResumeDTO();
+        registerResumeDTO.setTitle(uploadResumeDTO.getTitle());
+        registerResumeDTO.setContents(uploadResumeDTO.getContents());
+        registerResumeDTO.setYears(uploadResumeDTO.getYears());
+        registerResumeDTO.setFileLink(fullFileLink);
+        registerResumeDTO.setCategory(uploadResumeDTO.getCategory());
+        registerResumeDTO.setMemberId(id);
+        registerResumeDTO.setIsDelete(false);
+
+        Resume resume = registerResumeDTO.toEntity();
+
+        Resume resumeId = resumeRepository.save(resume);
+        log.info(String.valueOf(resumeId.getId()));
+        Long resumeIdCheck = resumeId.getId();
+
+        for(String hashtag: hashtagList){
+
+            ResumeHashtagDTO resumeHashtagDTO = new ResumeHashtagDTO();
+            try{
+                Hashtag check = hashtagRepository.findByHashtagName(hashtag);
+                Long checkId = check.getId();
+                resumeHashtagDTO.setHashtagId(checkId);
+
+            }catch(Exception e){
+                HashtagDTO hashtagDTO = new HashtagDTO();
+                hashtagDTO.setHashtagName(hashtag);
+                Hashtag hashtag1 = hashtagDTO.toEntity();
+                Hashtag hashtag2 = hashtagRepository.save(hashtag1);
+
+                resumeHashtagDTO.setHashtagId(hashtag2.getId());
+
+            }
+            resumeHashtagDTO.setResumeId(resumeIdCheck);
+            ResumeHashtag resumeHashtag = resumeHashtagDTO.toEntity();
+            resumeHashtagRepository.save(resumeHashtag);
+        }
     }
 
     public void deleteResume (Long memberId, Long postId) {
@@ -111,10 +166,9 @@ public class ResumeService {
     public Boolean deleteResumeComment(Long memberId, Long commentId) {
         Optional<ResumeComment> resumeCommentOptional = resumeCommentRepository.findById(commentId);
         ResumeComment resumeComment = resumeCommentOptional.orElse(null);
-        if(resumeComment.getMember().getId() == memberId) {
-
+        if (resumeComment.getMember().getId() == memberId) {
             resumeCommentRepository.deleteResumeComment(commentId);
-        }else{
+        } else {
             return false;
         }
         return true;
@@ -210,7 +264,7 @@ public class ResumeService {
         return resumeScrapRepository.save(resumeScrap);
     }
 
-    public void updateResume(Long memberId, Long resumeId, UploadResumeDTO uploadResumeDTO, String fullFileNamePath) {
+    public void updateResume(Long memberId, Long resumeId, UploadResumeDTO uploadResumeDTO, String fullFileNamePath, List<String> hashtagList) {
         String title = uploadResumeDTO.getTitle();
         String contents = uploadResumeDTO.getContents();
         CategoryEnum category = uploadResumeDTO.getCategory();

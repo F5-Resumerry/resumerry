@@ -18,7 +18,7 @@ public interface ResumeCommentRepository extends JpaRepository<ResumeComment, Lo
     @Transactional
     @Modifying
     @Query(value = "UPDATE resume_comment r SET r.is_delete = 'Y' where r.resume_comment_id = :commentId", nativeQuery = true)
-    int deleteResumeComment(Long commentId);
+    Integer deleteResumeComment(Long commentId);
 
     Optional<ResumeComment> findById(Long resumeCommentId);
 
