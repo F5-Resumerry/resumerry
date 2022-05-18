@@ -45,6 +45,8 @@ public class MemberServiceImpl implements MemberService {
         memberInfoRepository.save(memberInfo);
 
         memberDTO.setMemberInfo(memberInfo);
+        memberDTO.setMemberInfoId(memberInfo.getId());
+
         Member member = memberDTO.toEntity();
         return memberRepository.save(member);
     }

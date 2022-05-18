@@ -56,10 +56,10 @@ public class Resume extends BaseTimeEntity {
     private Boolean isDelete;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"), insertable = false, updatable = false)
     private Member member;
 
-    @Column(name = "member_id", insertable = false, updatable = false)
+    @Column(name = "member_id")
     private Long memberId;
 
     @OneToMany(mappedBy = "resume")
@@ -74,8 +74,8 @@ public class Resume extends BaseTimeEntity {
     @OneToMany(mappedBy = "resume")
     private List<ResumeScrap> resumeScrapList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "resume")
-//    private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
+    @OneToMany(mappedBy = "resume")
+    private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
 //    @Column(name = "hashtag")
 //    private String hashtag;
 

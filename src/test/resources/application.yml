@@ -39,11 +39,29 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
 logging:
   level:
     org.hibernate.SQL: debug
 jwt:
   secret: sdfasdfa
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAZFBQMW2O2LYWNE6U  # slack 확인요망
+      secretKey: 5M8r71jdlCkLPNXWW+85lAzYMH3KlHSq7tajjVsY # slack 확인요망
+    s3:
+      bucket: resume-file-storage
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+
 
 
 #
