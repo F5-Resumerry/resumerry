@@ -11,6 +11,9 @@ import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
 import com.f5.resumerry.selector.CategoryEnum;
 import com.f5.resumerry.selector.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -78,6 +81,8 @@ public class Member extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"), insertable = false, updatable = false)
+    @JsonIgnore
+    @JsonProperty("memberInfo")
     private MemberInfo memberInfo;
 
     @Column(name = "member_info_id")
