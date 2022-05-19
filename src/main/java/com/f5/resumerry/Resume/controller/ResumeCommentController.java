@@ -68,7 +68,7 @@ public class ResumeCommentController {
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONArray jsonArray = resumeService.viewComments(resumeId, memberIdByToken.getAccountName());
+        JSONArray jsonArray = resumeService.viewComments(resumeId, memberIdByToken.getId());
         return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
     }
 

@@ -84,7 +84,7 @@ public class PostCommentController {
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONArray jsonArray = postService.viewComments(postId, memberIdByToken.getAccountName());
+        JSONArray jsonArray = postService.viewComments(postId, memberIdByToken.getId());
         return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
     }
 

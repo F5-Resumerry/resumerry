@@ -3,6 +3,8 @@ package com.f5.resumerry.Post.service;
 import com.f5.resumerry.Post.dto.*;
 import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
+import com.f5.resumerry.Post.repository.PostCommentRecommendRepository;
+import com.f5.resumerry.Post.repository.PostCommentReportRepository;
 import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
 import com.f5.resumerry.Resume.Resume;
@@ -34,6 +36,12 @@ public class PostService {
 
     @Autowired
     private PostCommentRepository postCommentRepository;
+
+    @Autowired
+    private PostCommentRecommendRepository postCommentRecommendRepository;
+
+    @Autowired
+    private PostCommentReportRepository postCommentReportRepository;
 
 
     public List<PostsDTO> findPosts(String title, String category, String sort) {
@@ -108,24 +116,18 @@ public class PostService {
         postRepository.banComment(postId,commentId,reportMember);
     }
 
-    public JSONArray viewComments(Long postId, String accountName) {
+    public JSONArray viewComments(Long postId, Long memberId) {
 
         ArrayList<Long>[] arrayList = new ArrayList[100];
         for(int i = 0; i <  100; i++){
             arrayList[i] = new ArrayList<Long>();
         }
-        Optional<Post> postOptional = postRepository.findById(postId);
-        Post post = postOptional.orElse(null);
-        List<PostComment> postComments = postCommentRepository.findByPost(post);
+        List<PostComment> postComments = postCommentRepository.findByPostId(postId);
         for(PostComment postComment: postComments){
             arrayList[postComment.getPostCommentGroup()].add(postComment.getId());
         }
-        JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for(ArrayList arrayList1: arrayList){
-//            if(!arrayList1.isEmpty()){
-//                break;
-//            }
             int count = 0;
             JSONObject group = new JSONObject();
             JSONArray depth = new JSONArray();
@@ -146,8 +148,10 @@ public class PostService {
                     group.put("modifiedDate", postComment.getModifiedDate().toString());
                     group.put("commentGroup", postComment.getPostCommentGroup());
                     group.put("commentDepth", postComment.getPostCommentDepth());
-                    group.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
+                    group.put("isOwner", postComment.getMember().getId() == memberId ? true : false);
                     group.put("isDelete", postComment.getIsDelete());
+                    group.put("isRecommend", postCommentRecommendRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
+                    group.put("isBanned", postCommentReportRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
                     count += 1;
                     continue;
                 }
@@ -162,8 +166,10 @@ public class PostService {
                 depthIn.put("modifiedDate", postComment.getModifiedDate().toString());
                 depthIn.put("commentGroup", postComment.getPostCommentGroup());
                 depthIn.put("commentDepth", postComment.getPostCommentDepth());
-                depthIn.put("isOwner", postComment.getMember().getAccountName() == accountName ? true : false);
+                depthIn.put("isOwner", postComment.getMember().getId() == memberId ? true : false);
                 depthIn.put("isDelete", postComment.getIsDelete());
+                depthIn.put("isRecommend", postCommentRecommendRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
+                depthIn.put("isBanned", postCommentReportRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
                 depth.add(depthIn);
             }
             log.info(String.valueOf(depth));
