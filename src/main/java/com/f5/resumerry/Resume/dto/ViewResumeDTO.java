@@ -5,11 +5,14 @@ import com.f5.resumerry.Resume.ResumeScrap;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ViewResumeDTO {
 
     private Long memberId;
@@ -18,7 +21,7 @@ public class ViewResumeDTO {
     private String title;
     private CategoryEnum category;
     private String contents;
-    private String hashtag;
+    private List<String> hashtag;
     private Integer years;
     private LocalDateTime modifiedDate;
     private Long resumeId;

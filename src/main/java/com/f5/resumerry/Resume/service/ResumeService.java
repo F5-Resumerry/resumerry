@@ -1,11 +1,14 @@
 package com.f5.resumerry.Resume.service;
 
 import com.f5.resumerry.Member.domain.entity.Member;
+import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
 import com.f5.resumerry.Post.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.*;
+import com.f5.resumerry.Reward.repository.TokenHistoryRepository;
+import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,10 @@ public class ResumeService {
     private final ResumeCommentReportRepository resumeCommentReportRepository;
     private final HashtagRepository hashtagRepository;
     private final ResumeHashtagRepository resumeHashtagRepository;
+    private  final MemberInfoRepository memberInfoRepository;
+
+    private final TokenHistoryRepository tokenHistoryRepository;
+
 
     public JSONArray viewResumesInMyPage(Long memberId) {
         JSONArray jsonArray = new JSONArray();
@@ -71,22 +78,36 @@ public class ResumeService {
         // 2. 내것이 아니면
         // 2.1 스크랩을 하였는가
         // 2.2 추천이 되어있는가
+        ViewResumeDTO viewResumeDTO = new ViewResumeDTO();
         if(memberId.equals(tokenId)) {
-            return new ViewResumeDTO(resume, true, false, false);
+            viewResumeDTO = new ViewResumeDTO(resume, true, false, false);
         } else {
             if (resumeScrapRepository.existsByResume(resume)) {
                 // 스크랩이 존재한다면
                 if (resumeRecommendRepository.existsByResume(resume)) {
-                    return new ViewResumeDTO(resume, false, true, true);
+                    viewResumeDTO = new ViewResumeDTO(resume, false, true, true);
                 }
-                return new ViewResumeDTO(resume, false, true, false);
+                viewResumeDTO = new ViewResumeDTO(resume, false, true, false);
             } else {
                 if (resumeRecommendRepository.existsByResume(resume)) {
-                    return new ViewResumeDTO(resume, false, false, true);
+                    viewResumeDTO = new ViewResumeDTO(resume, false, false, true);
                 }
-                return new ViewResumeDTO(resume, false, false, false);
+                viewResumeDTO = new ViewResumeDTO(resume, false, false, false);
             }
         }
+        // dto에 hashtagname(string 부여)
+            List<String> hashtagLists = new ArrayList<String>();
+            // resume hash tag 에서 list 반환
+            for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
+                Long hashtagId = resumeHashtag.getHashtagId();
+                Hashtag hashtag = hashtagRepository.findByHashtagId(hashtagId);
+                hashtagLists.add(hashtag.getHashtagName());
+            }
+            viewResumeDTO.setHashtag(hashtagLists);
+
+            return viewResumeDTO;
+
+
 
     }
 
@@ -403,15 +424,36 @@ public class ResumeService {
 
     //이력서 잠금 해제  -> 잠금
 
-    public void unLockResume(Long memberid, Long resumeId) {
-        // 1. 이력서를 잠금해제 할만큼 토큰을 가지고있는가
+    public BooleanResponseDTO unLockResume(Long memberId, Long resumeId) {
+        // return BooleanReponse에 담기
+        // 1. 이력서를 잠금해제 할만큼 토큰을 가지고있는가 -> 5개라고 임시 지정
         // 1.1 가지고 있음 ( 토큰 갯수 확인 )
         // 1.1.1 유저의 토큰 갯수만큼 차감
         // 1.1.1.1. 해당 유저가 해당 레줌을 lock한것을 put -> 성공시 성공 resposonse 반환
         // 1.2 가지고 있지 않음 -> 부족한 갯수 반환
 
+        Integer numOfTokenToUnLockResume = 5;
 
+        String reasonOftokenUsing = "used";
 
+        BooleanResponseDTO responseDTO = new BooleanResponseDTO(true);
+
+        Integer numOfTokenUserHas = memberInfoRepository.findByMemberId(memberId);
+
+        if(numOfTokenUserHas < numOfTokenToUnLockResume ) {
+            responseDTO.setResult(false);
+            return responseDTO;
+        }
+
+        memberInfoRepository.updateToken(numOfTokenToUnLockResume, memberId);
+
+        // token_history table 관리 여부
+
+        // 해당 이력서 열람을 위해 토큰을 사용했다는 이력 남기는거 toekn histroy에 resume_id 추가했음
+
+        tokenHistoryRepository.insertTokenHistory(memberId, resumeId, reasonOftokenUsing, numOfTokenUserHas-numOfTokenToUnLockResume );
+
+        return responseDTO;
 
     }
 }
