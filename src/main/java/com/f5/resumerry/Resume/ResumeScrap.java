@@ -26,19 +26,19 @@ public class ResumeScrap{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumescrap"))
+    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumescrap"), insertable = false, updatable = false)
     private Resume resume;
 
-    @Column(name = "resume_id",insertable = false, updatable = false)
+    @Column(name = "resume_id")
     private Long resumeId;
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumescrap"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumescrap"), insertable = false, updatable = false)
     private Member member;
 
-    @Column(name = "member_id", insertable = false, updatable = false)
+    @Column(name = "member_id")
     private Long memberId;
 
     @CreatedDate
-    @Column(name = "created_date", nullable = false)
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 }

@@ -8,11 +8,12 @@ import com.f5.resumerry.Post.dto.PostsDTO;
 import com.f5.resumerry.Post.dto.RegisterPostDTO;
 import com.f5.resumerry.Post.dto.UpdatePostDTO;
 import com.f5.resumerry.Post.service.PostService;
-
+import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -71,31 +72,32 @@ public class PostController {
 
     @PostMapping(value = "/post")
     @ApiOperation(value = "게시글 등록")
-    public ResponseEntity<Map<String, Boolean>> registerPost(
+    public ResponseEntity<BooleanResponseDTO> registerPost(
             @ApiParam(value = "게시글 DTO") @RequestBody RegisterPostDTO registerPostDTO,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     )  {
         Member memberByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        Map<String, Boolean> param = new HashMap<>();
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         try {
            postService.registerPosts(memberByToken.getId(), registerPostDTO);
         } catch (Exception e) {
-            param.put("result", false);
-            return ResponseEntity.ok(param);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return ResponseEntity.ok(param);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
     @PutMapping(value = "/post/{member_id}/{post_id}") // 게시글 수정
     @ApiOperation(value = "게시글 수정")
-    public ResponseEntity putPost(
+    public ResponseEntity<BooleanResponseDTO> putPost(
             @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
             @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
             @ApiParam(value = "게시글 수정 DTO") @RequestBody UpdatePostDTO putPostDTO,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         if (!memberId.equals(memberIdByToken.getId())) {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
@@ -103,35 +105,33 @@ public class PostController {
         try {
             postService.updatePost(memberId, postId, putPostDTO);
         } catch (Exception e) {
-            param.put("result", false);
-            return ResponseEntity.ok(param);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return ResponseEntity.ok(param);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
     @DeleteMapping("/post/{member_id}/{post_id}")
     @ApiOperation(value = "게시글 삭제")
-    public ResponseEntity DeletePost(
+    public ResponseEntity<BooleanResponseDTO> DeletePost(
             @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
             @ApiParam(value = "게시글 번호") @PathVariable("post_id") Long postId,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         if (!memberId.equals(memberIdByToken.getId())) {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
-
-        Map<String, Boolean> param = new HashMap<>();
         try {
             postService.deletePost(memberIdByToken.getId(),postId);
         } catch (Exception e) {
-            param.put("result", false);
-            return ResponseEntity.ok(param);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return ResponseEntity.ok(param);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
 }

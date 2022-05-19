@@ -1,9 +1,6 @@
 package com.f5.resumerry.Resume.service;
 
 import com.f5.resumerry.Post.dto.GetCommentDTO;
-import com.f5.resumerry.Post.dto.PostCommentDTO;
-import com.f5.resumerry.Post.entity.Post;
-import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Member.domain.entity.Member;
@@ -12,6 +9,7 @@ import com.f5.resumerry.Resume.repository.*;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.LocalDateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,31 +233,31 @@ public class ResumeService {
         return resumeRecommendRepository.save(resumeRecommend);
     }
 
-    public boolean scrapResume(String accountName, Long resumeId){
-        Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
-        Member member = memberRepository.findByAccountName(accountName);
-        Resume resume = resumeOptional.orElse(null);
-        if (resumeScrapRepository.existsByMemberAndResume(member, resume)){
-            deleteResumeScrap(resume, member);
+    public boolean scrapResume(Long memberId, Long resumeId){
+        if (resumeScrapRepository.existsByMemberIdAndResumeId(memberId, resumeId)){
+            deleteResumeScrap(resumeId, memberId);
         } else{
-            saveResumeScrap(resume, member);
+            saveResumeScrap(resumeId, memberId);
         }
         return true;
     }
 
     @Transactional
-    public void deleteResumeScrap(Resume resume, Member member) {
-        ResumeScrap resumeScrap = resumeScrapRepository.findByResumeAndMember(resume, member);
+    public void deleteResumeScrap(Long resumeId, Long memberId) {
+        ResumeScrap resumeScrap = resumeScrapRepository.findByResumeIdAndMemberId(resumeId, memberId);
         resumeScrapRepository.deleteById(resumeScrap.getId());
         return;
     }
 
 
     @Transactional
-    public ResumeScrap saveResumeScrap(Resume resume, Member member) {
+    public ResumeScrap saveResumeScrap(Long resumeId, Long memberId) {
         ResumeScrapDTO resumeScrapDTO = new ResumeScrapDTO();
-        resumeScrapDTO.setResume(resume);
-        resumeScrapDTO.setMember(member);
+        resumeScrapDTO.setResumeId(resumeId);
+        resumeScrapDTO.setMemberId(memberId);
+        resumeScrapDTO.setCreatedDate(java.time.LocalDateTime.now());
+        log.info(String.valueOf(LocalDateTime.now()));
+        log.info(String.valueOf(resumeScrapDTO));
         ResumeScrap resumeScrap = resumeScrapDTO.toEntity();
         return resumeScrapRepository.save(resumeScrap);
     }
@@ -269,7 +267,8 @@ public class ResumeService {
         String contents = uploadResumeDTO.getContents();
         CategoryEnum category = uploadResumeDTO.getCategory();
         Integer years = uploadResumeDTO.getYears();
-        resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
+        Resume resume = resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
+
     }
 
     public List<FilterViewResumeDTO> viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
