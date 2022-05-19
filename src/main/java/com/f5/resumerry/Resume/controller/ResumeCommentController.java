@@ -69,7 +69,7 @@ public class ResumeCommentController {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         JSONArray jsonArray = resumeService.viewComments(resumeId, memberIdByToken.getId());
-        return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(jsonArray);
     }
 
     @PutMapping("/{member_id}/{resume_id}/comment/{comment_id}")
