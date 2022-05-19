@@ -3,18 +3,16 @@ package com.f5.resumerry.Resume.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
-import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.dto.*;
-import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
+import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Controller
@@ -106,62 +101,60 @@ public class ResumeController {
 
     @DeleteMapping("/resume/{user_id}/{resume_id}")
     @ApiOperation(value = "이력서 삭제")
-    public ResponseEntity deleteResume(
+    public ResponseEntity<BooleanResponseDTO> deleteResume(
             @ApiParam(value = "회원 번호") @PathVariable("user_id") Long memberId,
             @ApiParam(value = "이력서 번호") @PathVariable("resume_id") Long resumeId,
             @ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         if (!memberId.equals(memberIdByToken.getId())) {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
-
-        Map<String, Boolean> param = new HashMap<>();
         try {
             resumeService.deleteResume(memberIdByToken.getId(),resumeId);
         } catch (Exception e) {
-            param.put("result", false);
-            return ResponseEntity.ok(param);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return ResponseEntity.ok(param);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
-    @PostMapping("/resume/{user_id}/{resume_id}")
+    @PostMapping("/resume/{user_id}/{resume_id}/recommend")
     @ApiOperation(value = "이력서 추천")
-    public ResponseEntity recommendResume(
+    public ResponseEntity<BooleanResponseDTO> recommendResume(
             @ApiParam(value = "회원 번호") @PathVariable("user_id") Long memberId,
             @ApiParam(value = "게시글 번호") @PathVariable("resume_id") Long resumeId,
             @ApiParam(value = "이력서 토큰") @RequestHeader("Authorization") String token) {
-        Map<String, Boolean> param = new HashMap<>();
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         try {
             resumeService.recommendResume(memberIdByToken.getAccountName(), resumeId);
         } catch (Exception e) {
-            param.put("result", false);
-            return ResponseEntity.ok(param);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return ResponseEntity.ok().body(param);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
     @PostMapping("/resume/{user_id}/{resume_id}/scrap")
     @ApiOperation(value = "이력서 스크랩")
-    public ResponseEntity scrapResume(
+    public ResponseEntity<BooleanResponseDTO> scrapResume(
             @ApiParam(value = "회원 번호") @PathVariable("user_id") Long memberId,
             @ApiParam(value = "게시글 번호") @PathVariable("resume_id") Long resumeId,
             @ApiParam(value = "이력서 토큰") @RequestHeader("Authorization") String token) {
-        Map<String, Boolean> param = new HashMap<>();
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         try {
-            resumeService.scrapResume(memberIdByToken.getAccountName(), resumeId);
+            resumeService.scrapResume(memberIdByToken.getId(), resumeId);
         } catch (Exception e) {
-            param.put("result", false);
-            return ResponseEntity.ok(param);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return ResponseEntity.ok().body(param);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
     @PutMapping(value = "/resume/{user_id}/{resume_id}")

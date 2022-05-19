@@ -31,7 +31,7 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCus
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Resume r set r.title = ?3 , r.contents = ?4 , r.category = ?5, r.years = ?6, r.fileLink = ?7 where r.id = ?2 and r.memberId = ?1")
-    void updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);
+    Resume updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);
 
     Optional<Resume> findById(Long id);
 

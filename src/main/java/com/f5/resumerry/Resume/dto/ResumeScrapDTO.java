@@ -1,10 +1,9 @@
 package com.f5.resumerry.Resume.dto;
 
-import com.f5.resumerry.Member.domain.entity.Member;
-import com.f5.resumerry.Resume.Resume;
-import com.f5.resumerry.Resume.ResumeRecommend;
 import com.f5.resumerry.Resume.ResumeScrap;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -15,23 +14,31 @@ public class ResumeScrapDTO {
 
     private Long id;
 
-    private Resume resume;
+    private Long resumeId;
 
-    private Member member;
+    private Long memberId;
+
+    private LocalDateTime createdDate;
 
     @Builder
-    public ResumeScrapDTO(Long id, Resume resume, Member member){
+    public ResumeScrapDTO(Long id, Long resumeId, Long memberId, java.time.LocalDateTime createdDate){
         this.id = id;
-        this.resume = resume;
-        this.member = member;
+        this.resumeId = resumeId;
+        this.memberId = memberId;
+        this.createdDate = createdDate;
     }
 
     public ResumeScrap toEntity(){
         ResumeScrap build = ResumeScrap.builder()
                 .id(id)
-                .resume(resume)
-                .member(member)
+                .resumeId(resumeId)
+                .memberId(memberId)
+                .createdDate(createdDate)
                 .build();
         return build;
+    }
+
+    public void setCreatedDate(java.time.LocalDateTime now) {
+        this.createdDate = now;
     }
 }

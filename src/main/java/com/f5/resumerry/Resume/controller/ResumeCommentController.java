@@ -7,6 +7,7 @@ import com.f5.resumerry.Post.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
+import com.f5.resumerry.dto.BooleanResponseDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -41,22 +42,22 @@ public class ResumeCommentController {
 
     @PostMapping("/{member_id}/{resume_id}/comment")
     @ApiOperation(value = "이력서 답변 등록")
-    public ResponseEntity<?> registerResumeComment(
+    public ResponseEntity<BooleanResponseDTO> registerResumeComment(
             @ApiParam(value = "회원 번호") @PathVariable("member_id") Long memberId,
             @ApiParam(value = "이력서 번호") @PathVariable("resume_id") Long resumeId,
             @ApiParam(value = "이력서 답변 DTO") @RequestBody GetCommentDTO getCommentDTO,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONObject param = new JSONObject();
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         try {
             resumeService.registerResumeComment(memberIdByToken.getId(), resumeId, getCommentDTO);
-        } catch (Exception e) {
-            param.put("result", false);
-            return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        }  catch (Exception e) {
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
     @GetMapping("/{member_id}/{resume_id}/comment")
@@ -73,63 +74,63 @@ public class ResumeCommentController {
 
     @PutMapping("/{member_id}/{resume_id}/comment/{comment_id}")
     @ApiOperation(value = "이력서 답변 삭제")
-    public ResponseEntity<?> deleteResumeComments(
+    public ResponseEntity<BooleanResponseDTO> deleteResumeComments(
             @PathVariable("member_id") Long memberId,
             @PathVariable("resume_id") Long resumeId,
             @PathVariable("comment_id") Long commentId,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONObject param = new JSONObject();
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         try {
             if (!resumeService.deleteResumeComment(memberIdByToken.getId(), commentId)){
                 throw new RuntimeException("삭제할 권한이 없습니다");
             }
         } catch (Exception e) {
-            param.put("result", false);
-            return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
     @PostMapping("/{member_id}/{resume_id}/comment/{comment_id}/recommend")
     @ApiOperation(value = "이력서 답변 추천")
-    public ResponseEntity<?> recommendResumeComment(
+    public ResponseEntity<BooleanResponseDTO> recommendResumeComment(
             @ApiParam(value = "member_id") @PathVariable("member_id") Long memberId,
             @ApiParam(value = "resume_id") @PathVariable("resume_id") Long resumeId,
             @ApiParam(value = "comment_id") @PathVariable("comment_id") Long commentId,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONObject param = new JSONObject();
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         try {
             resumeService.recommendResumeComment(memberIdByToken.getId(), commentId);
         } catch (Exception e) {
-            param.put("result", false);
-            return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
     @PostMapping("/{member_id}/{resume_id}/comment/{comment_id}/bam")
     @ApiOperation(value = "이력서 답변 신고")
-    public ResponseEntity<?> reportResumeComment(
+    public ResponseEntity<BooleanResponseDTO> reportResumeComment(
             @ApiParam(value = "member_id") @PathVariable("member_id") Long memberId,
             @ApiParam(value = "resume_id") @PathVariable("resume_id") Long resumeId,
             @ApiParam(value = "comment_id") @PathVariable("comment_id") Long commentId,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token
     ) {
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONObject param = new JSONObject();
+        BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         try {
             resumeService.reportResumeComment(memberIdByToken.getId(), commentId);
         } catch (Exception e) {
-            param.put("result", false);
-            return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+            booleanResponseDTO.setResult(false);
+            return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
         }
-        param.put("result", true);
-        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        booleanResponseDTO.setResult(true);
+        return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 }
