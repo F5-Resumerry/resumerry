@@ -26,5 +26,4 @@ public class ResumeDTO {
     private String imageSrc;
     private String nickname;
     private Integer years;
-
 }

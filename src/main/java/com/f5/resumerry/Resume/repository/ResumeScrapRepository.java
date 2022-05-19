@@ -12,4 +12,6 @@ public interface ResumeScrapRepository extends JpaRepository<ResumeScrap, Long> 
     void deleteById(Long id);
 
     ResumeScrap findByResumeAndMember(Resume resume, Member member);
+
+    Boolean existsByResume(Resume resume);
 }

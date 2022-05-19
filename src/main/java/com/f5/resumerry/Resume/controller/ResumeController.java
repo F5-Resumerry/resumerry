@@ -3,6 +3,7 @@ package com.f5.resumerry.Resume.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
+import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
@@ -180,4 +181,18 @@ public class ResumeController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(value = "/resume/{member_id}/{resume_id}/unlock")
+    @ApiOperation("이력서 잠금 해제")
+    public ResponseEntity unLockResume(@ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token,
+                                         @ApiParam(value = "보낸 유저 아이디") @PathVariable("member_id") Long memberId,
+                                        @ApiParam(value = "이력서 아이디") @PathVariable("resume_id") Long resumeId) {
+        Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        if (!memberId.equals(member.getId())) {
+            throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
+        }
+        resumeService.unLockResume(member.getId(), resumeId);
+        return ResponseEntity.ok().build();
+    }
+
 }
