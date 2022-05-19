@@ -30,4 +30,7 @@ public class ResumeRecommend{
     @ManyToOne
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumerecommend"))
     private Member member;
+
+
+
 }

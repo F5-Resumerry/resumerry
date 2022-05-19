@@ -22,7 +22,6 @@ import java.util.List;
 )
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -36,8 +35,7 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private String contents;
 
-    @Column(nullable = false)
-    private Integer views;
+    private Integer viewCnt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -68,13 +66,4 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
     private List<PostComment> postCommentList = new ArrayList<>();
 
-    public Post(String title, String contents, int i, CategoryEnum category, boolean anonymous, Long memberId, Long resumeId) {
-        this.title = title;
-        this.contents = contents;
-        this.views = i;
-        this.category = category;
-        this.isAnonymous = anonymous;
-        this.memberId = memberId;
-        this.resumeId = resumeId;
-    }
 }

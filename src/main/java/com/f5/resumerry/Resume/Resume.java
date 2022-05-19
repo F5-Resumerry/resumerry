@@ -45,9 +45,10 @@ public class Resume extends BaseTimeEntity {
     private String fileLink;
 
     @Column(nullable = false)
-    private Integer views;
+    private Integer viewCnt;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private CategoryEnum category;
 
     @Column(name = "is_delete", nullable = false)
@@ -55,10 +56,10 @@ public class Resume extends BaseTimeEntity {
     private Boolean isDelete;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"), insertable = false, updatable = false)
     private Member member;
 
-    @Column(name = "member_id", insertable = false, updatable = false)
+    @Column(name = "member_id")
     private Long memberId;
 
     @OneToMany(mappedBy = "resume")
@@ -75,5 +76,7 @@ public class Resume extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "resume")
     private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
+//    @Column(name = "hashtag")
+//    private String hashtag;
 
 }

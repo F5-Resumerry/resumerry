@@ -1,5 +1,6 @@
 package com.f5.resumerry.converter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,9 +14,11 @@ import java.time.LocalDateTime;
 public abstract class BaseTimeEntity {
 
     @CreatedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
 
     @LastModifiedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime modifiedDate;
 
     public LocalDateTime getCreatedDate() {

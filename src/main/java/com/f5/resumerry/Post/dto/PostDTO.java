@@ -10,20 +10,17 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostDTO {
     // 여기에 dto contructure 정리 예정
     private Long id;
     private String title;
-    private Integer views;
+    private String contents;
+    private Integer viewCnt;
     private CategoryEnum category;
     private Boolean isAnonymous;
+    private Boolean isDelete;
     private Long memberId;
     private Long resumeId;
-
-
-
-
-
-
 
 }
