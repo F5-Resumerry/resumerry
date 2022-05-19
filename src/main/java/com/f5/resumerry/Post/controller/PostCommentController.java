@@ -78,14 +78,14 @@ public class PostCommentController {
 
     @GetMapping("/post/{member_id}/{post_id}/comment")
     @ApiOperation(value = "게시글 답변 조회")
-    public ResponseEntity<?> viewPostComments(
+    public ResponseEntity viewPostComments(
             @PathVariable("member_id") Long memberId,
             @PathVariable("post_id") Long postId,
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         JSONArray jsonArray = postService.viewComments(postId, memberIdByToken.getId());
-        return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(jsonArray);
     }
 
     @PostMapping("/post/{member_id}/{post_id}/comment/{comment_id}/recommend")

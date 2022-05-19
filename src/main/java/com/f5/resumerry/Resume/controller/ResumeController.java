@@ -86,7 +86,7 @@ public class ResumeController {
         }
         JSONArray result = new JSONArray();
         result = resumeService.viewResumesInMyPage(user_id);
-        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping(value = "/resume/{user_id}/{resume_id}")
