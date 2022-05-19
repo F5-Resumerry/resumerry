@@ -40,3 +40,6 @@ out/
 ### aws credential  ###
 !**/src/main/resources/application-aws-credential.yml
 
+### queryDsl ###
+!**/build/generated
+
