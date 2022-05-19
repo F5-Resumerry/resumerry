@@ -122,6 +122,11 @@ public class Member extends BaseTimeEntity {
         order.setClient(this);
     }
 
+    public void addToken(Integer amount) {
+        MemberInfo memberInfo = this.getMemberInfo();
+        memberInfo.setToken(memberInfo.getToken() + amount);
+    }
+
     @OneToMany(mappedBy = "member")
     private List<TokenHistory> tokenHistoryList = new ArrayList<>();
 

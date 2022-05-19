@@ -1,10 +1,7 @@
 package com.f5.resumerry.Member.domain.entity;
 
 import com.f5.resumerry.converter.BooleanToYNConverter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -23,6 +20,8 @@ public class MemberInfo {
     @Column(name = "member_info_id")
     private Long id;
 
+    @Getter
+    @Setter
     @Column(nullable = false)
     private Integer token = 0 ;
 

@@ -106,7 +106,16 @@ public class OrderService {
                     OrderResponseHandleDto.class
             ).getBody();
 
-            if (orderResponseHandleDto ==  null) throw new BusinessException("잘못된 주문입니다.");
+            if (orderResponseHandleDto ==  null) {
+                throw new BusinessException("잘못된 주문입니다.");
+            } else {
+                memberRepository.findByEmail(order.getClientEmail())
+                        .ifPresentOrElse(
+                                M -> M.addToken(100)
+                                , () -> {
+                                    throw new BusinessException("존재하지 않는 회원입니다.");
+                                });
+            }
         } catch (Exception e) {
             throw new BusinessException("최종결제 실행 요청에 실패하였습니다.");
         }
