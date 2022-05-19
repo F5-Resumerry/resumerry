@@ -8,6 +8,7 @@ import com.f5.resumerry.Post.dto.PostsDTO;
 import com.f5.resumerry.Post.dto.RegisterPostDTO;
 import com.f5.resumerry.Post.dto.UpdatePostDTO;
 import com.f5.resumerry.Post.service.PostService;
+
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
