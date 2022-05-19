@@ -89,7 +89,7 @@ public class PostService {
 
     // 댓글 controller 시작
     public void registerPostComment(Long memberId, Long postId, GetCommentDTO req) {
-        PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getPostCommentGroup(), req.getPostCommentDepth(), req.getIsAnonymous(), memberId, postId);
+        PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getCommentGroup(), req.getCommentDepth(), req.getIsAnonymous(), memberId, postId);
         postRepository.registerPostComment(postCommentDTO);
     }
 

@@ -3,7 +3,7 @@ package com.f5.resumerry.Resume.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
-import com.f5.resumerry.Post.dto.GetCommentDTO;
+import com.f5.resumerry.Resume.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;

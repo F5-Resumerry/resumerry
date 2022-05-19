@@ -1,16 +1,14 @@
 package com.f5.resumerry.Resume.service;
 
-import com.f5.resumerry.Post.dto.GetCommentDTO;
+import com.f5.resumerry.Resume.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberRepository;
-import com.f5.resumerry.Post.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeComment;
 import com.f5.resumerry.Resume.ResumeRecommend;
 import com.f5.resumerry.Resume.ResumeScrap;
-import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.ResumeCommentRepository;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.repository.ResumeRepository;
@@ -174,8 +172,8 @@ public class ResumeService {
 
         resumeCommentDTO.setContents(req.getContents());
         resumeCommentDTO.setIsAnonymous(req.getIsAnonymous());
-        resumeCommentDTO.setResumeCommentGroup(req.getPostCommentGroup());
-        resumeCommentDTO.setResumeCommentDepth(req.getPostCommentDepth());
+        resumeCommentDTO.setResumeCommentGroup(req.getCommentGroup());
+        resumeCommentDTO.setResumeCommentDepth(req.getCommentDepth());
         resumeCommentDTO.setMember(member);
         resumeCommentDTO.setResume(resume);
         resumeCommentDTO.setIsDelete("N");
