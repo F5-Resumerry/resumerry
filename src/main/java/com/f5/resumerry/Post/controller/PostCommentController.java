@@ -48,7 +48,7 @@ public class PostCommentController {
             return ResponseEntity.ok(param);
         }
         param.put("result", true);
-        return new ResponseEntity<>(param.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(param, HttpStatus.OK);
     }
 
     @DeleteMapping("/post/{member_id}/{post_id}/comment/{comment_id}")

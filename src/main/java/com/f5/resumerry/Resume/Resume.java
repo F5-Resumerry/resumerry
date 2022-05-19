@@ -74,9 +74,8 @@ public class Resume extends BaseTimeEntity {
     @OneToMany(mappedBy = "resume")
     private List<ResumeScrap> resumeScrapList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "resume")
-//    private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
-//    @Column(name = "hashtag")
-//    private String hashtag;
+    @OneToMany(mappedBy = "resume")
+    private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
+
 
 }

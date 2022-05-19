@@ -89,7 +89,6 @@ public class ResumeController {
     public ResponseEntity viewResume(@ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token,
                                    @ApiParam(value = "이력서 주인 아이디") @PathVariable("user_id") Long userId,
                                    @ApiParam(value = "이력서 아이디") @PathVariable("resume_id") Long resumeId) {
-        System.out.println("print");
         Long tokenId = memberService.getMember(jwtUtil.extractUsername(token.substring(7))).getId();
         ViewResumeDTO resumeResponse = resumeService.viewResume(userId,resumeId,tokenId);
         return ResponseEntity.ok(resumeResponse);

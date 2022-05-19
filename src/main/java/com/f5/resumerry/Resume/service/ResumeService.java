@@ -83,13 +83,14 @@ public class ResumeService {
         resumeRepository.updateIsDelete(memberId, postId);
     }
 
+
     public boolean recommendResume(String accountName, Long resumeId){
         Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
         Member member = memberRepository.findByAccountName(accountName);
         Resume resume = resumeOptional.orElse(null);
         if (resumeRecommendRepository.existsByMemberAndResume(member, resume)){
             deleteResumeRecommend(resume, member);
-        } else{
+        } else {
             saveResumeRecommend(resume, member);
         }
         return true;
@@ -169,6 +170,9 @@ public class ResumeService {
 
     public List<FilterViewResumeDTO> viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
         // 해시태그 반영 안됨
+        // 해시태그 이름으로 파싱 -> resumeid
+
+        String hashtag = resumeFilterDTO.getHashtag();
 
         String sort = resumeFilterDTO.getSort();
         String title = resumeFilterDTO.getTitle();
@@ -176,7 +180,7 @@ public class ResumeService {
         Integer endYear = resumeFilterDTO.getEndYear();
         CategoryEnum category = resumeFilterDTO.getCategory();
 
-        List<Resume> resumeLists = resumeRepository.findAllWithMember(title, startYear, endYear, category); //기본 생성 날짜로 반환
+        List<Resume> resumeLists = resumeRepository.findAllWithMember(title, startYear, endYear, category, hashtag); //기본 생성 날짜로 반환
         if(sort.equals("view")) {
             resumeLists = resumeRepository.findAllWithMemberByView(title, startYear, endYear, category);
         }
@@ -271,12 +275,15 @@ public class ResumeService {
 
     //이력서 잠금 해제  -> 잠금
 
-    public void unLockResume(Long id, Long resumeId) {
+    public void unLockResume(Long memberid, Long resumeId) {
         // 1. 이력서를 잠금해제 할만큼 토큰을 가지고있는가
         // 1.1 가지고 있음 ( 토큰 갯수 확인 )
         // 1.1.1 유저의 토큰 갯수만큼 차감
         // 1.1.1.1. 해당 유저가 해당 레줌을 lock한것을 put -> 성공시 성공 resposonse 반환
         // 1.2 가지고 있지 않음 -> 부족한 갯수 반환
+
+
+
 
     }
 }
