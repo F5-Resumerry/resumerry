@@ -1,16 +1,14 @@
 package com.f5.resumerry.Resume.service;
 
-import com.f5.resumerry.Post.dto.GetCommentDTO;
+import com.f5.resumerry.Resume.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberRepository;
-import com.f5.resumerry.Post.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeComment;
 import com.f5.resumerry.Resume.ResumeRecommend;
 import com.f5.resumerry.Resume.ResumeScrap;
-import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.ResumeCommentRepository;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.repository.ResumeRepository;
@@ -145,23 +143,19 @@ public class ResumeService {
     }
 
 
-    public boolean recommendResume(String accountName, Long resumeId){
-        Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
-        Member member = memberRepository.findByAccountName(accountName);
-        Resume resume = resumeOptional.orElse(null);
-        if (resumeRecommendRepository.existsByMemberAndResume(member, resume)){
-            deleteResumeRecommend(resume, member);
-        } else {
-            saveResumeRecommend(resume, member);
+    public boolean recommendResume(Long memberId, Long resumeId){
+
+        try{
+            ResumeRecommend resumeRecommend = resumeRecommendRepository.findByResumeIdAndMemberId(resumeId, memberId);
+            resumeRecommendRepository.deleteById(resumeRecommend.getId());
+        } catch(Exception e){
+            ResumeRecommendDTO resumeRecommendDTO = new ResumeRecommendDTO();
+            resumeRecommendDTO.setResumeId(resumeId);
+            resumeRecommendDTO.setMemberId(memberId);
+            ResumeRecommend resumeRecommend = resumeRecommendDTO.toEntity();
+            resumeRecommendRepository.save(resumeRecommend);
         }
         return true;
-    }
-
-    @Transactional
-    public void deleteResumeRecommend(Resume resume, Member member) {
-        ResumeRecommend resumeRecommend = resumeRecommendRepository.findByResumeAndMember(resume, member);
-        resumeRecommendRepository.deleteById(resumeRecommend.getId());
-        return;
     }
 
 
@@ -169,15 +163,12 @@ public class ResumeService {
     @Transactional
     public void registerResumeComment(Long memberId, Long resumeId, GetCommentDTO req) {
         ResumeCommentDTO resumeCommentDTO = new ResumeCommentDTO();
-        Member member = memberRepository.getById(memberId);
-        Resume resume = resumeRepository.getById(resumeId);
-
         resumeCommentDTO.setContents(req.getContents());
         resumeCommentDTO.setIsAnonymous(req.getIsAnonymous());
-        resumeCommentDTO.setResumeCommentGroup(req.getPostCommentGroup());
-        resumeCommentDTO.setResumeCommentDepth(req.getPostCommentDepth());
-        resumeCommentDTO.setMember(member);
-        resumeCommentDTO.setResume(resume);
+        resumeCommentDTO.setResumeCommentGroup(req.getCommentGroup());
+        resumeCommentDTO.setResumeCommentDepth(req.getCommentDepth());
+        resumeCommentDTO.setMemberId(memberId);
+        resumeCommentDTO.setResumeId(resumeId);
         resumeCommentDTO.setIsDelete("N");
         ResumeComment resumeComment = resumeCommentDTO.toEntity();
         resumeCommentRepository.save(resumeComment);
@@ -245,15 +236,6 @@ public class ResumeService {
         resumeCommentReportDTO.setResumeCommentId(commentId);
         ResumeCommentReport resumeCommentReport = resumeCommentReportDTO.toEntity();
         return resumeCommentReportRepository.save(resumeCommentReport);
-    }
-
-    @Transactional
-    public ResumeRecommend saveResumeRecommend(Resume resume, Member member) {
-        ResumeRecommendDTO resumeRecommendDTO = new ResumeRecommendDTO();
-        resumeRecommendDTO.setResume(resume);
-        resumeRecommendDTO.setMember(member);
-        ResumeRecommend resumeRecommend = resumeRecommendDTO.toEntity();
-        return resumeRecommendRepository.save(resumeRecommend);
     }
 
     public boolean scrapResume(Long memberId, Long resumeId){
@@ -324,26 +306,18 @@ public class ResumeService {
                 .collect(Collectors.toList());
     }
 
-    public JSONArray viewComments(Long resumeId, String accountName) {
+    public JSONArray viewComments(Long resumeId, Long memberId) {
 
         ArrayList<Long>[] arrayList = new ArrayList[100];
         for(int i = 0; i <  100; i++){
             arrayList[i] = new ArrayList<Long>();
         }
-        Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
-        log.info("hi\n");
-        Resume resume = resumeOptional.orElse(null);
-        log.info("hi\n");
-        List<ResumeComment> resumeComments = resumeCommentRepository.findByResume(resume);
+        List<ResumeComment> resumeComments = resumeCommentRepository.findByResumeId(resumeId);
         for(ResumeComment resumeComment: resumeComments){
             arrayList[resumeComment.getResumeCommentGroup()].add(resumeComment.getId());
         }
-        JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for(ArrayList arrayList1: arrayList){
-//            if(!arrayList1.isEmpty()){
-//                break;
-//            }
             int count = 0;
             JSONObject group = new JSONObject();
             JSONArray depth = new JSONArray();
@@ -364,8 +338,10 @@ public class ResumeService {
                     group.put("modifiedDate", resumeComment.getModifiedDate().toString());
                     group.put("commentGroup", resumeComment.getResumeCommentGroup());
                     group.put("commentDepth", resumeComment.getResumeCommentDepth());
-                    group.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);
+                    group.put("isOwner", resumeComment.getMember().getId() == memberId ? true : false);
                     group.put("isDelete", resumeComment.getIsDelete());
+                    group.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
+                    group.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                     count += 1;
                     continue;
                 }
@@ -380,8 +356,10 @@ public class ResumeService {
                 depthIn.put("modifiedDate", resumeComment.getModifiedDate().toString());
                 depthIn.put("commentGroup", resumeComment.getResumeCommentGroup());
                 depthIn.put("commentDepth", resumeComment.getResumeCommentDepth());
-                depthIn.put("isOwner", resumeComment.getMember().getAccountName() == accountName ? true : false);
+                depthIn.put("isOwner", resumeComment.getMember().getId() == memberId ? true : false);
                 depthIn.put("isDelete", resumeComment.getIsDelete());
+                depthIn.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
+                depthIn.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                 depth.add(depthIn);
             }
             log.info(String.valueOf(depth));
@@ -389,13 +367,7 @@ public class ResumeService {
                 group.put("childComments", depth);
                 jsonArray.add(group);
             }
-            log.info("hi\n");
         }
-
-        log.info(String.valueOf(arrayList));
-        log.info("hello\n");
-        log.info(String.valueOf(resumeComments));
-        jsonObject.put("hello", "hello");
         return jsonArray;
     }
 

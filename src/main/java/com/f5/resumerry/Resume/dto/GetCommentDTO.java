@@ -1,4 +1,4 @@
-package com.f5.resumerry.Post.dto;
+package com.f5.resumerry.Resume.dto;
 
 import lombok.Data;
 

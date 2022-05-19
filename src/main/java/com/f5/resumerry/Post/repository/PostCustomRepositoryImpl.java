@@ -158,18 +158,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
 
     public void registerRecommendComment(PostCommentRecommendDTO pcr) {
-        entityManager.createNativeQuery("insert into post_comment_recommend (member_id, post_comment_id, post_id) values (?, ?, ?)")
+        entityManager.createNativeQuery("insert into post_comment_recommend (member_id, post_comment_id) values (?, ?)")
                 .setParameter(1, pcr.getMemberId())
                 .setParameter(2, pcr.getCommentId())
-                .setParameter(3, pcr.getPostId())
                 .executeUpdate();
     }
 
     public void banComment( Long postId, Long commentId, Long reportMember) {
-        entityManager.createNativeQuery("insert into post_comment_report (member_id, post_comment_id, post_id) values (?, ?, ?)")
+        entityManager.createNativeQuery("insert into post_comment_report (member_id, post_comment_id) values (?, ?)")
                 .setParameter(1, reportMember)
                 .setParameter(2, commentId)
-                .setParameter(3, postId)
                 .executeUpdate();
     }
 

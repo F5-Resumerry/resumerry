@@ -13,22 +13,22 @@ public class ResumeRecommendDTO {
 
     private Long id;
 
-    private Resume resume;
+    private Long resumeId;
 
-    private Member member;
+    private Long memberId;
 
     @Builder
-    public ResumeRecommendDTO(Long id, Resume resume, Member member){
+    public ResumeRecommendDTO(Long id, Long resumeId, Long memberId){
         this.id = id;
-        this.resume = resume;
-        this.member = member;
+        this.resumeId = resumeId;
+        this.memberId = memberId;
     }
 
     public ResumeRecommend toEntity(){
         ResumeRecommend build = ResumeRecommend.builder()
                 .id(id)
-                .resume(resume)
-                .member(member)
+                .resumeId(resumeId)
+                .memberId(memberId)
                 .build();
         return build;
     }

@@ -7,11 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ResumeRecommendRepository extends JpaRepository<ResumeRecommend, Long>{
-    Boolean existsByMemberAndResume(Member member, Resume resume);
 
     void deleteById(Long id);
 
-    ResumeRecommend findByResumeAndMember(Resume resume, Member member);
+    ResumeRecommend findByResumeIdAndMemberId(Long ResumeId, Long memberId);
 
     Boolean existsByResume(Resume resume);
 }

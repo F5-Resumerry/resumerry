@@ -28,11 +28,6 @@ public class ValidController {
     private final MemberServiceImpl memberServiceImpl;
     private final ConfirmationTokenService confirmationTokenService;
 
-//    @PostMapping("/email/exists")
-//    public ResponseEntity<Boolean> checkEmailDuplicate(@RequestBody Member member) {
-//        return ResponseEntity.ok(memberServiceImpl.checkExistsEmail(member.getEmail()));
-//    }
-
     @PostMapping("/account/exists")
     public ResponseEntity<Map<String, Boolean>> checkAccountNameDuplicate(@RequestBody AccountNameDTO memberDTO) {
         Map<String, Boolean> result = new HashMap<>();

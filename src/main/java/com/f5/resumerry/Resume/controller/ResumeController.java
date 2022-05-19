@@ -130,7 +130,7 @@ public class ResumeController {
         BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         try {
-            resumeService.recommendResume(memberIdByToken.getAccountName(), resumeId);
+            resumeService.recommendResume(memberIdByToken.getId(), resumeId);
         } catch (Exception e) {
             booleanResponseDTO.setResult(false);
             return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
