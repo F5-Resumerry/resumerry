@@ -30,4 +30,6 @@ public class ResumeHashtagDTO {
                 .build();
         return build;
     }
+
+
 }

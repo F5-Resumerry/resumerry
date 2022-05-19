@@ -1,6 +1,8 @@
 package com.f5.resumerry.Member.domain.entity;
 
 import com.f5.resumerry.converter.BooleanToYNConverter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,6 +39,7 @@ public class MemberInfo {
     private Boolean emailVerified = true;
 
     @OneToOne(mappedBy = "memberInfo")
+    @JsonBackReference
     private Member member;
 
 

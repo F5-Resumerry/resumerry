@@ -1,6 +1,8 @@
 package com.f5.resumerry.Resume.repository;
 
+import com.f5.resumerry.Resume.Hashtag;
 import com.f5.resumerry.Resume.Resume;
+import com.f5.resumerry.Resume.ResumeHashtag;
 import com.f5.resumerry.Resume.ResumeScrap;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.selector.CategoryEnum;
@@ -49,22 +51,20 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
     // 3. startYear ~ endYear 해당 범위내에 있는 연차를 가져와야함
     // 4. hashtag는 일단 무시
     // 5. sort 기준 - 추천, view , years, recent 별로
-    public List<Resume> findAllWithMember(String title, Integer startYear, Integer endYear, CategoryEnum category, String hashtag) {
+    public List<Resume> findAllWithMember(String title, Integer startYear, Integer endYear, CategoryEnum category) {
        // resume의 모든 리스트를 반환한다. 이때 memebr와 join하여 모든 값을 가져온다. + hashtag 포함 1개
         return entityManager.createQuery("select r " +
-                "from Resume r " +
-                "join fetch r.member m " +
-                "where r.category = :category " +
+                        "from Resume r " +
+                        "join fetch r.member m " +
+                        "where r.category = :category " +
                         "and r.title like concat('%', :title,'%') " +
                         "and r.isDelete = true " +
                         "and r.years between :startYear and :endYear " +
-                        "and h.hashtagName = :hashtag " +
                         "order by r.createdDate desc " , Resume.class)
                 .setParameter("title", title)
                 .setParameter("startYear", startYear)
                 .setParameter("endYear", endYear)
                 .setParameter("category", category)
-                .setParameter("hashtag", hashtag)
                 .getResultList();
     }
     public List<Resume> findAllWithMemberByView(String title, Integer startYear, Integer endYear, CategoryEnum category) {
@@ -87,12 +87,13 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
     public List<Resume> findAllWithMemberByRecommend(String title, Integer startYear, Integer endYear, CategoryEnum category) {
         // resume의 모든 리스트를 반환한다. 이때 memebr와 join하여 모든 값을 가져온다.
         return entityManager.createQuery("select r " +
-                        "from Resume r " +
+                        "from Resume r, ResumeHashtag  rh " +
                         "join fetch r.member m " +
                         "where r.category = :category " +
                         "and r.title like concat('%', :title,'%') " +
                         "and r.isDelete = true " +
                         "and r.years between :startYear and :endYear " +
+                        "and rh.resumeId = r.id " +
                         "order by r.resumeRecommendList.size desc " , Resume.class)
                 .setParameter("title", title)
                 .setParameter("startYear", startYear)
@@ -126,6 +127,17 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
                .setParameter("resumeId", resumeId)
                .getSingleResult();
     }
-    
+
+    public List<ResumeHashtag> findHashtag(Long resumeId) {
+       return entityManager.createQuery(
+               "select rh " +
+                "from ResumeHashtag rh " +
+               "join rh.hashtag h " +
+                       "join rh.resume r " +
+                       "where r.id = :resumeId", ResumeHashtag.class)
+               .setParameter("resumeId", resumeId)
+               .getResultList();
+    }
+
 
 }

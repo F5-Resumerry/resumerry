@@ -1,20 +1,10 @@
 package com.f5.resumerry.Resume.service;
 
-import com.f5.resumerry.Post.dto.GetCommentDTO;
-import com.f5.resumerry.Resume.*;
-import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberRepository;
 import com.f5.resumerry.Post.dto.GetCommentDTO;
-import com.f5.resumerry.Resume.Resume;
-import com.f5.resumerry.Resume.ResumeComment;
-import com.f5.resumerry.Resume.ResumeRecommend;
-import com.f5.resumerry.Resume.ResumeScrap;
+import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
-import com.f5.resumerry.Resume.repository.ResumeCommentRepository;
-import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
-import com.f5.resumerry.Resume.repository.ResumeRepository;
-import com.f5.resumerry.Resume.repository.ResumeScrapRepository;
 import com.f5.resumerry.Resume.repository.*;
 import com.f5.resumerry.selector.CategoryEnum;
 import lombok.RequiredArgsConstructor;
@@ -297,16 +287,13 @@ public class ResumeService {
     public List<FilterViewResumeDTO> viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
         // 해시태그 반영 안됨
         // 해시태그 이름으로 파싱 -> resumeid
-
-        String hashtag = resumeFilterDTO.getHashtag();
-
         String sort = resumeFilterDTO.getSort();
         String title = resumeFilterDTO.getTitle();
         Integer startYear = resumeFilterDTO.getStartYear();
         Integer endYear = resumeFilterDTO.getEndYear();
         CategoryEnum category = resumeFilterDTO.getCategory();
 
-        List<Resume> resumeLists = resumeRepository.findAllWithMember(title, startYear, endYear, category, hashtag); //기본 생성 날짜로 반환
+        List<Resume> resumeLists = resumeRepository.findAllWithMember(title, startYear, endYear, category); //기본 생성 날짜로 반환
         if(sort.equals("view")) {
             resumeLists = resumeRepository.findAllWithMemberByView(title, startYear, endYear, category);
         }
@@ -318,10 +305,25 @@ public class ResumeService {
         }
 
         // 받은 resumeList dto로 반환
-        return resumeLists
+        List<FilterViewResumeDTO> lists = resumeLists
                 .stream()
                 .map(resume -> new FilterViewResumeDTO(resume))
                 .collect(Collectors.toList());
+
+        // dto에 hashtagname(string 부여)
+        for(FilterViewResumeDTO list : lists) {
+            List<String> hashtagLists = new ArrayList<String>();
+            Long resumeId = list.getResumeId();
+            // resume hash tag 에서 list 반환
+            for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
+                Long hashtagId = resumeHashtag.getHashtagId();
+                Hashtag hashtag = hashtagRepository.findByHashtagId(hashtagId);
+                hashtagLists.add(hashtag.getHashtagName());
+            }
+            list.setHashtag(hashtagLists);
+        }
+
+        return lists;
     }
 
     public JSONArray viewComments(Long resumeId, String accountName) {
