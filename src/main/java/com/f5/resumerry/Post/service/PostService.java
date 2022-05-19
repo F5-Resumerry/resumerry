@@ -102,7 +102,7 @@ public class PostService {
     }
 
     public void deletePostComment(Long memberId, Long postId, Long commentId) {
-        postRepository.updateCommentIsDelete(memberId, postId,commentId);
+        postRepository.updateCommentIsDelete(memberId, commentId);
     }
 
     public void registerRecommendComment(Long memberId, Long postId, Long commentId) {
