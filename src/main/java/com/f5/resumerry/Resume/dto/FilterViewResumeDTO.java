@@ -1,5 +1,6 @@
 package com.f5.resumerry.Resume.dto;
 
+import com.f5.resumerry.Resume.Hashtag;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeHashtag;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +22,7 @@ public class FilterViewResumeDTO {
     private Integer commentCnt;
     private Integer viewCnt;
     private LocalDateTime modifiedDate;
-    private List<ResumeHashtag> hashtag;
+    private List<String> hashtag;
     private Long memberId;
     private String imageSrc;
     private String nickname;
@@ -33,10 +35,12 @@ public class FilterViewResumeDTO {
         this.commentCnt = r.getResumeCommentList().size();
         this.viewCnt = r.getViewCnt();
         this.modifiedDate = r.getModifiedDate();
-        this.hashtag = r.getResumeHashtagList();
+        //this.hashtag = r.getResumeHashtagList();
         this.memberId = r.getMemberId();
         this.imageSrc = r.getMember().getImageSrc();
         this.nickname = r.getMember().getNickname();
         this.years = r.getYears();
     }
+
+
 }

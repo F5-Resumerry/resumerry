@@ -2,9 +2,11 @@ package com.f5.resumerry.Resume;
 
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Post.entity.Post;
+import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
 import com.f5.resumerry.selector.CategoryEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -75,8 +77,12 @@ public class Resume extends BaseTimeEntity {
     private List<ResumeScrap> resumeScrapList = new ArrayList<>();
 
     @OneToMany(mappedBy = "resume")
+    @JsonBackReference
     private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
 //    @Column(name = "hashtag")
 //    private String hashtag;
+
+    @OneToMany(mappedBy = "resume")
+    private List<TokenHistory> tokenHistoryList = new ArrayList<>();
 
 }

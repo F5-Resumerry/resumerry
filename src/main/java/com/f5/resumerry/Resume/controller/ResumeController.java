@@ -194,8 +194,7 @@ public class ResumeController {
         if (!memberId.equals(member.getId())) {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
-        resumeService.unLockResume(member.getId(), resumeId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(resumeService.unLockResume(member.getId(), resumeId));
     }
 
 }
