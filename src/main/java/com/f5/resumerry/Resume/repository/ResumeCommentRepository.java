@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface ResumeCommentRepository extends JpaRepository<ResumeComment, Long> {
-    List<ResumeComment> findByResume(Resume resume);
+    List<ResumeComment> findByResumeId(Long resumeId);
 
     @Transactional
     @Modifying

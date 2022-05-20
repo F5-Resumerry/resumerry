@@ -21,8 +21,8 @@ public class ResumeCommentDTO {
     private Boolean isAnonymous;
     private Integer resumeCommentGroup;
     private Integer resumeCommentDepth;
-    private Member member;
-    private Resume resume;
+    private Long memberId;
+    private Long resumeId;
     private String isDelete;
 
 
@@ -34,8 +34,8 @@ public class ResumeCommentDTO {
                 .isAnonymous(isAnonymous)
                 .resumeCommentGroup(resumeCommentGroup)
                 .resumeCommentDepth(resumeCommentDepth)
-                .member(member)
-                .resume(resume)
+                .memberId(memberId)
+                .resumeId(resumeId)
                 .isDelete(isDelete)
                 .build();
         return build;

@@ -42,12 +42,18 @@ public class ResumeComment extends BaseTimeEntity {
     private Integer resumeCommentDepth;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumecomment"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumecomment"), insertable = false, updatable = false)
     private Member member;
 
+    @Column(name = "member_id")
+    private Long memberId;
+
     @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumecomment"))
+    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumecomment"), insertable = false, updatable = false)
     private Resume resume;
+
+    @Column(name = "resume_id")
+    private Long resumeId;
 
     @OneToMany(mappedBy = "resumeComment")
     private List<ResumeCommentRecommend> resumeCommentRecommendList = new ArrayList<>();

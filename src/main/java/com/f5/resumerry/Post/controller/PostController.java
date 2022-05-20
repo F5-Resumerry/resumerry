@@ -54,7 +54,7 @@ public class PostController {
         if(!user_id.equals(memberByToken.getId())) {
             throw new AuthenticateException("잘못된 회원입니다.");
         }
-        List<PostsDTO> findPostsInMyPageResponse =postService.findPostsInMyPage(memberByToken.getId());
+        List<PostsDTO> findPostsInMyPageResponse = postService.findPostsInMyPage(memberByToken.getId());
         return ResponseEntity.ok(findPostsInMyPageResponse);
     }
 

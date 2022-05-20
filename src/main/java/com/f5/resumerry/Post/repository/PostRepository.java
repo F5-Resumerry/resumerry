@@ -32,8 +32,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
 
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query("update PostComment pc set pc.isDelete = 'Y' where pc.postId = :postId and pc.memberId = :memberId and pc.id = :commentId")
-    void updateCommentIsDelete(Long memberId, Long postId, Long commentId);
+    @Query("update PostComment pc set pc.isDelete = 'Y' where pc.memberId = :memberId and pc.id = :commentId")
+    void updateCommentIsDelete(Long memberId, Long commentId);
 
 
 

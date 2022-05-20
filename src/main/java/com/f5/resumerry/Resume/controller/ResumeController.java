@@ -86,7 +86,7 @@ public class ResumeController {
         }
         JSONArray result = new JSONArray();
         result = resumeService.viewResumesInMyPage(user_id);
-        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping(value = "/resume/{user_id}/{resume_id}")
@@ -130,7 +130,7 @@ public class ResumeController {
         BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         try {
-            resumeService.recommendResume(memberIdByToken.getAccountName(), resumeId);
+            resumeService.recommendResume(memberIdByToken.getId(), resumeId);
         } catch (Exception e) {
             booleanResponseDTO.setResult(false);
             return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);

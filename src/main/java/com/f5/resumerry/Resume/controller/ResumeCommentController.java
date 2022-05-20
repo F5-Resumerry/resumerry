@@ -3,7 +3,7 @@ package com.f5.resumerry.Resume.controller;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
-import com.f5.resumerry.Post.dto.GetCommentDTO;
+import com.f5.resumerry.Resume.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.repository.ResumeRecommendRepository;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
@@ -68,8 +68,8 @@ public class ResumeCommentController {
             @ApiParam(value = "토큰") @RequestHeader("Authorization") String token) {
 
         Member memberIdByToken = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        JSONArray jsonArray = resumeService.viewComments(resumeId, memberIdByToken.getAccountName());
-        return new ResponseEntity<>(jsonArray.toJSONString(), HttpStatus.OK);
+        JSONArray jsonArray = resumeService.viewComments(resumeId, memberIdByToken.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(jsonArray);
     }
 
     @PutMapping("/{member_id}/{resume_id}/comment/{comment_id}")

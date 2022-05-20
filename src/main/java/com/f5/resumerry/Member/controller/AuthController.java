@@ -76,7 +76,7 @@ public class AuthController {
             throw new DuplicateException("login", "잘못된 입력값입니다.", ErrorCode.INVALID_INPUT_VALUE);
             //에러 처리 필요
         }
-        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping("/test")
