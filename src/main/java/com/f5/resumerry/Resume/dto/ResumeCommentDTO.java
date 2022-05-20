@@ -1,15 +1,11 @@
 package com.f5.resumerry.Resume.dto;
 
-import com.f5.resumerry.Member.domain.entity.Member;
-import com.f5.resumerry.Post.dto.PostChildCommentDTO;
-import com.f5.resumerry.Resume.Resume;
+
 import com.f5.resumerry.Resume.ResumeComment;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Data
 @NoArgsConstructor

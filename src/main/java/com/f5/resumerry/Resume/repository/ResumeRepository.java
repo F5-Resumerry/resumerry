@@ -36,6 +36,4 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCus
     Optional<Resume> findById(Long id);
 
     List<Resume> findByMemberId(Long memberId);
-
-
 }

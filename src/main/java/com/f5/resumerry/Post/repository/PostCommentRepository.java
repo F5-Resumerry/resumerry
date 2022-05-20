@@ -17,8 +17,4 @@ public interface PostCommentRepository extends JpaRepository<PostComment, Long> 
 
     Optional<PostComment> findById(Long postCommentId);
 
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query("update MemberInfo mi set mi.stack = mi.stack + 5, mi.token = mi.token + 1 where mi.id in (select m.memberInfoId from Member m where m.id = :memberId)")
-    void updateCommentUploadReward(Long memberId);
 }

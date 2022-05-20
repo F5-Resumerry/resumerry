@@ -1,5 +1,6 @@
 package com.f5.resumerry.Post.service;
 
+import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Post.dto.*;
 import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
@@ -43,6 +44,9 @@ public class PostService {
     @Autowired
     private PostCommentReportRepository postCommentReportRepository;
 
+    @Autowired
+    private MemberInfoRepository memberInfoRepository;
+
 
     public List<PostsDTO> findPosts(String title, String category, String sort) {
         /**
@@ -70,7 +74,7 @@ public class PostService {
     public void registerPosts(Long memberId, RegisterPostDTO req){
         RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId);
         postRepository.registerPost(insertPost);
-        postRepository.updateUploadReward(memberId);
+        memberInfoRepository.updateReward(memberId, 3, 0);
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId, Long tokenId) {
@@ -101,7 +105,7 @@ public class PostService {
     public void registerPostComment(Long memberId, Long postId, GetCommentDTO req) {
         PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getCommentGroup(), req.getCommentDepth(), req.getIsAnonymous(), memberId, postId);
         postRepository.registerPostComment(postCommentDTO);
-        postCommentRepository.updateCommentUploadReward(memberId);
+        memberInfoRepository.updateReward(memberId, 5, 0);
     }
 
     public void deletePostComment(Long memberId, Long postId, Long commentId) {
@@ -112,6 +116,11 @@ public class PostService {
         // postd, commentid를 가진 댓글에 PostCommentRecommend 테이블에 memberid와 commendId 추가
         PostCommentRecommendDTO pcr = new PostCommentRecommendDTO(memberId, postId, commentId);
         postRepository.registerRecommendComment(pcr);
+        Optional<PostComment> postCommentOptional = postCommentRepository.findById(commentId);
+        PostComment postComment = postCommentOptional.orElse(null);
+        if(postComment.getPostCommentRecommendList().size() % 5 == 0){
+            memberInfoRepository.updateReward(postComment.getMemberId(), 5, 1);
+        }
 
     }
 

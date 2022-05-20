@@ -108,7 +108,7 @@ public class ResumeService {
             }
             viewResumeDTO.setHashtag(hashtagLists);
 
-        resumeRepository.viewCnt(memberId,resumeId);
+        resumeRepository.viewCnt(memberId, resumeId);
 
 
         return viewResumeDTO;
@@ -155,6 +155,7 @@ public class ResumeService {
             ResumeHashtag resumeHashtag = resumeHashtagDTO.toEntity();
             resumeHashtagRepository.save(resumeHashtag);
         }
+        memberInfoRepository.updateReward(id, 5, 1);
     }
 
     public void deleteResume (Long memberId, Long postId) {
@@ -164,16 +165,16 @@ public class ResumeService {
 
 
     public boolean recommendResume(Long memberId, Long resumeId){
+        ResumeRecommendDTO resumeRecommendDTO = new ResumeRecommendDTO();
+        resumeRecommendDTO.setResumeId(resumeId);
+        resumeRecommendDTO.setMemberId(memberId);
+        ResumeRecommend resumeRecommend = resumeRecommendDTO.toEntity();
+        resumeRecommendRepository.save(resumeRecommend);
 
-        try{
-            ResumeRecommend resumeRecommend = resumeRecommendRepository.findByResumeIdAndMemberId(resumeId, memberId);
-            resumeRecommendRepository.deleteById(resumeRecommend.getId());
-        } catch(Exception e){
-            ResumeRecommendDTO resumeRecommendDTO = new ResumeRecommendDTO();
-            resumeRecommendDTO.setResumeId(resumeId);
-            resumeRecommendDTO.setMemberId(memberId);
-            ResumeRecommend resumeRecommend = resumeRecommendDTO.toEntity();
-            resumeRecommendRepository.save(resumeRecommend);
+        Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
+        Resume resume = resumeOptional.orElse(null);
+        if(resume.getResumeRecommendList().size() % 5 == 0){
+            memberInfoRepository.updateReward(resume.getMemberId(), 5, 1);
         }
         return true;
     }
@@ -184,7 +185,7 @@ public class ResumeService {
     public void registerResumeComment(Long memberId, Long resumeId, GetCommentDTO req) {
         ResumeCommentDTO resumeCommentDTO = new ResumeCommentDTO();
         resumeCommentDTO.setContents(req.getContents());
-        resumeCommentDTO.setIsAnonymous(req.getIsAnonymous());
+        resumeCommentDTO.setIsAnonymous(!req.getIsAnonymous());
         resumeCommentDTO.setResumeCommentGroup(req.getCommentGroup());
         resumeCommentDTO.setResumeCommentDepth(req.getCommentDepth());
         resumeCommentDTO.setMemberId(memberId);
@@ -192,6 +193,7 @@ public class ResumeService {
         resumeCommentDTO.setIsDelete("N");
         ResumeComment resumeComment = resumeCommentDTO.toEntity();
         resumeCommentRepository.save(resumeComment);
+        memberInfoRepository.updateReward(memberId, 5, 0);
     }
 
     @Transactional
@@ -208,84 +210,49 @@ public class ResumeService {
 
     @Transactional
     public Boolean recommendResumeComment(Long memberId, Long commentId) {
-        if (resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, commentId)){
-            deleteResumeCommentRecommend(memberId, commentId);
-        } else{
-            saveResumeCommentRecommend(memberId, commentId);
-        }
-        return true;
-    }
-
-    @Transactional
-    public void deleteResumeCommentRecommend(Long memberId, Long commentId) {
-        resumeCommentRecommendRepository.deleteByMemberIdAndResumeCommentId(memberId, commentId);
-        return;
-    }
-
-
-    @Transactional
-    public ResumeCommentRecommend saveResumeCommentRecommend(Long memberId, Long commentId) {
         ResumeCommentRecommendDTO resumeCommentRecommendDTO = new ResumeCommentRecommendDTO();
         resumeCommentRecommendDTO.setMemberId(memberId);
         resumeCommentRecommendDTO.setResumeCommentId(commentId);
         ResumeCommentRecommend resumeCommentRecommend = resumeCommentRecommendDTO.toEntity();
-        return resumeCommentRecommendRepository.save(resumeCommentRecommend);
+        resumeCommentRecommendRepository.save(resumeCommentRecommend);
+        Optional<ResumeComment> resumeCommentOptional = resumeCommentRepository.findById(commentId);
+        ResumeComment resumeComment = resumeCommentOptional.orElse(null);
+
+        if(resumeComment.getResumeCommentRecommendList().size() % 5 == 0){
+            memberInfoRepository.updateReward(resumeComment.getMemberId(), 5, 1);
+        }
+
+        return true;
     }
 
     @Transactional
     public Boolean reportResumeComment(Long memberId, Long commentId) {
-        if (resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, commentId)){
-            deleteResumeCommentReport(memberId, commentId);
-        } else{
-            saveResumeCommentReport(memberId, commentId);
-        }
-        return true;
-    }
-
-    @Transactional
-    public void deleteResumeCommentReport(Long memberId, Long commentId) {
-        resumeCommentReportRepository.deleteByMemberIdAndResumeCommentId(memberId, commentId);
-        return;
-    }
-
-
-    @Transactional
-    public ResumeCommentReport saveResumeCommentReport(Long memberId, Long commentId) {
         ResumeCommentReportDTO resumeCommentReportDTO = new ResumeCommentReportDTO();
         resumeCommentReportDTO.setMemberId(memberId);
         resumeCommentReportDTO.setResumeCommentId(commentId);
         ResumeCommentReport resumeCommentReport = resumeCommentReportDTO.toEntity();
-        return resumeCommentReportRepository.save(resumeCommentReport);
-    }
-
-    public boolean scrapResume(Long memberId, Long resumeId){
-        if (resumeScrapRepository.existsByMemberIdAndResumeId(memberId, resumeId)){
-            deleteResumeScrap(resumeId, memberId);
-        } else{
-            saveResumeScrap(resumeId, memberId);
-        }
+        resumeCommentReportRepository.save(resumeCommentReport);
         return true;
     }
 
     @Transactional
-    public void deleteResumeScrap(Long resumeId, Long memberId) {
-        ResumeScrap resumeScrap = resumeScrapRepository.findByResumeIdAndMemberId(resumeId, memberId);
-        resumeScrapRepository.deleteById(resumeScrap.getId());
-        return;
-    }
-
-
-    @Transactional
-    public ResumeScrap saveResumeScrap(Long resumeId, Long memberId) {
+    public boolean scrapResume(Long memberId, Long resumeId){
         ResumeScrapDTO resumeScrapDTO = new ResumeScrapDTO();
         resumeScrapDTO.setResumeId(resumeId);
         resumeScrapDTO.setMemberId(memberId);
         resumeScrapDTO.setCreatedDate(java.time.LocalDateTime.now());
-        log.info(String.valueOf(LocalDateTime.now()));
-        log.info(String.valueOf(resumeScrapDTO));
         ResumeScrap resumeScrap = resumeScrapDTO.toEntity();
-        return resumeScrapRepository.save(resumeScrap);
+        resumeScrapRepository.save(resumeScrap);
+
+        Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
+        Resume resume = resumeOptional.orElse(null);
+        if(resume.getResumeScrapList().size() % 5 == 0){
+            memberInfoRepository.updateReward(resume.getMemberId(), 5, 1);
+        }
+
+        return true;
     }
+
 
     public void updateResume(Long memberId, Long resumeId, UploadResumeDTO uploadResumeDTO, String fullFileNamePath, List<String> hashtagList) {
         String title = uploadResumeDTO.getTitle();
