@@ -445,13 +445,16 @@ public class ResumeService {
             return responseDTO;
         }
 
-        memberInfoRepository.updateToken(numOfTokenToUnLockResume, memberId);
+        Member memberData = memberRepository.findByMemberId(memberId);
+        Long memberDataInfoId = memberData.getMemberInfoId();
+
+        memberRepository.updateMemberToken(numOfTokenToUnLockResume, memberDataInfoId);
 
         // token_history table 관리 여부
 
         // 해당 이력서 열람을 위해 토큰을 사용했다는 이력 남기는거 toekn histroy에 resume_id 추가했음
 
-        tokenHistoryRepository.insertTokenHistory(memberId, resumeId, reasonOftokenUsing, numOfTokenUserHas-numOfTokenToUnLockResume );
+        tokenHistoryRepository.insertTokenHistory(memberId, resumeId, reasonOftokenUsing, (long) (numOfTokenUserHas-numOfTokenToUnLockResume));
 
         return responseDTO;
 

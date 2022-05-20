@@ -28,7 +28,7 @@ public class TokenHistory {
     private Long id;
 
     @Column(nullable = false)
-    private Long count;
+    private Long tokenCnt;
 
     @Column(nullable = false)
     private String reason;

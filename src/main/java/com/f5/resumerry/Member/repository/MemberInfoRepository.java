@@ -12,8 +12,4 @@ public interface MemberInfoRepository extends JpaRepository<MemberInfo, Long> {
     @Query("select mi.token from MemberInfo mi where mi.member.id = ?1")
     Integer findByMemberId(Long id);
 
-    @Transactional
-    @Modifying
-    @Query("update MemberInfo mi set mi.token = mi.token - ?1 where mi.member.id = ?2 ")
-    void updateToken( Integer k,  Long memberId);
 }
