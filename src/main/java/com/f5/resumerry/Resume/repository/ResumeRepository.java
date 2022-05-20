@@ -18,7 +18,7 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCus
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Resume r set r.viewCnt = r.viewCnt+1 where r.id = :resumeId and r.memberId = :memberId")
-    void viewCnt(Long memberId, Long resumeId);
+    void viewCnt(@Param("memberId") Long memberId, @Param("resumeId") Long resumeId);
 
     @Query("select (count(r) > 0) from Resume r where r.memberId = ?1 and r.id = ?2")
     boolean existScrapByMemberIdAndResumeId(Long memberId, Long id);
@@ -36,5 +36,6 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCus
     Optional<Resume> findById(Long id);
 
     List<Resume> findByMemberId(Long memberId);
+
 
 }

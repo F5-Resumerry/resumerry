@@ -30,6 +30,8 @@ public class ViewResumeDTO {
     private Integer viewCnt;
     private String fileLink;
     private Boolean isOwner;
+
+    private  Boolean isLock;
     private Boolean isScrap;
     private Boolean isRecommend;
 
@@ -49,6 +51,7 @@ public class ViewResumeDTO {
         this.viewCnt = r.getViewCnt();
         this.fileLink = r.getFileLink();
         this.isOwner = isOwner;
+        this.isLock = r.getIsLock();
         this.isScrap = isScrap;
         this.isRecommend = isRecommend;
     }

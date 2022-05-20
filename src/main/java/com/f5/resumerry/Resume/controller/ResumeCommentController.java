@@ -114,7 +114,7 @@ public class ResumeCommentController {
         return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);
     }
 
-    @PostMapping("/{member_id}/{resume_id}/comment/{comment_id}/bam")
+    @PostMapping("/{member_id}/{resume_id}/comment/{comment_id}/ban")
     @ApiOperation(value = "이력서 답변 신고")
     public ResponseEntity<BooleanResponseDTO> reportResumeComment(
             @ApiParam(value = "member_id") @PathVariable("member_id") Long memberId,

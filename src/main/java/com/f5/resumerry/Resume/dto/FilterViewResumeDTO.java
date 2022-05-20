@@ -23,6 +23,7 @@ public class FilterViewResumeDTO {
     private Integer viewCnt;
     private LocalDateTime modifiedDate;
     private List<String> hashtag;
+    private Boolean isLock;
     private Long memberId;
     private String imageSrc;
     private String nickname;
@@ -40,6 +41,7 @@ public class FilterViewResumeDTO {
         this.imageSrc = r.getMember().getImageSrc();
         this.nickname = r.getMember().getNickname();
         this.years = r.getYears();
+        this.isLock = r.getIsLock();
     }
 
 
