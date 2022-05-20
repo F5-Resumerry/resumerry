@@ -2,6 +2,7 @@ package com.f5.resumerry.Resume;
 
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Post.entity.Post;
+import com.f5.resumerry.Reward.ResumeAuthority;
 import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
@@ -57,6 +58,9 @@ public class Resume extends BaseTimeEntity {
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean isDelete;
 
+    @Column(name = "is_lock", nullable = false)
+    @Convert(converter = BooleanToYNConverter.class)
+    private Boolean isLock;
     @ManyToOne
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"), insertable = false, updatable = false)
     private Member member;
@@ -84,5 +88,8 @@ public class Resume extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "resume")
     private List<TokenHistory> tokenHistoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "resume")
+    private List<ResumeAuthority> resumeAuthorityList = new ArrayList<>();
 
 }

@@ -7,6 +7,8 @@ import com.f5.resumerry.Resume.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.*;
+import com.f5.resumerry.Reward.ResumeAuthority;
+import com.f5.resumerry.Reward.repository.ResumeAuthorityRepository;
 import com.f5.resumerry.Reward.repository.TokenHistoryRepository;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.selector.CategoryEnum;
@@ -40,9 +42,8 @@ public class ResumeService {
     private final HashtagRepository hashtagRepository;
     private final ResumeHashtagRepository resumeHashtagRepository;
     private  final MemberInfoRepository memberInfoRepository;
-
     private final TokenHistoryRepository tokenHistoryRepository;
-
+    private final ResumeAuthorityRepository resumeAuthorityRepository;
 
     public JSONArray viewResumesInMyPage(Long memberId) {
         JSONArray jsonArray = new JSONArray();
@@ -78,7 +79,9 @@ public class ResumeService {
         // 2. 내것이 아니면
         // 2.1 스크랩을 하였는가
         // 2.2 추천이 되어있는가
-        ViewResumeDTO viewResumeDTO = new ViewResumeDTO();
+
+
+        ViewResumeDTO viewResumeDTO;
         if(memberId.equals(tokenId)) {
             viewResumeDTO = new ViewResumeDTO(resume, true, false, false);
         } else {
@@ -105,7 +108,10 @@ public class ResumeService {
             }
             viewResumeDTO.setHashtag(hashtagLists);
 
-            return viewResumeDTO;
+        resumeRepository.viewCnt(memberId,resumeId);
+
+
+        return viewResumeDTO;
 
 
 
@@ -409,8 +415,6 @@ public class ResumeService {
 
         Integer numOfTokenToUnLockResume = 5;
 
-        String reasonOftokenUsing = "used";
-
         BooleanResponseDTO responseDTO = new BooleanResponseDTO(true);
 
         Integer numOfTokenUserHas = memberInfoRepository.findByMemberId(memberId);
@@ -426,10 +430,11 @@ public class ResumeService {
         memberRepository.updateMemberToken(numOfTokenToUnLockResume, memberDataInfoId);
 
         // token_history table 관리 여부
-
-        // 해당 이력서 열람을 위해 토큰을 사용했다는 이력 남기는거 toekn histroy에 resume_id 추가했음
-
-        tokenHistoryRepository.insertTokenHistory(memberId, resumeId, reasonOftokenUsing, (long) (numOfTokenUserHas-numOfTokenToUnLockResume));
+        Resume resumeData = resumeRepository.getById(resumeId);
+        // 해당 이력서 열람을 위해 토큰을 사용했다는 이력 남기는거 token histroy에 resume_id 추가했음
+        String reason =resumeData.getMember().getAccountName()+ "  " +resumeData.getTitle()+" 이력서 해제";
+        tokenHistoryRepository.insertTokenHistory(memberId, reason, (long) (numOfTokenUserHas- numOfTokenToUnLockResume));
+        resumeAuthorityRepository.insertResumeAuthority(memberId, resumeId); // lock 해제 이력 남김
 
         return responseDTO;
 

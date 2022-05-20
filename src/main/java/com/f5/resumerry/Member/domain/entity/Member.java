@@ -6,6 +6,7 @@ import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Post.entity.PostCommentRecommend;
 import com.f5.resumerry.Post.entity.PostCommentReport;
 import com.f5.resumerry.Resume.*;
+import com.f5.resumerry.Reward.ResumeAuthority;
 import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
@@ -116,6 +117,9 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member")
     private List<ResumeScrap> resumeScrapList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<ResumeAuthority> resumeAuthorityList = new ArrayList<>();
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @Builder.Default
