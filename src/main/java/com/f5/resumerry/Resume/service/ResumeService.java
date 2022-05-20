@@ -106,7 +106,8 @@ public class ResumeService {
         registerResumeDTO.setFileLink(fullFileLink);
         registerResumeDTO.setCategory(uploadResumeDTO.getCategory());
         registerResumeDTO.setMemberId(id);
-        registerResumeDTO.setIsDelete(false);
+        registerResumeDTO.setIsDelete(true);
+        registerResumeDTO.setViewCnt(0);
 
         Resume resume = registerResumeDTO.toEntity();
 
