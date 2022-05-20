@@ -80,6 +80,7 @@ public class PostController {
         BooleanResponseDTO booleanResponseDTO = new BooleanResponseDTO();
         try {
            postService.registerPosts(memberByToken.getId(), registerPostDTO);
+
         } catch (Exception e) {
             booleanResponseDTO.setResult(false);
             return ResponseEntity.status(HttpStatus.OK).body(booleanResponseDTO);

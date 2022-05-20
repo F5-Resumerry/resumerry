@@ -70,12 +70,14 @@ public class PostService {
     public void registerPosts(Long memberId, RegisterPostDTO req){
         RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId);
         postRepository.registerPost(insertPost);
+        postRepository.updateUploadReward(memberId);
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId, Long tokenId) {
         postRepository.viewCnt(memberId, postId);
         if (memberId != tokenId) {
             // 소유자가 아닌경우
+            postRepository.updateViewCnt(memberId, postId);
             return postRepository.viewNotOwnPost(postId);
         } else {
             return postRepository.viewPost(tokenId,postId);
@@ -99,6 +101,7 @@ public class PostService {
     public void registerPostComment(Long memberId, Long postId, GetCommentDTO req) {
         PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getCommentGroup(), req.getCommentDepth(), req.getIsAnonymous(), memberId, postId);
         postRepository.registerPostComment(postCommentDTO);
+        postCommentRepository.updateCommentUploadReward(memberId);
     }
 
     public void deletePostComment(Long memberId, Long postId, Long commentId) {

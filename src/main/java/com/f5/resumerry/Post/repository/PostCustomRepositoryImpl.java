@@ -15,7 +15,7 @@ import java.util.Optional;
 @Transactional
 public class PostCustomRepositoryImpl implements PostCustomRepository {
 
-    @Autowiredw
+    @Autowired
     private EntityManager entityManager;
 
     @Override

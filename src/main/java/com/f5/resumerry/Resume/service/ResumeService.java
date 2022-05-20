@@ -3,7 +3,7 @@ package com.f5.resumerry.Resume.service;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
-import com.f5.resumerry.Post.dto.GetCommentDTO;
+import com.f5.resumerry.Resume.dto.GetCommentDTO;
 import com.f5.resumerry.Resume.*;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.repository.*;
@@ -119,7 +119,8 @@ public class ResumeService {
         registerResumeDTO.setFileLink(fullFileLink);
         registerResumeDTO.setCategory(uploadResumeDTO.getCategory());
         registerResumeDTO.setMemberId(id);
-        registerResumeDTO.setIsDelete(false);
+        registerResumeDTO.setIsDelete(true);
+        registerResumeDTO.setViewCnt(0);
 
         Resume resume = registerResumeDTO.toEntity();
 
