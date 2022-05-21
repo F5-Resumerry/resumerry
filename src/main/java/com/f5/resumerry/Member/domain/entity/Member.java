@@ -135,7 +135,7 @@ public class Member extends BaseTimeEntity {
         memberInfo.setToken(memberInfo.getToken() + amount);
     }
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
     private List<TokenHistory> tokenHistoryList = new ArrayList<>();
 
 }

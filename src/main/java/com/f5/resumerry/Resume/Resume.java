@@ -87,9 +87,6 @@ public class Resume extends BaseTimeEntity {
 //    private String hashtag;
 
     @OneToMany(mappedBy = "resume")
-    private List<TokenHistory> tokenHistoryList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "resume")
     private List<ResumeAuthority> resumeAuthorityList = new ArrayList<>();
 
 }

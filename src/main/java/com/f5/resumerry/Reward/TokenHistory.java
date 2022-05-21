@@ -3,6 +3,8 @@ package com.f5.resumerry.Reward;
 
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Resume.Resume;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,11 +39,8 @@ public class TokenHistory {
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_tokenhistory"))
     private Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_tokenhistory"))
-    private Resume resume;
 }

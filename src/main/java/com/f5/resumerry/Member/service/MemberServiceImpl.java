@@ -8,6 +8,7 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.domain.entity.MemberInfo;
 import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
+import com.f5.resumerry.Reward.TokenHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +33,10 @@ public class MemberServiceImpl implements MemberService {
     private final MemberInfoRepository memberInfoRepository;
     private final ConfirmationTokenService confirmationTokenService;
     private final SaltUtil saltUtil;
+
+    public List<TokenHistory> getAllTokenHistory(Long userId) {
+        return memberRepository.findAllTokenHistoryByUserId(userId);
+    }
 
     @Override
     @Transactional

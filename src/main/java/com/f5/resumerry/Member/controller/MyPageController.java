@@ -4,6 +4,7 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberServiceImpl;
 import com.f5.resumerry.Member.service.MyPageService;
+import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.exception.AuthenticateException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/my-page")
@@ -48,6 +50,12 @@ public class MyPageController {
         return ResponseEntity.status(HttpStatus.OK).body(myPageService.viewProfileInMyPage(member.getAccountName()));
     }
 
-
-
+    @GetMapping("/token/{user_id}")
+    @ApiOperation(value = "내 토큰 사용 이력 조회")
+    public ResponseEntity<List<TokenHistory>> getTokenHistory(
+            @ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
+            @ApiParam("유저 번호") @PathVariable Long user_id
+    ) {
+        return ResponseEntity.ok(memberService.getAllTokenHistory(user_id));
+    }
 }
