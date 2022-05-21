@@ -17,9 +17,6 @@ import static com.f5.resumerry.Member.domain.entity.QMemberInfo.memberInfo;
 @Transactional
 public class MemberCustomRepositoryImpl implements  MemberCustomRepository{
 
-//    @Autowired
-//    private EntityManager entityManager;
-
     private final JPAQueryFactory queryFactory;
 
     public MemberCustomRepositoryImpl(EntityManager em) {
@@ -27,10 +24,7 @@ public class MemberCustomRepositoryImpl implements  MemberCustomRepository{
     }
 
     public void updateMemberToken(Integer n, Long memberInfoId) {
-//        entityManager.createQuery("update MemberInfo mi  set mi.token = mi.token - :n where mi.id = :memberInfoId")
-//                .setParameter("n", n)
-//                .setParameter("memberInfoId", memberInfoId)
-//                .executeUpdate();
+
         queryFactory
                 .update(memberInfo)
                 .set(memberInfo.token, n)
@@ -40,6 +34,7 @@ public class MemberCustomRepositoryImpl implements  MemberCustomRepository{
 
     @Override
     public List<TokenHistory> findAllTokenHistoryByUserId(Long userId) {
+
         return queryFactory
                 .selectFrom(tokenHistory)
                 .where(tokenHistory.member.id.eq(userId))
