@@ -15,7 +15,7 @@ public interface MemberInfoRepository extends JpaRepository<MemberInfo, Long> {
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update MemberInfo mi set mi.stack = mi.stack + :stackCnt, mi.token = mi.token + :tokenCnt  where mi.id in (select m.memberInfoId from Member m where m.id = :memberId)")
-    void updateReward(Long memberId, Integer stackCnt, Integer tokenCnt);
+    void updateReward(@Param("memberId") Long memberId, @Param("stackCnt") Integer stackCnt, @Param("tokenCnt") Integer tokenCnt);
 
 
 }
