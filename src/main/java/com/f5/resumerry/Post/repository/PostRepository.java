@@ -39,11 +39,4 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.viewCnt = p.viewCnt + 1 where p.memberId = :memberId and p.id = :postId")
     void updateViewCnt(Long memberId, Long postId);
-
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query("update MemberInfo mi set mi.stack = mi.stack + 3  where mi.id in (select m.memberInfoId from Member m where m.id = :memberId)")
-    void updateUploadReward(Long memberId);
-
-
 }

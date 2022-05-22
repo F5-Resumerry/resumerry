@@ -12,4 +12,10 @@ public interface MemberInfoRepository extends JpaRepository<MemberInfo, Long> {
     @Query("select mi.token from MemberInfo mi where mi.member.id = ?1")
     Integer findByMemberId(Long id);
 
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update MemberInfo mi set mi.stack = mi.stack + :stackCnt, mi.token = mi.token + :tokenCnt  where mi.id in (select m.memberInfoId from Member m where m.id = :memberId)")
+    void updateReward(Long memberId, Integer stackCnt, Integer tokenCnt);
+
+
 }
