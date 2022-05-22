@@ -41,7 +41,7 @@ public class ResumeService {
     private final ResumeCommentReportRepository resumeCommentReportRepository;
     private final HashtagRepository hashtagRepository;
     private final ResumeHashtagRepository resumeHashtagRepository;
-    private  final MemberInfoRepository memberInfoRepository;
+    private final MemberInfoRepository memberInfoRepository;
     private final TokenHistoryRepository tokenHistoryRepository;
     private final ResumeAuthorityRepository resumeAuthorityRepository;
 
@@ -155,7 +155,9 @@ public class ResumeService {
             ResumeHashtag resumeHashtag = resumeHashtagDTO.toEntity();
             resumeHashtagRepository.save(resumeHashtag);
         }
+        log.info("안녕핫요\n");
         memberInfoRepository.updateReward(id, 5, 1);
+        log.info("안녕핫요\n");
     }
 
     public void deleteResume (Long memberId, Long postId) {
