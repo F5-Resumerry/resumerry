@@ -155,9 +155,9 @@ public class ResumeService {
             ResumeHashtag resumeHashtag = resumeHashtagDTO.toEntity();
             resumeHashtagRepository.save(resumeHashtag);
         }
-        log.info("안녕핫요\n");
         memberInfoRepository.updateReward(id, 5, 1);
-        log.info("안녕핫요\n");
+        String reason = uploadResumeDTO.getTitle() + " 이력서 작성 보상";
+        tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
     }
 
     public void deleteResume (Long memberId, Long postId) {
@@ -175,8 +175,12 @@ public class ResumeService {
 
         Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
         Resume resume = resumeOptional.orElse(null);
-        if(resume.getResumeRecommendList().size() % 5 == 0){
-            memberInfoRepository.updateReward(resume.getMemberId(), 5, 1);
+        Integer recommendCnt = resume.getResumeRecommendList().size();
+        if(recommendCnt % 5 == 0){
+            Long id = resume.getMemberId();
+            memberInfoRepository.updateReward(id, 5, 1);
+            String reason = resume.getTitle() + " 이력서 추천 " + recommendCnt + "개 달성 보상";
+            tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
         }
         return true;
     }
@@ -219,11 +223,13 @@ public class ResumeService {
         resumeCommentRecommendRepository.save(resumeCommentRecommend);
         Optional<ResumeComment> resumeCommentOptional = resumeCommentRepository.findById(commentId);
         ResumeComment resumeComment = resumeCommentOptional.orElse(null);
-
-        if(resumeComment.getResumeCommentRecommendList().size() % 5 == 0){
-            memberInfoRepository.updateReward(resumeComment.getMemberId(), 5, 1);
+        Integer commentRecommendCnt = resumeComment.getResumeCommentRecommendList().size();
+        if(commentRecommendCnt % 5 == 0){
+            Long id = resumeComment.getMemberId();
+            memberInfoRepository.updateReward(id, 5, 1);
+            String reason = resumeComment.getContents() + " 답변 추천 " + commentRecommendCnt + "개 달성 보상";
+            tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
         }
-
         return true;
     }
 
@@ -248,8 +254,12 @@ public class ResumeService {
 
         Optional<Resume> resumeOptional = resumeRepository.findById(resumeId);
         Resume resume = resumeOptional.orElse(null);
-        if(resume.getResumeScrapList().size() % 5 == 0){
-            memberInfoRepository.updateReward(resume.getMemberId(), 5, 1);
+        Integer scrapCnt = resume.getResumeScrapList().size();
+        if(scrapCnt % 5 == 0){
+            Long id = resume.getMemberId();
+            memberInfoRepository.updateReward(id, 5, 1);
+            String reason = resume.getTitle() + " 이력서 스크랩 " + scrapCnt + "개 달성 보상";
+            tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
         }
 
         return true;
