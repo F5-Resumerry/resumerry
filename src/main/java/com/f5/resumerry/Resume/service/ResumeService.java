@@ -12,6 +12,7 @@ import com.f5.resumerry.Reward.repository.ResumeAuthorityRepository;
 import com.f5.resumerry.Reward.repository.TokenHistoryRepository;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.selector.CategoryEnum;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDateTime;
@@ -44,6 +45,7 @@ public class ResumeService {
     private final MemberInfoRepository memberInfoRepository;
     private final TokenHistoryRepository tokenHistoryRepository;
     private final ResumeAuthorityRepository resumeAuthorityRepository;
+    private final ResumeRecommendCustomRepository resumeRecommendCustomRepository;
 
     public JSONArray viewResumesInMyPage(Long memberId) {
         JSONArray jsonArray = new JSONArray();
@@ -417,5 +419,10 @@ public class ResumeService {
 
         return responseDTO;
 
+    }
+
+    public List<ResumeRecommendDTO> getAllResumeRecommend(Long userId, Long resumeId) {
+
+        return resumeRecommendCustomRepository.findResumeRecommendByUserId(userId, resumeId);
     }
 }

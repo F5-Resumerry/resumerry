@@ -4,11 +4,14 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
 import com.f5.resumerry.Resume.Resume;
+import com.f5.resumerry.Resume.ResumeRecommend;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.exception.AuthenticateException;
+import com.querydsl.core.Tuple;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -195,6 +198,16 @@ public class ResumeController {
             throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
         }
         return ResponseEntity.ok(resumeService.unLockResume(member.getId(), resumeId));
+    }
+
+    @GetMapping("/recommend/{user_id}/{resume_id}")
+    @ApiOperation(value = "TF-IDF 추천이력서 조회")
+    public ResponseEntity<List<ResumeRecommendDTO>> getTokenHistory(
+            @ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
+            @ApiParam("유저 번호") @PathVariable Long user_id,
+            @ApiParam("이력서 번호") @PathVariable Long resume_id
+    ) {
+        return ResponseEntity.ok(resumeService.getAllResumeRecommend(user_id, resume_id));
     }
 
 }
