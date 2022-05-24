@@ -109,5 +109,8 @@ public class MemberServiceImpl implements MemberService {
         return check.get();
     }
 
-
+    public Long findMemberId(String accountName){
+        Member member = memberRepository.findByAccountName(accountName);
+        return member.getId();
+    }
 }

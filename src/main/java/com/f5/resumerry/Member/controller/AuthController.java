@@ -65,13 +65,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody SignInDTO memberDTO) {
         JSONObject result = new JSONObject();
-        AtomicBoolean check = new AtomicBoolean(false);
         if (memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword())) {
-            check.set(true);
             final UserDetails userDetails = userDetailsService
                     .loadUserByUsername(memberDTO.getAccountName());
             final String jwt = jwtUtil.generateToken(userDetails);
             result.put("access_token", jwt);
+            Long memberId = memberServiceImpl.findMemberId(memberDTO.getAccountName());
+            result.put("member_id", memberId);
         }else{
             throw new DuplicateException("login", "잘못된 입력값입니다.", ErrorCode.INVALID_INPUT_VALUE);
             //에러 처리 필요

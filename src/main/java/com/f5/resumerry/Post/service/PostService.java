@@ -9,6 +9,8 @@ import com.f5.resumerry.Post.repository.PostCommentReportRepository;
 import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
 import com.f5.resumerry.Resume.Resume;
+import com.f5.resumerry.Reward.TokenHistory;
+import com.f5.resumerry.Reward.repository.TokenHistoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +49,8 @@ public class PostService {
     @Autowired
     private MemberInfoRepository memberInfoRepository;
 
+    @Autowired
+    private TokenHistoryRepository tokenHistoryRepository;
 
     public List<PostsDTO> findPosts(String title, String category, String sort) {
         /**
@@ -118,8 +122,12 @@ public class PostService {
         postRepository.registerRecommendComment(pcr);
         Optional<PostComment> postCommentOptional = postCommentRepository.findById(commentId);
         PostComment postComment = postCommentOptional.orElse(null);
-        if(postComment.getPostCommentRecommendList().size() % 5 == 0){
-            memberInfoRepository.updateReward(postComment.getMemberId(), 5, 1);
+        Integer commentRecommendCnt = postComment.getPostCommentRecommendList().size();
+        if(commentRecommendCnt % 5 == 0){
+            Long id = postComment.getMemberId();
+            memberInfoRepository.updateReward(id, 5, 1);
+            String reason = postComment.getContents() + " 답변 추천 " + commentRecommendCnt + "개 달성 보상";
+            tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
         }
 
     }
