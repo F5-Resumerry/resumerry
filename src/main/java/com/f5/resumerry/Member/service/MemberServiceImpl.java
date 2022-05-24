@@ -2,7 +2,6 @@ package com.f5.resumerry.Member.service;
 
 
 import com.f5.resumerry.Member.domain.dto.AmendRequestDTO;
-import com.f5.resumerry.Member.domain.dto.MemberDTO;
 import com.f5.resumerry.Member.domain.dto.MemberInfoDTO;
 import com.f5.resumerry.Member.domain.dto.SignUpDTO;
 import com.f5.resumerry.Member.domain.entity.ConfirmationToken;
@@ -13,20 +12,15 @@ import com.f5.resumerry.Member.repository.MemberRepository;
 import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.selector.AwsUpload;
-import com.f5.resumerry.selector.CategoryEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
