@@ -10,12 +10,11 @@ import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.exception.AuthenticateException;
-<<<<<<< HEAD
 import com.f5.resumerry.selector.AwsUpload;
-=======
+
 import com.querydsl.core.Tuple;
 import io.swagger.annotations.Api;
->>>>>>> f2887791b34fe8b3b11e090ae392c622b868f265
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;

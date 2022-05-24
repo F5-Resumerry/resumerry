@@ -44,12 +44,7 @@ public class AwsS3Service {
 
     // S3로 업로드
     private String putS3(File uploadFile, String fileName, AwsUpload awsUpload) {
-        String bucket;
-        if( awsUpload == AwsUpload.IMAGE ){
-            bucket = imageBucket;
-        } else {
-            bucket = resumeBucket;
-        }
+        String bucket = chooseS3Bucket(awsUpload);
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
@@ -74,5 +69,11 @@ public class AwsS3Service {
         }
 
         return Optional.empty();
+    }
+    private String chooseS3Bucket(AwsUpload awsUpload) {
+        if (awsUpload ==AwsUpload.RESUME) {
+            return resumeBucket;
+        }
+            return imageBucket;
     }
 }

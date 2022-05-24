@@ -129,14 +129,9 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.amendMemberInfo(memberId, amendRequestDTO.getNickname(), amendRequestDTO.getYears(), amendRequestDTO.getCategory() ,amendRequestDTO.getIntroduce(),amendRequestDTO.getIsWorking(), fullImageSrc);
     }
 
-
-
-
-
-=======
     public Long findMemberId(String accountName){
         Member member = memberRepository.findByAccountName(accountName);
         return member.getId();
     }
->>>>>>> f2887791b34fe8b3b11e090ae392c622b868f265
+
 }
