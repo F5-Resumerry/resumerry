@@ -9,5 +9,5 @@ public class GetCommentDTO {
     private Integer commentGroup;
     private Integer commentDepth;
     private Boolean isAnonymous;
-
+    private Integer yDepth;
 }

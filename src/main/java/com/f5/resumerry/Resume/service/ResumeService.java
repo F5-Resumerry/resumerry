@@ -191,6 +191,7 @@ public class ResumeService {
         resumeCommentDTO.setMemberId(memberId);
         resumeCommentDTO.setResumeId(resumeId);
         resumeCommentDTO.setIsDelete("N");
+        resumeCommentDTO.setYDepth(req.getYDepth());
         ResumeComment resumeComment = resumeCommentDTO.toEntity();
         resumeCommentRepository.save(resumeComment);
         memberInfoRepository.updateReward(memberId, 5, 0);
@@ -341,6 +342,7 @@ public class ResumeService {
                     group.put("isDelete", resumeComment.getIsDelete());
                     group.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                     group.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
+                    group.put("yDepth", resumeComment.getYDepth());
                     count += 1;
                     continue;
                 }
@@ -359,9 +361,9 @@ public class ResumeService {
                 depthIn.put("isDelete", resumeComment.getIsDelete());
                 depthIn.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                 depthIn.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
+                depthIn.put("yDepth", resumeComment.getYDepth());
                 depth.add(depthIn);
             }
-            log.info(String.valueOf(depth));
             if(group.size() > 0) {
                 group.put("childComments", depth);
                 jsonArray.add(group);
