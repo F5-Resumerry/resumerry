@@ -63,4 +63,7 @@ public class ResumeComment extends BaseTimeEntity {
 
     @Column(name = "is_delete")
     private String isDelete;
+
+    @Column(name = "y_depth")
+    private Integer yDepth;
 }
