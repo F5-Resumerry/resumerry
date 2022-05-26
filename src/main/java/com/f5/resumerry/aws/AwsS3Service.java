@@ -71,7 +71,7 @@ public class AwsS3Service {
         return Optional.empty();
     }
     private String chooseS3Bucket(AwsUpload awsUpload) {
-        if (awsUpload ==AwsUpload.RESUME) {
+        if (awsUpload == AwsUpload.RESUME) {
             return resumeBucket;
         }
             return imageBucket;
