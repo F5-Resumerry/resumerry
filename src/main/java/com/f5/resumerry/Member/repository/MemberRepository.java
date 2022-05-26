@@ -1,6 +1,7 @@
 package com.f5.resumerry.Member.repository;
 
 import com.f5.resumerry.Member.domain.entity.Member;
+import com.f5.resumerry.selector.CategoryEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +25,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
     @Query("select m from Member m where m.id = ?1")
     Member findByMemberId(Long memberId);
 
-
+    void amendMemberInfo(Long memberId, String nickname, Integer years, CategoryEnum category, String introduce, Boolean isWorking, String imageSrc);
 }

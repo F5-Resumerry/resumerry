@@ -10,8 +10,11 @@ import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.exception.AuthenticateException;
+import com.f5.resumerry.selector.AwsUpload;
+
 import com.querydsl.core.Tuple;
 import io.swagger.annotations.Api;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +73,7 @@ public class ResumeController {
         String filePath = String.valueOf(date.getYear()) + "/" + member.getNickname();
 
         // 해당 filePath에 파일 업로드
-        awsS3Service.upload(file, filePath);
+        awsS3Service.upload(file, filePath, AwsUpload.RESUME);
 
         String fullFileLink = "/" +filePath + "/" + file.getOriginalFilename();
 
@@ -173,7 +176,7 @@ public class ResumeController {
 
 
         LocalDate date = LocalDate.now();
-        String filePath = String.valueOf(date.getYear()) + "/" + member.getNickname();
+        String filePath = String.valueOf(date.getYear()) + "/" + member.getAccountName();
 
         String fullFileLink = "/" + filePath + "/" + file.getOriginalFilename();
 
@@ -183,7 +186,7 @@ public class ResumeController {
         }
 
         resumeService.updateResume(member.getId(), resumeId, uploadResumeDTO, fullFileLink, hashtagList);
-        awsS3Service.upload(file, filePath);
+        awsS3Service.upload(file, filePath, AwsUpload.RESUME);
 
         return ResponseEntity.ok().build();
     }

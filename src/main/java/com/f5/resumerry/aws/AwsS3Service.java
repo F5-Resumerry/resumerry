@@ -3,6 +3,7 @@ package com.f5.resumerry.aws;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.f5.resumerry.selector.AwsUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,25 +22,29 @@ import java.util.UUID;
 public class AwsS3Service {
     private final AmazonS3Client amazonS3Client;
 
-    @Value("${cloud.aws.s3.bucket}")
-    public String bucket;  // S3 버킷 이름
+    @Value("${cloud.aws.s3.resumeBucket}")
+    public String resumeBucket;  // S3 버킷 이름
 
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException{
+    @Value("${cloud.aws.s3.imageBucket}")
+    public String imageBucket;
+
+    public String upload(MultipartFile multipartFile, String dirName, AwsUpload awsUpload) throws IOException{
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-        return upload(uploadFile, dirName);
+        return upload(uploadFile, dirName, awsUpload);
     }
 
     // S3로 파일 업로드하기
-    private String upload(File uploadFile, String dirName) {
+    private String upload(File uploadFile, String dirName, AwsUpload awsUpload) {
         String fileName = dirName + "/"  + uploadFile.getName();   // S3에 저장된 파일 이름
-        String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
+        String uploadImageUrl = putS3(uploadFile, fileName, awsUpload); // s3로 업로드
         removeNewFile(uploadFile);
         return uploadImageUrl;
     }
 
     // S3로 업로드
-    private String putS3(File uploadFile, String fileName) {
+    private String putS3(File uploadFile, String fileName, AwsUpload awsUpload) {
+        String bucket = chooseS3Bucket(awsUpload);
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
@@ -64,5 +69,11 @@ public class AwsS3Service {
         }
 
         return Optional.empty();
+    }
+    private String chooseS3Bucket(AwsUpload awsUpload) {
+        if (awsUpload == AwsUpload.RESUME) {
+            return resumeBucket;
+        }
+            return imageBucket;
     }
 }
