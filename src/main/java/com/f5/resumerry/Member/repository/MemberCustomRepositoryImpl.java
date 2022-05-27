@@ -25,11 +25,12 @@ public class MemberCustomRepositoryImpl implements  MemberCustomRepository{
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    @Transactional
     public void updateMemberToken(Integer n, Long memberInfoId) {
 
         queryFactory
                 .update(memberInfo)
-                .set(memberInfo.token, n)
+                .set(memberInfo.token, memberInfo.token.add(n))
                 .where(memberInfo.id.eq(memberInfoId))
                 .execute();
     }

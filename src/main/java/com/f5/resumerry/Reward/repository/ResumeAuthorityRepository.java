@@ -14,4 +14,6 @@ public interface ResumeAuthorityRepository extends JpaRepository<ResumeAuthority
     @Modifying(clearAutomatically = true)
     @Query(value = "insert into resume_authority(member_id, resume_id) values (:memberId, :resumeId)", nativeQuery = true)
     public void insertResumeAuthority(@Param("memberId") Long memberId,@Param("resumeId") Long resumeId);
+
+    Boolean existsByMemberIdAndResumeId(Long memberId, Long resumeId);
 }

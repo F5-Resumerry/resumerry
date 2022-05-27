@@ -42,7 +42,4 @@ public class ResumeRecommend{
     @Column(name = "member_id")
     private Long memberId;
 
-    @CreatedDate
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
 }
