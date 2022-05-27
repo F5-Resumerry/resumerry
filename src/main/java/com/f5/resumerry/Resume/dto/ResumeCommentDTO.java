@@ -33,7 +33,7 @@ public class ResumeCommentDTO {
                 .memberId(memberId)
                 .resumeId(resumeId)
                 .isDelete(isDelete)
-                .yDepth(yPath)
+                .yPath(yPath)
                 .build();
         return build;
     }

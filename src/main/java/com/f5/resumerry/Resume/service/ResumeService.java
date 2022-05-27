@@ -356,7 +356,7 @@ public class ResumeService {
                     group.put("isDelete", resumeComment.getIsDelete());
                     group.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                     group.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
-                    group.put("yPath", resumeComment.getYDepth());
+                    group.put("yPath", resumeComment.getYPath());
                     count += 1;
                     continue;
                 }
@@ -375,7 +375,7 @@ public class ResumeService {
                 depthIn.put("isDelete", resumeComment.getIsDelete());
                 depthIn.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                 depthIn.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
-                depthIn.put("yPath", resumeComment.getYDepth());
+                depthIn.put("yPath", resumeComment.getYPath());
                 depth.add(depthIn);
             }
             if(group.size() > 0) {
