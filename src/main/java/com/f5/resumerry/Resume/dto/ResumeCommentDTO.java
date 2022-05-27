@@ -20,7 +20,7 @@ public class ResumeCommentDTO {
     private Long memberId;
     private Long resumeId;
     private String isDelete;
-    private Integer yDepth;
+    private Integer yPath;
 
 
     public ResumeComment toEntity(){
@@ -33,7 +33,7 @@ public class ResumeCommentDTO {
                 .memberId(memberId)
                 .resumeId(resumeId)
                 .isDelete(isDelete)
-                .yDepth(yDepth)
+                .yDepth(yPath)
                 .build();
         return build;
     }
