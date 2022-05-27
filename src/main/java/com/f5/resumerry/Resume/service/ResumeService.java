@@ -81,23 +81,27 @@ public class ResumeService {
         // 2. 내것이 아니면
         // 2.1 스크랩을 하였는가
         // 2.2 추천이 되어있는가
-
-
+        Boolean isBuyer;
+        if(resumeAuthorityRepository.existsByMemberIdAndResumeId(tokenId, resumeId)) {
+            isBuyer = true;
+        } else{
+            isBuyer = false;
+        }
         ViewResumeDTO viewResumeDTO;
         if(memberId.equals(tokenId)) {
-            viewResumeDTO = new ViewResumeDTO(resume, true, false, false);
+            viewResumeDTO = new ViewResumeDTO(resume, true, false, false, isBuyer);
         } else {
             if (resumeScrapRepository.existsByResume(resume)) {
                 // 스크랩이 존재한다면
                 if (resumeRecommendRepository.existsByResume(resume)) {
-                    viewResumeDTO = new ViewResumeDTO(resume, false, true, true);
+                    viewResumeDTO = new ViewResumeDTO(resume, false, true, true, isBuyer);
                 }
-                viewResumeDTO = new ViewResumeDTO(resume, false, true, false);
+                viewResumeDTO = new ViewResumeDTO(resume, false, true, false, isBuyer);
             } else {
                 if (resumeRecommendRepository.existsByResume(resume)) {
-                    viewResumeDTO = new ViewResumeDTO(resume, false, false, true);
+                    viewResumeDTO = new ViewResumeDTO(resume, false, false, true, isBuyer);
                 }
-                viewResumeDTO = new ViewResumeDTO(resume, false, false, false);
+                viewResumeDTO = new ViewResumeDTO(resume, false, false, false, isBuyer);
             }
         }
         // dto에 hashtagname(string 부여)
@@ -183,6 +187,11 @@ public class ResumeService {
             memberInfoRepository.updateReward(id, 5, 1);
             String reason = resume.getTitle() + " 이력서 추천 " + recommendCnt + "개 달성 보상";
             tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
+        }
+        log.info(String.valueOf(recommendCnt));
+        log.info("hello\n");
+        if(recommendCnt > 10){
+            resumeRepository.lockResume(resumeId);
         }
         return true;
     }

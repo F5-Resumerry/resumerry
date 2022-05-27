@@ -34,8 +34,9 @@ public class ViewResumeDTO {
     private  Boolean isLock;
     private Boolean isScrap;
     private Boolean isRecommend;
+    private Boolean isBuyer;
 
-    public ViewResumeDTO(Resume r, Boolean isOwner, Boolean isScrap, Boolean isRecommend) {
+    public ViewResumeDTO(Resume r, Boolean isOwner, Boolean isScrap, Boolean isRecommend, Boolean isBuyer) {
         this.memberId = r.getMemberId();
         this.imageSrc = r.getMember().getImageSrc();
         this.nickname = r.getMember().getNickname();
@@ -54,6 +55,7 @@ public class ViewResumeDTO {
         this.isLock = r.getIsLock();
         this.isScrap = isScrap;
         this.isRecommend = isRecommend;
+        this.isBuyer = isBuyer;
     }
 
 }
