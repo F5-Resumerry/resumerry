@@ -84,7 +84,7 @@ public class ResumeController {
 
     @GetMapping("/resume/{user_id}")
     @ApiOperation(value = "마이 페이지에서 이력서 조회")
-    public ResponseEntity<?> viewResumesInMyPage(@ApiParam("유저 토큰") @RequestHeader String token,
+    public ResponseEntity<?> viewResumesInMyPage(@ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
                                               @ApiParam("요청 회원 번호")@PathVariable Long user_id) {
         Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         if(!user_id.equals(member.getId())) {

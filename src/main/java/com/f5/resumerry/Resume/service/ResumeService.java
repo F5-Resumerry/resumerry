@@ -199,7 +199,7 @@ public class ResumeService {
         resumeCommentDTO.setMemberId(memberId);
         resumeCommentDTO.setResumeId(resumeId);
         resumeCommentDTO.setIsDelete("N");
-        resumeCommentDTO.setYDepth(req.getYDepth());
+        resumeCommentDTO.setYPath(req.getYPath());
         ResumeComment resumeComment = resumeCommentDTO.toEntity();
         resumeCommentRepository.save(resumeComment);
         memberInfoRepository.updateReward(memberId, 5, 0);
@@ -356,7 +356,7 @@ public class ResumeService {
                     group.put("isDelete", resumeComment.getIsDelete());
                     group.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                     group.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
-                    group.put("yDepth", resumeComment.getYDepth());
+                    group.put("yPath", resumeComment.getYDepth());
                     count += 1;
                     continue;
                 }
@@ -375,7 +375,7 @@ public class ResumeService {
                 depthIn.put("isDelete", resumeComment.getIsDelete());
                 depthIn.put("isRecommend", resumeCommentRecommendRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
                 depthIn.put("isBanned", resumeCommentReportRepository.existsByMemberIdAndResumeCommentId(memberId, resumeComment.getId()));
-                depthIn.put("yDepth", resumeComment.getYDepth());
+                depthIn.put("yPath", resumeComment.getYDepth());
                 depth.add(depthIn);
             }
             if(group.size() > 0) {
@@ -415,7 +415,7 @@ public class ResumeService {
         // token_history table 관리 여부
         Resume resumeData = resumeRepository.getById(resumeId);
         // 해당 이력서 열람을 위해 토큰을 사용했다는 이력 남기는거 token histroy에 resume_id 추가했음
-        String reason =resumeData.getMember().getAccountName()+ "  " +resumeData.getTitle()+" 이력서 해제";
+        String reason =resumeData.getMember().getAccountName() + "  " + resumeData.getTitle()+" 이력서 해제";
         tokenHistoryRepository.insertTokenHistory(memberId, reason, (long) (numOfTokenUserHas- numOfTokenToUnLockResume));
         resumeAuthorityRepository.insertResumeAuthority(memberId, resumeId); // lock 해제 이력 남김
 
