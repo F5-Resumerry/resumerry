@@ -188,8 +188,10 @@ public class ResumeService {
             String reason = resume.getTitle() + " 이력서 추천 " + recommendCnt + "개 달성 보상";
             tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
         }
-        log.info(String.valueOf(recommendCnt));
-        log.info("hello\n");
+        if(resume.getIsLock() == true){
+            log.info(String.valueOf(resume.getIsLock()));
+            return true;
+        }
         if(recommendCnt > 10){
             resumeRepository.lockResume(resumeId);
         }
