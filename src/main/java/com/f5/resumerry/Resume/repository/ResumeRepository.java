@@ -31,12 +31,12 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeCus
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Resume r set r.title = ?3 , r.contents = ?4 , r.category = ?5, r.years = ?6, r.fileLink = ?7 where r.id = ?2 and r.memberId = ?1")
-    Resume updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);
+    Resume updateResume(@Param("memberId")Long memberId, @Param("resumeId") Long resumeId, @Param("title") String title, @Param("contents") String contents, @Param("category") CategoryEnum category, @Param("years") Integer years, @Param("fullFileNamePath") String fullFileNamePath);
 
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("update Resume r set r.isLock = 'Y' where r.id = :resumeId")
-    void lockResume(Long resumeId);
+    void lockResume(@Param("resumeId") Long resumeId);
 
     Optional<Resume> findById(Long id);
 
