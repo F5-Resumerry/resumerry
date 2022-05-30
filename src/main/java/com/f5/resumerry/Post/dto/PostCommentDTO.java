@@ -23,7 +23,7 @@ public class PostCommentDTO {
     private Integer postCommentGroup;
     private Integer postCommentDepth;
 
-    private List<PostCommentDepthDTO> postCommentDepthList;
+    private List<PostChildCommentDTO> postCommentDepthList;
 
     public PostCommentDTO(String contents, Integer postCommentGroup, Integer postCommentDepth, Boolean isAnonymous, Long memberId, Long postId) {
         this.contents = contents;
@@ -33,13 +33,7 @@ public class PostCommentDTO {
         this.memberId = memberId;
         this.postId = postId;
     }
-    public PostCommentDTO(String contents, Integer postCommentGroup, Boolean isAnonymous, Long memberId, Long postId) {
-        this.contents = contents;
-        this.postCommentGroup = postCommentGroup;
-        this.isAnonymous = isAnonymous;
-        this.memberId = memberId;
-        this.postId = postId;
-    }
+
 
 
 }

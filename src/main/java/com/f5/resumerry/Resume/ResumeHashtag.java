@@ -1,5 +1,6 @@
 package com.f5.resumerry.Resume;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,10 +24,20 @@ public class ResumeHashtag{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumehashtag"))
+    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumehashtag"), insertable = false, updatable = false)
+    @JsonManagedReference
     private Resume resume;
 
+    @Column(name = "resume_id")
+    @JsonManagedReference
+    private Long resumeId;
+
     @ManyToOne
-    @JoinColumn(name = "hashtag_id", foreignKey = @ForeignKey(name = "FK_hashtag_resumehashtag"))
+    @JoinColumn(name = "hashtag_id", foreignKey = @ForeignKey(name = "FK_hashtag_resumehashtag"), insertable = false, updatable = false)
+    @JsonManagedReference
     private Hashtag hashtag;
+
+    @Column(name = "hashtag_id")
+    @JsonManagedReference
+    private Long hashtagId;
 }

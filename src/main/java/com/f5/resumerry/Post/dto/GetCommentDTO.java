@@ -6,8 +6,8 @@ import lombok.Data;
 public class GetCommentDTO {
 
     private String contents;
-    private Integer postCommentGroup;
-    private Integer postCommentDepth;
+    private Integer commentGroup;
+    private Integer commentDepth;
     private Boolean isAnonymous;
 
 }

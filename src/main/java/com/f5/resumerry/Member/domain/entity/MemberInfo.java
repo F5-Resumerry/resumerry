@@ -1,9 +1,9 @@
 package com.f5.resumerry.Member.domain.entity;
 
 import com.f5.resumerry.converter.BooleanToYNConverter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -14,6 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class MemberInfo {
 
     @Id
@@ -21,6 +22,8 @@ public class MemberInfo {
     @Column(name = "member_info_id")
     private Long id;
 
+    @Getter
+    @Setter
     @Column(nullable = false)
     private Integer token = 0 ;
 
@@ -36,6 +39,7 @@ public class MemberInfo {
     private Boolean emailVerified = true;
 
     @OneToOne(mappedBy = "memberInfo")
+    @JsonBackReference
     private Member member;
 
 

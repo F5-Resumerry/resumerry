@@ -19,21 +19,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ResumeScrap{
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_scrap_id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumescrap"))
+    @JoinColumn(name = "resume_id", foreignKey = @ForeignKey(name = "FK_resume_resumescrap"), insertable = false, updatable = false)
     private Resume resume;
 
+    @Column(name = "resume_id")
+    private Long resumeId;
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumescrap"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resumescrap"), insertable = false, updatable = false)
     private Member member;
 
+    @Column(name = "member_id")
+    private Long memberId;
+
     @CreatedDate
-    @Column(name = "created_date", nullable = false)
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 }

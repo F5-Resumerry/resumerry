@@ -12,6 +12,8 @@ import com.f5.resumerry.exception.ErrorCode;
 import com.f5.resumerry.Member.service.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -61,20 +63,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody SignInDTO memberDTO) {
-        Map<String, String> result = new HashMap<>();
-        AtomicBoolean check = new AtomicBoolean(false);
+    public ResponseEntity<?> login(@Valid @RequestBody SignInDTO memberDTO) {
+        JSONObject result = new JSONObject();
         if (memberServiceImpl.checkLogin(memberDTO.getAccountName(), memberDTO.getPassword())) {
-            check.set(true);
             final UserDetails userDetails = userDetailsService
                     .loadUserByUsername(memberDTO.getAccountName());
             final String jwt = jwtUtil.generateToken(userDetails);
             result.put("access_token", jwt);
+            Long memberId = memberServiceImpl.findMemberId(memberDTO.getAccountName());
+            result.put("member_id", memberId);
         }else{
             throw new DuplicateException("login", "잘못된 입력값입니다.", ErrorCode.INVALID_INPUT_VALUE);
             //에러 처리 필요
         }
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping("/test")

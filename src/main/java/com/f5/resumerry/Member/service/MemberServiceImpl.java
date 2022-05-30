@@ -1,6 +1,7 @@
 package com.f5.resumerry.Member.service;
 
 
+import com.f5.resumerry.Member.domain.dto.AmendRequestDTO;
 import com.f5.resumerry.Member.domain.dto.MemberInfoDTO;
 import com.f5.resumerry.Member.domain.dto.SignUpDTO;
 import com.f5.resumerry.Member.domain.entity.ConfirmationToken;
@@ -8,22 +9,24 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.domain.entity.MemberInfo;
 import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Member.repository.MemberRepository;
+import com.f5.resumerry.Reward.TokenHistory;
+import com.f5.resumerry.aws.AwsS3Service;
+import com.f5.resumerry.selector.AwsUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 @Slf4j
 public class MemberServiceImpl implements MemberService {
 
@@ -32,6 +35,12 @@ public class MemberServiceImpl implements MemberService {
     private final MemberInfoRepository memberInfoRepository;
     private final ConfirmationTokenService confirmationTokenService;
     private final SaltUtil saltUtil;
+
+    private final AwsS3Service awsS3Service;
+
+    public List<TokenHistory> getAllTokenHistory(Long userId) {
+        return memberRepository.findAllTokenHistoryByUserId(userId);
+    }
 
     @Override
     @Transactional
@@ -45,6 +54,8 @@ public class MemberServiceImpl implements MemberService {
         memberInfoRepository.save(memberInfo);
 
         memberDTO.setMemberInfo(memberInfo);
+        memberDTO.setMemberInfoId(memberInfo.getId());
+
         Member member = memberDTO.toEntity();
         return memberRepository.save(member);
     }
@@ -102,5 +113,19 @@ public class MemberServiceImpl implements MemberService {
         return check.get();
     }
 
+    public void amendMemberInfo(Long memberId, AmendRequestDTO amendRequestDTO, String fullImageSrc, MultipartFile file, String imageSrc, AwsUpload type){
+        try {
+            awsS3Service.upload(file, imageSrc, type);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(memberId);
+        memberRepository.amendMemberInfo(memberId, amendRequestDTO.getNickname(), amendRequestDTO.getYears(), amendRequestDTO.getCategory() ,amendRequestDTO.getIntroduce(),amendRequestDTO.getIsWorking(), fullImageSrc);
+    }
+
+    public Long findMemberId(String accountName){
+        Member member = memberRepository.findByAccountName(accountName);
+        return member.getId();
+    }
 
 }

@@ -2,9 +2,12 @@ package com.f5.resumerry.Resume;
 
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Post.entity.Post;
+import com.f5.resumerry.Reward.ResumeAuthority;
+import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
 import com.f5.resumerry.selector.CategoryEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,7 +48,7 @@ public class Resume extends BaseTimeEntity {
     private String fileLink;
 
     @Column(nullable = false)
-    private Integer views;
+    private Integer viewCnt;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -55,11 +58,14 @@ public class Resume extends BaseTimeEntity {
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean isDelete;
 
+    @Column(name = "is_lock", nullable = false)
+    @Convert(converter = BooleanToYNConverter.class)
+    private Boolean isLock;
     @ManyToOne
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"))
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"), insertable = false, updatable = false)
     private Member member;
 
-    @Column(name = "member_id", insertable = false, updatable = false)
+    @Column(name = "member_id")
     private Long memberId;
 
     @OneToMany(mappedBy = "resume")
@@ -74,9 +80,13 @@ public class Resume extends BaseTimeEntity {
     @OneToMany(mappedBy = "resume")
     private List<ResumeScrap> resumeScrapList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "resume")
-//    private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
-    @Column(name = "hashtag")
-    private String hashtag;
+    @OneToMany(mappedBy = "resume")
+    @JsonBackReference
+    private List<ResumeHashtag> resumeHashtagList = new ArrayList<>();
+//    @Column(name = "hashtag")
+//    private String hashtag;
+
+    @OneToMany(mappedBy = "resume")
+    private List<ResumeAuthority> resumeAuthorityList = new ArrayList<>();
 
 }

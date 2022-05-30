@@ -16,7 +16,7 @@ public class PostDTO {
     private Long id;
     private String title;
     private String contents;
-    private Integer views;
+    private Integer viewCnt;
     private CategoryEnum category;
     private Boolean isAnonymous;
     private Boolean isDelete;

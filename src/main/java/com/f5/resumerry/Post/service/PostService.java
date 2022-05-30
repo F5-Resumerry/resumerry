@@ -1,18 +1,33 @@
 package com.f5.resumerry.Post.service;
 
+import com.f5.resumerry.Member.repository.MemberInfoRepository;
 import com.f5.resumerry.Post.dto.*;
+import com.f5.resumerry.Post.entity.Post;
+import com.f5.resumerry.Post.entity.PostComment;
+import com.f5.resumerry.Post.repository.PostCommentRecommendRepository;
+import com.f5.resumerry.Post.repository.PostCommentReportRepository;
+import com.f5.resumerry.Post.repository.PostCommentRepository;
 import com.f5.resumerry.Post.repository.PostRepository;
+import com.f5.resumerry.Resume.Resume;
+import com.f5.resumerry.Reward.TokenHistory;
+import com.f5.resumerry.Reward.repository.TokenHistoryRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PostService {
 
     private PostRepository postRepository;
@@ -22,6 +37,20 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
+    @Autowired
+    private PostCommentRepository postCommentRepository;
+
+    @Autowired
+    private PostCommentRecommendRepository postCommentRecommendRepository;
+
+    @Autowired
+    private PostCommentReportRepository postCommentReportRepository;
+
+    @Autowired
+    private MemberInfoRepository memberInfoRepository;
+
+    @Autowired
+    private TokenHistoryRepository tokenHistoryRepository;
 
     public List<PostsDTO> findPosts(String title, String category, String sort) {
         /**
@@ -47,15 +76,16 @@ public class PostService {
     }
 
     public void registerPosts(Long memberId, RegisterPostDTO req){
-        RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId, req.getResumeId());
+        RegisterPostDTO insertPost = new RegisterPostDTO(req.getTitle(), req.getCategory(), req.getContents(), req.getFileLink(), req.getIsAnonymous(),0, memberId);
         postRepository.registerPost(insertPost);
+        memberInfoRepository.updateReward(memberId, 3, 0);
     }
 
     public FindPostDTO viewPost(Long memberId, Long postId, Long tokenId) {
-        Boolean is_owner = false;
-        postRepository.updateViewCnt(memberId, postId);
+        postRepository.viewCnt(memberId, postId);
         if (memberId != tokenId) {
             // 소유자가 아닌경우
+            postRepository.updateViewCnt(memberId, postId);
             return postRepository.viewNotOwnPost(postId);
         } else {
             return postRepository.viewPost(tokenId,postId);
@@ -77,18 +107,28 @@ public class PostService {
 
     // 댓글 controller 시작
     public void registerPostComment(Long memberId, Long postId, GetCommentDTO req) {
-        PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getPostCommentGroup(), req.getPostCommentDepth(), req.getIsAnonymous(), memberId, postId);
+        PostCommentDTO postCommentDTO = new PostCommentDTO(req.getContents(), req.getCommentGroup(), req.getCommentDepth(), req.getIsAnonymous(), memberId, postId);
         postRepository.registerPostComment(postCommentDTO);
+        memberInfoRepository.updateReward(memberId, 5, 0);
     }
 
     public void deletePostComment(Long memberId, Long postId, Long commentId) {
-        postRepository.updateCommentIsDelete(memberId, postId,commentId);
+        postRepository.updateCommentIsDelete(memberId, commentId);
     }
 
     public void registerRecommendComment(Long memberId, Long postId, Long commentId) {
         // postd, commentid를 가진 댓글에 PostCommentRecommend 테이블에 memberid와 commendId 추가
         PostCommentRecommendDTO pcr = new PostCommentRecommendDTO(memberId, postId, commentId);
         postRepository.registerRecommendComment(pcr);
+        Optional<PostComment> postCommentOptional = postCommentRepository.findById(commentId);
+        PostComment postComment = postCommentOptional.orElse(null);
+        Integer commentRecommendCnt = postComment.getPostCommentRecommendList().size();
+        if(commentRecommendCnt % 5 == 0){
+            Long id = postComment.getMemberId();
+            memberInfoRepository.updateReward(id, 5, 1);
+            String reason = postComment.getContents() + " 답변 추천 " + commentRecommendCnt + "개 달성 보상";
+            tokenHistoryRepository.insertTokenHistory(id, reason, 1L);
+        }
 
     }
 
@@ -96,24 +136,71 @@ public class PostService {
         postRepository.banComment(postId,commentId,reportMember);
     }
 
-//    public List<PostCommentDTO> viewComments(Long memberId, Long postId) {
-//        // 대댓글 리스트
-//        //ObjectMapper mapper = new ObjectMapper();
-//        List<PostCommentDTO> comments = new ArrayList<PostCommentDTO>();
-//    // 반복문 수정하기
-//        for(int i = 0; i < postRepository. ; i++) {
-//            // i 번째 그룹의 대댓글들을 가져옴
-//           List<PostCommentDepthDTO> commentDepthList = postRepository.findCommentDepth(i, postId);
-//           // 그룹 i번의 댓글을 가져옴
-//           PostCommentDTO comment = postRepository.findComment(i,postId);
-//           // 그룹 i번쨰 댓글에 depthlist 주입
-//           comment.setPostCommentDepthList(commentDepthList);
-//           comments.add(comment);
-//            System.out.println(comment);
-//        }
-//        return comments;
-//
-//    }
+    public JSONArray viewComments(Long postId, Long memberId) {
+
+        ArrayList<Long>[] arrayList = new ArrayList[100];
+        for(int i = 0; i <  100; i++){
+            arrayList[i] = new ArrayList<Long>();
+        }
+        List<PostComment> postComments = postCommentRepository.findByPostId(postId);
+        for(PostComment postComment: postComments){
+            arrayList[postComment.getPostCommentGroup()].add(postComment.getId());
+        }
+        JSONArray jsonArray = new JSONArray();
+        for(ArrayList arrayList1: arrayList){
+            int count = 0;
+            JSONObject group = new JSONObject();
+            JSONArray depth = new JSONArray();
+
+            for(Object id: arrayList1){
+                Optional<PostComment> postCommentOptional = postCommentRepository.findById((Long) id);
+                PostComment postComment = postCommentOptional.orElse(null);
+                JSONObject depthIn = new JSONObject();
+                if(count == 0){
+                    group.put("commentId", id);
+                    group.put("memberId", postComment.getMember().getId());
+                    group.put("imageSrc", postComment.getMember().getImageSrc());
+                    group.put("nickname", postComment.getMember().getNickname());
+                    group.put("contents", postComment.getContents());
+                    group.put("recommendCnt", postComment.getPostCommentRecommendList().size());
+                    group.put("banCnt", postComment.getPostCommentReportList().size());
+                    group.put("isAnonymous", postComment.getIsAnonymous());
+                    group.put("modifiedDate", postComment.getModifiedDate().toString());
+                    group.put("commentGroup", postComment.getPostCommentGroup());
+                    group.put("commentDepth", postComment.getPostCommentDepth());
+                    group.put("isOwner", postComment.getMember().getId() == memberId ? true : false);
+                    group.put("isDelete", postComment.getIsDelete());
+                    group.put("isRecommend", postCommentRecommendRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
+                    group.put("isBanned", postCommentReportRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
+                    count += 1;
+                    continue;
+                }
+                depthIn.put("commentId", id);
+                depthIn.put("memberId", postComment.getMember().getId());
+                depthIn.put("imageSrc", postComment.getMember().getImageSrc());
+                depthIn.put("nickname", postComment.getMember().getNickname());
+                depthIn.put("contents", postComment.getContents());
+                depthIn.put("recommendCnt", postComment.getPostCommentRecommendList().size());
+                depthIn.put("banCnt", postComment.getPostCommentReportList().size());
+                depthIn.put("isAnonymous", postComment.getIsAnonymous());
+                depthIn.put("modifiedDate", postComment.getModifiedDate().toString());
+                depthIn.put("commentGroup", postComment.getPostCommentGroup());
+                depthIn.put("commentDepth", postComment.getPostCommentDepth());
+                depthIn.put("isOwner", postComment.getMember().getId() == memberId ? true : false);
+                depthIn.put("isDelete", postComment.getIsDelete());
+                depthIn.put("isRecommend", postCommentRecommendRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
+                depthIn.put("isBanned", postCommentReportRepository.existsByMemberIdAndPostCommentId(memberId, postComment.getId()));
+                depth.add(depthIn);
+            }
+            log.info(String.valueOf(depth));
+            if(group.size() > 0) {
+                group.put("childComments", depth);
+                jsonArray.add(group);
+            }
+        }
+        log.info(String.valueOf(jsonArray));
+        return jsonArray;
+    }
 
 
 }

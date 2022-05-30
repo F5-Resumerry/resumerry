@@ -1,16 +1,18 @@
 package com.f5.resumerry.Member.domain.entity;
 
-import com.f5.resumerry.Order.Order;
+import com.f5.resumerry.Order.entity.Order;
 import com.f5.resumerry.Post.entity.Post;
 import com.f5.resumerry.Post.entity.PostComment;
 import com.f5.resumerry.Post.entity.PostCommentRecommend;
 import com.f5.resumerry.Post.entity.PostCommentReport;
 import com.f5.resumerry.Resume.*;
+import com.f5.resumerry.Reward.ResumeAuthority;
 import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.converter.BaseTimeEntity;
 import com.f5.resumerry.converter.BooleanToYNConverter;
 import com.f5.resumerry.selector.CategoryEnum;
 import com.f5.resumerry.selector.Role;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -78,6 +80,9 @@ public class Member extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_info_id", foreignKey = @ForeignKey(name = "FK_memberinfo_member"), insertable = false, updatable = false)
+    @JsonIgnore
+    @JsonProperty("memberInfo")
+    @JsonManagedReference
     private MemberInfo memberInfo;
 
     @Column(name = "member_info_id")
@@ -114,9 +119,23 @@ public class Member extends BaseTimeEntity {
     private List<ResumeScrap> resumeScrapList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    private List<ResumeAuthority> resumeAuthorityList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @Builder.Default
     private List<Order> orderList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    public void addOrder(Order order) {
+        this.orderList.add(order);
+        order.setClient(this);
+    }
+
+    public void addToken(Integer amount) {
+        MemberInfo memberInfo = this.getMemberInfo();
+        memberInfo.setToken(memberInfo.getToken() + amount);
+    }
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
     private List<TokenHistory> tokenHistoryList = new ArrayList<>();
 
 }

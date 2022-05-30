@@ -14,7 +14,7 @@ public class FindPostDTO {
     private String title;
     private String contents;
     private Integer commentCnt;
-    private Integer views;
+    private Integer viewCnt;
     private Boolean isAnonymous;
     private String imageSrc;
     private Long memberId;
