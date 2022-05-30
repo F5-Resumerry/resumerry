@@ -11,12 +11,17 @@ import com.f5.resumerry.Post.repository.PostRepository;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Reward.TokenHistory;
 import com.f5.resumerry.Reward.repository.TokenHistoryRepository;
+import com.f5.resumerry.selector.CategoryEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -52,26 +57,15 @@ public class PostService {
     @Autowired
     private TokenHistoryRepository tokenHistoryRepository;
 
-    public List<PostsDTO> findPosts(String title, String category, String sort) {
-        /**
-         * ToDo
-         * recent / view
-         * 1. 조건이 최신순(recent)이다.
-         *  1.1. 카테고리가 전체이거나 혹은 특정 카테고리거나.
-         * 2. 조건이 (view)이다.
-         *  2.1. 카테고리가 전체이거나 혹은 특정 카테고리거나.
-         */
-        if (sort.equals("recent")) {
-            if(category.equals("ALL")) {
-                return postRepository.findPosts(title, category);
+    public PostsFullResponse findPosts(String title, CategoryEnum category, String sort, Integer pageNo) {
+            if(sort.equals("recent")){
+                Pageable paging = PageRequest.of(pageNo,20, Sort.by("createdDate").ascending());
             }
-            return postRepository.findPostsNotAll(title, category);
-        } else {
-            if (category.equals("ALL")) {
-                return postRepository.findPostsView(title, category);
-            }
-            return postRepository.findPostsViewNotAll(title, category);
-        }
+            Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending());
+
+            Page<PostsDTO> pagePosts =postRepository.findByTitleContainingAndAndCategory(title, category, paging).map(PostsDTO::of);
+            PostsFullResponse responses = new PostsFullResponse(pagePosts, pagePosts.getTotalPages());
+            return responses;
 
     }
 

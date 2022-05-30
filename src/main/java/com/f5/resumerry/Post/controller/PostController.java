@@ -10,9 +10,11 @@ import com.f5.resumerry.Post.dto.UpdatePostDTO;
 import com.f5.resumerry.Post.service.PostService;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.exception.AuthenticateException;
+import com.f5.resumerry.selector.CategoryEnum;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,11 +40,11 @@ public class PostController {
     @GetMapping(value = "/posts")
     @ApiOperation(value = "게시글 목록 조회")
     public ResponseEntity findPosts(@ApiParam(value = "글 제목") @RequestParam(name = "title", required = false, defaultValue = "") String title,
-                                    @ApiParam(value = "직종") @RequestParam(name = "category",required = false, defaultValue = "ALL") String category,
-                                    @ApiParam(value = "정렬기준") @RequestParam(name = "sort", required = false, defaultValue = "recent") String sort
+                                    @ApiParam(value = "직종") @RequestParam(name = "category",required = false, defaultValue = "ALL") CategoryEnum category,
+                                    @ApiParam(value = "정렬기준") @RequestParam(name = "sort", required = false, defaultValue = "recent") String sort,
+                                    @ApiParam(value = "페이지 넘버") @RequestParam(name ="pageNo") Integer pageNo
                                     ) {
-        List<PostsDTO> findPostResponse = postService.findPosts(title, category, sort);
-        return  ResponseEntity.ok(findPostResponse);
+        return  ResponseEntity.ok(postService.findPosts(title, category, sort, pageNo));
     }
 
     @GetMapping(value = "/post/{user_id}")
