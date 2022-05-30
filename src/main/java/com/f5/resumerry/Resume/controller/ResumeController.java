@@ -205,7 +205,7 @@ public class ResumeController {
 
     @GetMapping("/recommend/{user_id}/{resume_id}")
     @ApiOperation(value = "TF-IDF 추천이력서 조회")
-    public ResponseEntity<List<ResumeRecommendDTO>> getTokenHistory(
+    public ResponseEntity<List<ResumeSimilarRecommendDto>> getTfIdfRecommendResumes(
             @ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
             @ApiParam("유저 번호") @PathVariable Long user_id,
             @ApiParam("이력서 번호") @PathVariable Long resume_id

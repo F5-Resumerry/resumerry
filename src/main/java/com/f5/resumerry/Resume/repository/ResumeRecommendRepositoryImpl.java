@@ -2,6 +2,7 @@ package com.f5.resumerry.Resume.repository;
 
 
 import com.f5.resumerry.Resume.dto.ResumeRecommendDTO;
+import com.f5.resumerry.Resume.dto.ResumeSimilarRecommendDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -9,8 +10,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.f5.resumerry.Resume.QResumeRecommend.resumeRecommend;
 import static com.f5.resumerry.Resume.QResume.resume;
+import static com.f5.resumerry.Resume.QResumeSimilarRecommend.resumeSimilarRecommend;
 
 public class ResumeRecommendRepositoryImpl implements ResumeRecommendCustomRepository {
 
@@ -20,23 +21,22 @@ public class ResumeRecommendRepositoryImpl implements ResumeRecommendCustomRepos
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ResumeRecommendDTO> findResumeRecommendByUserId(Long userId, Long resumeId) {
+    public List<ResumeSimilarRecommendDto> findResumeRecommendByResumeId(Long userId, Long resumeId) {
 
         return queryFactory
-                .select(Projections.constructor(ResumeRecommendDTO.class,
-                        resumeRecommend.resumeId
+                .select(Projections.constructor(ResumeSimilarRecommendDto.class,
+                        resumeSimilarRecommend.id
+                        , resume.viewCnt
                         , resume.title
                         , resume.fileLink
                         , resume.contents
                         , resume.createdDate
                 ))
-                .from(resumeRecommend)
-                .innerJoin(resume).on(resume.id.eq(resumeRecommend.resumeId))
-                .where(
-                        resumeRecommend.memberId.eq(userId)
-                )
-                .orderBy(resumeRecommend.createdDate.desc())
+                .from(resumeSimilarRecommend)
+                .innerJoin(resume).on(resume.id.eq(resumeSimilarRecommend.similarResumeId))
+                .orderBy(resumeSimilarRecommend.createdDate.desc())
                 .limit(5)
                 .fetch();
     }
+
 }
