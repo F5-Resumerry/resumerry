@@ -423,8 +423,8 @@ public class ResumeService {
 
     }
 
-    public List<ResumeRecommendDTO> getAllResumeRecommend(Long userId, Long resumeId) {
+    public List<ResumeSimilarRecommendDto> getAllResumeRecommend(Long userId, Long resumeId) {
 
-        return resumeRecommendCustomRepository.findResumeRecommendByUserId(userId, resumeId);
+        return resumeRecommendCustomRepository.findResumeRecommendByResumeId(userId, resumeId);
     }
 }
