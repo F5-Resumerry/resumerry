@@ -1,4 +1,7 @@
 spring:
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -48,60 +51,23 @@ logging:
     org.hibernate.SQL: debug
 jwt:
   secret: sdfasdfa
-
+payments:
+  toss:
+    client-api-key: test_ck_dP9BRQmyarY5ZMaNvv7rJ07KzLNk
+    secret-api-key: test_sk_YZ1aOwX7K8mBgqjwD6q3yQxzvNPG
+    success-url: /orders/success
+    fail-url: /orders/fail
+    origin-url: https://api.tosspayments.com/v1
 cloud:
   aws:
     credentials:
       accessKey: AKIAZFBQMW2O2LYWNE6U  # slack 확인요망
       secretKey: 5M8r71jdlCkLPNXWW+85lAzYMH3KlHSq7tajjVsY # slack 확인요망
     s3:
-      bucket: resume-file-storage
+      resumeBucket: resume-file-storage
+      imageBucket : resumerry-user-profile-image
+
     region:
       static: ap-northeast-2
     stack:
       auto: false
-
-
-
-
-#
-#spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    password: 9520awdr0259!
-#    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&useSSL=false
-#    username: root
-#    initialization-mode: always
-#    platform: mysql
-#  jpa:
-#    database: mysql
-#    database-platform: org.hibernate.dialect.MySQL8Dialect
-#    hibernate:
-#      ddl-auto: none
-#    show-sql: true
-#  #  flyway:
-#  #    locations: classpath:/db/migration # migration 파일들이 위치하는 directory
-#  #    sql-migration-suffixes: ddl        # 파일 확장자
-#  #    baseline-on-migrate: true          # flyway_schema_history 테이블을 자동으로 생성할지 여부
-#  #    baseline-version: 0                # 최초 버전 정보
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: dmswn0261@ajou.ac.kr
-#    password: okqwxajmtkuzagvu
-#    properties:
-#      mail:
-#        smtp:
-#          starttls:
-#            enable: true
-#            required: true
-#          auth: true
-#          connectiontimeout: 5000
-#          timeout: 5000
-#          writetimeout: 5000
-#logging:
-#  level:
-#    org.hibernate.SQL: debug
-#
-#server:
-#  port: 8081
