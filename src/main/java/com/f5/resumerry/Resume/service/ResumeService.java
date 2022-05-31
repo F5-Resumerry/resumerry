@@ -286,7 +286,7 @@ public class ResumeService {
     public ResumesFullResponse viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
         // 해시태그 반영 안됨
         // 해시태그 이름으로 파싱 -> resumeid
-        SortingEnum sort = resumeFilterDTO.getSort();
+        String sort = resumeFilterDTO.getSort();
         String title = resumeFilterDTO.getTitle();
         Integer startYear = resumeFilterDTO.getStartYear();
         Integer endYear = resumeFilterDTO.getEndYear();
@@ -294,13 +294,13 @@ public class ResumeService {
         Integer pageNo = resumeFilterDTO.getPageNo();
         Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending()) ;
 
-        if(sort.equals(SortingEnum.view)) {
+        if(SortingEnum.VIEW.toString().equalsIgnoreCase(sort)) {
             paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending()) ;
         }
-        if(sort.equals(SortingEnum.recommend)) {
+        if(SortingEnum.RECOMMEND.toString().equalsIgnoreCase(sort)) {
             paging = PageRequest.of(pageNo, 20, Sort.by("recommendCnt").descending()) ;
         }
-        if(sort.equals(SortingEnum.years)) {
+        if(SortingEnum.YEARS.toString().equalsIgnoreCase(sort)) {
             paging = PageRequest.of(pageNo, 20, Sort.by("years").descending()) ;
         }
 
