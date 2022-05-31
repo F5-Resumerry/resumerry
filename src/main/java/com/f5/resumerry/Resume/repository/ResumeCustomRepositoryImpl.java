@@ -1,14 +1,14 @@
 package com.f5.resumerry.Resume.repository;
 
-import com.f5.resumerry.Resume.Hashtag;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeHashtag;
-import com.f5.resumerry.Resume.ResumeScrap;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.selector.CategoryEnum;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 
 
 import javax.persistence.EntityManager;
@@ -19,7 +19,12 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
     @Autowired
     private EntityManager entityManager;
 
-   public List<ResumeDTO> viewResumesInMyPage(Long id) {
+
+    private final JPAQueryFactory queryFactory;
+
+    public ResumeCustomRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+
+    public List<ResumeDTO> viewResumesInMyPage(Long id) {
        return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size,r.resumeCommentList.size,r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname,r.years) "
                + "from Resume r "
                + "join r.member m "
@@ -135,6 +140,7 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
                .setParameter("resumeId", resumeId)
                .getResultList();
     }
+
 
 
 }

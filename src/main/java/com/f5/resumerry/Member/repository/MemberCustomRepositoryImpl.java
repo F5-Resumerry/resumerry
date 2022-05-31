@@ -21,9 +21,7 @@ public class MemberCustomRepositoryImpl implements  MemberCustomRepository{
 
     private final JPAQueryFactory queryFactory;
 
-    public MemberCustomRepositoryImpl(EntityManager em) {
-        this.queryFactory = new JPAQueryFactory(em);
-    }
+    public MemberCustomRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     @Transactional
     public void updateMemberToken(Integer n, Long memberInfoId) {

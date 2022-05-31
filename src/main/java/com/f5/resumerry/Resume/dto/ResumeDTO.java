@@ -15,13 +15,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResumeDTO {
     private Long resumeId;
-    private String Title;
+    private String title;
     private String contents;
     private Integer recommendCnt;
     private Integer commentCnt;
     private Integer viewCnt;
     private LocalDateTime modifiedDate;
-//    private String Hashtag;
+   // private List<String> Hashtag;
     private Long memberId;
     private String imageSrc;
     private String nickname;

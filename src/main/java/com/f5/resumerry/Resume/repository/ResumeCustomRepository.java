@@ -8,6 +8,9 @@ import com.f5.resumerry.Resume.dto.ResumeDTO;
 import com.f5.resumerry.Resume.dto.ResumeFilterDTO;
 import com.f5.resumerry.Resume.dto.ViewResumeDTO;
 import com.f5.resumerry.selector.CategoryEnum;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -26,4 +29,5 @@ public interface ResumeCustomRepository {
 
 
     Resume viewResume(Long resumeId);
+
 }
