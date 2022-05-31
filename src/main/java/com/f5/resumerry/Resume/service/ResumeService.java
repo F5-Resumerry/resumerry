@@ -294,11 +294,14 @@ public class ResumeService {
         Integer pageNo = resumeFilterDTO.getPageNo();
         Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending()) ;
 
-        if(sort.equals(SortingEnum.view)) {      paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending()) ;
+        if(sort.equals(SortingEnum.view)) {
+            paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending()) ;
         }
-        if(sort.equals(SortingEnum.recommend)) {    paging = PageRequest.of(pageNo, 20, Sort.by("recommendCnt").descending()) ;
+        if(sort.equals(SortingEnum.recommend)) {
+            paging = PageRequest.of(pageNo, 20, Sort.by("recommendCnt").descending()) ;
         }
-        if(sort.equals(SortingEnum.years)) {     paging = PageRequest.of(pageNo, 20, Sort.by("years").descending()) ;
+        if(sort.equals(SortingEnum.years)) {
+            paging = PageRequest.of(pageNo, 20, Sort.by("years").descending()) ;
         }
 
         PageImpl<FilterViewResumeDTO> lists =resumeRepositorySupport.findAllResumes(paging, title, category, startYear, endYear);

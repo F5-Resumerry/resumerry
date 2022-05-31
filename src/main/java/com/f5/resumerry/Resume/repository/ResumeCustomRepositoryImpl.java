@@ -1,18 +1,11 @@
 package com.f5.resumerry.Resume.repository;
 
-import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeHashtag;
 import com.f5.resumerry.Resume.dto.*;
-import com.f5.resumerry.common.service.PagingUtil;
 import com.f5.resumerry.selector.CategoryEnum;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +19,6 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
-    private  PagingUtil pagingUtil;
 
     private final JPAQueryFactory queryFactory;
 
