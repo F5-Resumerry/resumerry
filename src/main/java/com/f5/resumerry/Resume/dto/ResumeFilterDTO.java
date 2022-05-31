@@ -1,6 +1,7 @@
 package com.f5.resumerry.Resume.dto;
 
 import com.f5.resumerry.selector.CategoryEnum;
+import com.f5.resumerry.selector.SortingEnum;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ public class ResumeFilterDTO {
     @ApiParam("시작 연도") private Integer startYear;
     @ApiParam("끝 연도")private Integer endYear;
     @ApiParam("해시태그") private String hashtag;
-    @ApiParam("정렬 방법") private String sort;
+    @ApiParam("정렬 방법") private SortingEnum sort;
 
     @ApiParam("페이지 번호") private Integer pageNo;
 
@@ -26,7 +27,7 @@ public class ResumeFilterDTO {
         this.title = "";
         this.startYear = 0;
         this.endYear = 100;
-        this.sort = "recent";
+        this.sort = SortingEnum.recent;
         this.pageNo = 0;
     }
 

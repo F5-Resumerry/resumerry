@@ -12,6 +12,7 @@ import com.f5.resumerry.Reward.repository.ResumeAuthorityRepository;
 import com.f5.resumerry.Reward.repository.TokenHistoryRepository;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.selector.CategoryEnum;
+import com.f5.resumerry.selector.SortingEnum;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -282,60 +283,40 @@ public class ResumeService {
 
     }
 
-    public Page<FilterViewResumeDTO> viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
+    public ResumesFullResponse viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
         // 해시태그 반영 안됨
         // 해시태그 이름으로 파싱 -> resumeid
-        String sort = resumeFilterDTO.getSort();
+        SortingEnum sort = resumeFilterDTO.getSort();
         String title = resumeFilterDTO.getTitle();
         Integer startYear = resumeFilterDTO.getStartYear();
         Integer endYear = resumeFilterDTO.getEndYear();
         CategoryEnum category = resumeFilterDTO.getCategory();
         Integer pageNo = resumeFilterDTO.getPageNo();
+        Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending()) ;
 
-//        List<Resume> resumeLists = resumeRepository.findAllWithMember(title, startYear, endYear, category); //기본 생성 날짜로 반환
-//        if(sort.equals("view")) {
-//            resumeLists = resumeRepository.findAllWithMemberByView(title, startYear, endYear, category);
-//        }
-//        if(sort.equals("recommend")) {
-//            resumeLists = resumeRepository.findAllWithMemberByRecommend(title, startYear, endYear, category);
-//        }
-//        if(sort.equals("years")) {
-//            resumeLists = resumeRepository.findAllWithMemberByYears(title, startYear, endYear, category);
-//        }
-//
-//
-//
-//        // 받은 resumeList dto로 반환
-//        List<FilterViewResumeDTO> lists = resumeLists
-//                .stream()
-//                .map(resume -> new FilterViewResumeDTO(resume))
-//                .collect(Collectors.toList());
-//
-//        // dto에 hashtagname(string 부여)
-//        for(FilterViewResumeDTO list : lists) {
-//            List<String> hashtagLists = new ArrayList<String>();
-//            Long resumeId = list.getResumeId();
-//            // resume hash tag 에서 list 반환
-//            for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
-//                Long hashtagId = resumeHashtag.getHashtagId();
-//                Hashtag hashtag = hashtagRepository.findByHashtagId(hashtagId);
-//                hashtagLists.add(hashtag.getHashtagName());
-//            }
-//            list.setHashtag(hashtagLists);
-//        }
-//
-//        return lists;
+        if(sort.equals(SortingEnum.view)) {      paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending()) ;
+        }
+        if(sort.equals(SortingEnum.recommend)) {    paging = PageRequest.of(pageNo, 20, Sort.by("recommendCnt").descending()) ;
+        }
+        if(sort.equals(SortingEnum.years)) {     paging = PageRequest.of(pageNo, 20, Sort.by("years").descending()) ;
+        }
 
-        Sort.Order order = Sort.Order.desc("createdDate");
-        Sort sorted = Sort.by(order);
+        PageImpl<FilterViewResumeDTO> lists =resumeRepositorySupport.findAllResumes(paging, title, category, startYear, endYear);
 
-        Pageable paging = PageRequest.of(pageNo, 20, sorted);
+                // dto에 hashtagname(string 부여) -> 리팩토링 필요,,
+        for(FilterViewResumeDTO list : lists) {
+            List<String> hashtagLists = new ArrayList<String>();
+            Long resumeId = list.getId();
+            // resume hash tag 에서 list 반환
+            for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
+                Long hashtagId = resumeHashtag.getHashtagId();
+                hashtagLists.add(resumeHashtag.getHashtag().getHashtagName());
+            }
+            list.setHashtag(hashtagLists);
+        }
 
-        PageImpl<FilterViewResumeDTO> pages =resumeRepositorySupport.findAllResumes(paging, title, category, startYear, endYear);
-        return pages;
-//        Page<FilterViewResumeDTO> filterViewResumeDTOS = pages.map(FilterViewResumeDTO::of);
-        //return filterViewResumeDTOS;
-
+        ResumesFullResponse resumesFullResponse = new ResumesFullResponse(lists.getContent(), lists.getTotalPages());
+        return resumesFullResponse;
 
     }
 

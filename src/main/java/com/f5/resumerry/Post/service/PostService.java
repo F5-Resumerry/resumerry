@@ -66,7 +66,6 @@ public class PostService {
             Page<PostsDTO> pagePosts =postRepository.findByTitleContainingAndAndCategory(title, category, paging).map(PostsDTO::of);
             PostsFullResponse responses = new PostsFullResponse(pagePosts, pagePosts.getTotalPages());
             return responses;
-
     }
 
     public void registerPosts(Long memberId, RegisterPostDTO req){

@@ -46,4 +46,5 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
 
     Page<Post> findByTitleContainingAndAndCategory(String title, CategoryEnum category, Pageable pageable);
 
+
 }
