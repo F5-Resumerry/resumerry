@@ -86,29 +86,35 @@ public class ResumeService {
         // 2. 내것이 아니면
         // 2.1 스크랩을 하였는가
         // 2.2 추천이 되어있는가
+        ViewResumeDTO viewResumeDTO;
         Boolean isBuyer;
+        Boolean isOwner;
+        Boolean isScrap;
+        Boolean isRecommend;
         if(resumeAuthorityRepository.existsByMemberIdAndResumeId(tokenId, resumeId)) {
             isBuyer = true;
-        } else{
+        } else {
             isBuyer = false;
         }
-        ViewResumeDTO viewResumeDTO;
+
         if(memberId.equals(tokenId)) {
-            viewResumeDTO = new ViewResumeDTO(resume, true, false, false, isBuyer);
+            isOwner = true;
+
         } else {
-            if (resumeScrapRepository.existsByResume(resume)) {
-                // 스크랩이 존재한다면
-                if (resumeRecommendRepository.existsByResume(resume)) {
-                    viewResumeDTO = new ViewResumeDTO(resume, false, true, true, isBuyer);
-                }
-                viewResumeDTO = new ViewResumeDTO(resume, false, true, false, isBuyer);
-            } else {
-                if (resumeRecommendRepository.existsByResume(resume)) {
-                    viewResumeDTO = new ViewResumeDTO(resume, false, false, true, isBuyer);
-                }
-                viewResumeDTO = new ViewResumeDTO(resume, false, false, false, isBuyer);
-            }
+            isOwner = false;
         }
+
+        if (resumeScrapRepository.existsByMemberIdAndResumeId(resumeId, tokenId)) {
+            isScrap = true;
+        } else {
+            isScrap = false;
+        }
+        if (resumeRecommendRepository.existsByResumeIdAndMemberId(resumeId, memberId)) {
+            isRecommend = true;
+        } else {
+            isRecommend = false;
+        }
+        viewResumeDTO = new ViewResumeDTO(resume, isOwner, isScrap, isRecommend, isBuyer);
         // dto에 hashtagname(string 부여)
             List<String> hashtagLists = new ArrayList<String>();
             // resume hash tag 에서 list 반환
@@ -138,6 +144,8 @@ public class ResumeService {
         registerResumeDTO.setMemberId(id);
         registerResumeDTO.setIsDelete(true);
         registerResumeDTO.setViewCnt(0);
+        registerResumeDTO.setIsLock(true);
+
 
         Resume resume = registerResumeDTO.toEntity();
 

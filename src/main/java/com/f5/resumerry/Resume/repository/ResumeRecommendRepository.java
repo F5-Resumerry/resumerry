@@ -10,7 +10,7 @@ public interface ResumeRecommendRepository extends JpaRepository<ResumeRecommend
 
     void deleteById(Long id);
 
-    ResumeRecommend findByResumeIdAndMemberId(Long ResumeId, Long memberId);
+    Boolean existsByResumeIdAndMemberId(Long ResumeId, Long memberId);
 
     Boolean existsByResume(Resume resume);
 }
