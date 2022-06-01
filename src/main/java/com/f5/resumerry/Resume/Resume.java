@@ -61,6 +61,7 @@ public class Resume extends BaseTimeEntity {
     @Column(name = "is_lock", nullable = false)
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean isLock;
+
     @ManyToOne
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "FK_member_resume"), insertable = false, updatable = false)
     private Member member;

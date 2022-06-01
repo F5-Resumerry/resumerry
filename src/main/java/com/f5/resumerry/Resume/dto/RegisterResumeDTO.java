@@ -30,9 +30,11 @@ public class RegisterResumeDTO {
 
     private Long memberId;
 
+    private Boolean isLock;
+
 
     @Builder
-    public RegisterResumeDTO(Long id, String title, String contents, Integer years, String fileLink, Integer viewCnt, CategoryEnum category, Boolean isDelete, Long memberId){
+    public RegisterResumeDTO(Long id, String title, String contents, Integer years, String fileLink, Integer viewCnt, CategoryEnum category, Boolean isDelete, Long memberId, Boolean isLock){
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -42,6 +44,7 @@ public class RegisterResumeDTO {
         this.category = category;
         this.isDelete = isDelete;
         this.memberId = memberId;
+        this.isLock = isLock;
     }
 
     public Resume toEntity(){
@@ -55,6 +58,7 @@ public class RegisterResumeDTO {
                 .category(category)
                 .isDelete(isDelete)
                 .memberId(memberId)
+                .isLock(isLock)
                 .build();
         return build;
     }

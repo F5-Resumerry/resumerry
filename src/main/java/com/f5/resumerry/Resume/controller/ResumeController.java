@@ -1,5 +1,6 @@
 package com.f5.resumerry.Resume.controller;
 
+import com.f5.resumerry.Member.controller.AuthController;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
 import com.f5.resumerry.Member.service.MemberService;
@@ -10,6 +11,7 @@ import com.f5.resumerry.Resume.service.ResumeService;
 import com.f5.resumerry.aws.AwsS3Service;
 import com.f5.resumerry.dto.BooleanResponseDTO;
 import com.f5.resumerry.exception.AuthenticateException;
+import com.f5.resumerry.security.AuthService;
 import com.f5.resumerry.selector.AwsUpload;
 
 import com.querydsl.core.Tuple;
@@ -40,12 +42,15 @@ public class ResumeController {
     private final JwtUtil jwtUtil;
     private final AwsS3Service awsS3Service;
 
+    private final AuthService authService;
 
-    public ResumeController(ResumeService resumeService, MemberService memberService, JwtUtil jwtUtil, AwsS3Service awsS3Service) {
+
+    public ResumeController(ResumeService resumeService, MemberService memberService, JwtUtil jwtUtil, AwsS3Service awsS3Service, AuthService authService) {
         this.resumeService = resumeService;
         this.memberService = memberService;
         this.jwtUtil = jwtUtil;
         this.awsS3Service = awsS3Service;
+        this.authService = authService;
 
     }
 
@@ -53,9 +58,8 @@ public class ResumeController {
     @ApiOperation(value = "이력서 목록 조회")
     public ResponseEntity viewResumes(@ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
                                       @ModelAttribute ResumeFilterDTO resumeFilterDTO) {
-        Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        List<FilterViewResumeDTO> resumes = resumeService.viewResumes(resumeFilterDTO, member.getId());
-        return ResponseEntity.ok(resumes);
+        Long id = authService.Token2Member(token).getId();
+        return ResponseEntity.ok(resumeService.viewResumes(resumeFilterDTO,id));
     }
 
     @PostMapping(value = "/resume", consumes = {"multipart/form-data", MediaType.MULTIPART_FORM_DATA_VALUE })
