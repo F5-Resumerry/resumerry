@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class FilterViewResumeDTO {
-    private Long id;
+    private Long resumeId;
     private String title;
     private String contents;
     private Integer recommendCnt;

@@ -43,7 +43,7 @@ public class ResumeRepositorySupport extends QuerydslRepositorySupport {
     public PageImpl<FilterViewResumeDTO> findAllResumes(Pageable pageable, String title, CategoryEnum category, Integer startYear, Integer endYear){
         JPQLQuery<FilterViewResumeDTO> query = jpaQueryFactory        // 1)
                 .select(Projections.bean(FilterViewResumeDTO.class,
-                        resume.id
+                        resume.id.as("resumeId")
                         , resume.title
                         , resume.contents
                         , resumeRecommend.count().intValue().as("recommendCnt")

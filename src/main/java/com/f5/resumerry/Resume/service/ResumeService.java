@@ -315,12 +315,12 @@ public class ResumeService {
             paging = PageRequest.of(pageNo, 20, Sort.by("years").descending()) ;
         }
 
-        PageImpl<FilterViewResumeDTO> lists =resumeRepositorySupport.findAllResumes(paging, title, category, startYear, endYear);
+        PageImpl<FilterViewResumeDTO> lists = resumeRepositorySupport.findAllResumes(paging, title, category, startYear, endYear);
 
                 // dto에 hashtagname(string 부여) -> 리팩토링 필요,,
         for(FilterViewResumeDTO list : lists) {
             List<String> hashtagLists = new ArrayList<String>();
-            Long resumeId = list.getId();
+            Long resumeId = list.getResumeId();
             // resume hash tag 에서 list 반환
             for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
                 Long hashtagId = resumeHashtag.getHashtagId();
