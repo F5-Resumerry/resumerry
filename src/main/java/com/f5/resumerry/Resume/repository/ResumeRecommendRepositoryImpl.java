@@ -25,7 +25,7 @@ public class ResumeRecommendRepositoryImpl implements ResumeRecommendCustomRepos
 
         return queryFactory
                 .select(Projections.constructor(ResumeSimilarRecommendDto.class,
-                        resumeSimilarRecommend.id
+                        resumeSimilarRecommend.similarResumeId
                         , resume.viewCnt
                         , resume.title
                         , resume.fileLink
@@ -33,7 +33,9 @@ public class ResumeRecommendRepositoryImpl implements ResumeRecommendCustomRepos
                         , resume.createdDate
                 ))
                 .from(resumeSimilarRecommend)
-                .innerJoin(resume).on(resume.id.eq(resumeSimilarRecommend.similarResumeId))
+                .innerJoin(resume).on(resume.id.eq(resumeSimilarRecommend.sourceResumeId)
+                        .and(resumeSimilarRecommend.sourceResumeId.eq(resumeId))
+                )
                 .orderBy(resumeSimilarRecommend.createdDate.desc())
                 .limit(5)
                 .fetch();
