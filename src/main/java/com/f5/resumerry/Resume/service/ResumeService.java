@@ -302,7 +302,7 @@ public class ResumeService {
 
     }
 
-    public ResumesFullResponse viewResumes(ResumeFilterDTO resumeFilterDTO, Long memberId) {
+    public ResumesFullResponse viewResumes(ResumeFilterDTO resumeFilterDTO) {
         // 해시태그 반영 안됨
         // 해시태그 이름으로 파싱 -> resumeid
         String sort = resumeFilterDTO.getSort();

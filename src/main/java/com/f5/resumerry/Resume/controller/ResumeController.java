@@ -56,10 +56,9 @@ public class ResumeController {
 
     @GetMapping("/resume")
     @ApiOperation(value = "이력서 목록 조회")
-    public ResponseEntity viewResumes(@ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
-                                      @ModelAttribute ResumeFilterDTO resumeFilterDTO) {
-        Long id = authService.Token2Member(token).getId();
-        return ResponseEntity.ok(resumeService.viewResumes(resumeFilterDTO,id));
+    public ResponseEntity viewResumes(@ModelAttribute ResumeFilterDTO resumeFilterDTO) {
+
+        return ResponseEntity.ok(resumeService.viewResumes(resumeFilterDTO));
     }
 
     @PostMapping(value = "/resume", consumes = {"multipart/form-data", MediaType.MULTIPART_FORM_DATA_VALUE })
