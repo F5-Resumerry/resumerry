@@ -30,6 +30,7 @@ public class MyPageService {
         List<ScrapListDTO> scrapListDTO = new ArrayList<ScrapListDTO>();
         Member member = memberRepository.findByAccountName(accountName);
         List<ResumeScrap> resumeList = member.getResumeScrapList();
+        System.out.println(resumeList);
         for(ResumeScrap resumeScrap: resumeList){
             Optional<Resume> resumeOptional = resumeRepository.findById(resumeScrap.getResumeId());
             Resume resume = resumeOptional.orElse(null);
@@ -47,7 +48,6 @@ public class MyPageService {
                 scrapListDTO1.setNickname(resume.getMember().getNickname());
                 scrapListDTO1.setRecommendCnt(resume.getResumeRecommendList().size());
                 scrapListDTO1.setCommentCnt(resume.getResumeCommentList().size());
-
 
                 List<String> hashtagList = new ArrayList<String>();
                 for(ResumeHashtag resumeHashtag: resume.getResumeHashtagList()){

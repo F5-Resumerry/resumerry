@@ -7,7 +7,7 @@ import com.f5.resumerry.Resume.ResumeScrap;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ResumeScrapRepository extends JpaRepository<ResumeScrap, Long> {
-    Boolean existsByMemberIdAndResumeId(Long memberId, Long resumeId);
+    Boolean existsByResumeIdAndMemberId(Long resumeId, Long memberId);
 
     void deleteById(Long id);
 

@@ -104,12 +104,12 @@ public class ResumeService {
             isOwner = false;
         }
 
-        if (resumeScrapRepository.existsByMemberIdAndResumeId(resumeId, tokenId)) {
+        if (resumeScrapRepository.existsByResumeIdAndMemberId(resumeId, tokenId)) {
             isScrap = true;
         } else {
             isScrap = false;
         }
-        if (resumeRecommendRepository.existsByResumeIdAndMemberId(resumeId, memberId)) {
+        if (resumeRecommendRepository.existsByResumeIdAndMemberId(resumeId, tokenId)) {
             isRecommend = true;
         } else {
             isRecommend = false;
