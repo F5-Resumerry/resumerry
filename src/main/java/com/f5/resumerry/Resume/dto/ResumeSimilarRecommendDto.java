@@ -13,8 +13,6 @@ public class ResumeSimilarRecommendDto {
 
     private Long id;
     private Integer viewCnt;
-    private Integer commentCnt;
-    private Integer likeCnt;
     private String title;
     private String fileLink;
     private String contents;

@@ -33,7 +33,7 @@ public class ResumeRecommendRepositoryImpl implements ResumeRecommendCustomRepos
                         , resume.createdDate
                 ))
                 .from(resumeSimilarRecommend)
-                .innerJoin(resume).on(resume.id.eq(resumeSimilarRecommend.sourceResumeId)
+                .innerJoin(resume).on(resume.id.eq(resumeSimilarRecommend.similarResumeId)
                         .and(resumeSimilarRecommend.sourceResumeId.eq(resumeId))
                 )
                 .orderBy(resumeSimilarRecommend.createdDate.desc())
