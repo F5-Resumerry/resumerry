@@ -25,7 +25,7 @@ public class ResumeRecommendRepositoryImpl implements ResumeRecommendCustomRepos
 
         return queryFactory
                 .select(Projections.constructor(ResumeSimilarRecommendDto.class,
-                        resumeSimilarRecommend.similarResumeId
+                        resume.id
                         , resume.viewCnt
                         , resume.title
                         , resume.fileLink
