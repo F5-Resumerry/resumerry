@@ -197,13 +197,10 @@ public class ResumeController {
     @PostMapping(value = "/resume/{member_id}/{resume_id}/unlock")
     @ApiOperation("이력서 잠금 해제")
     public ResponseEntity unLockResume(@ApiParam(value = "인증 토큰") @RequestHeader("Authorization") String token,
-                                         @ApiParam(value = "보낸 유저 아이디") @PathVariable("member_id") Long memberId,
+                                         @ApiParam(value = "보낸 유저 아이디") @PathVariable("member_id") Long resumeMemberId,
                                         @ApiParam(value = "이력서 아이디") @PathVariable("resume_id") Long resumeId) {
-        Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
-        if (!memberId.equals(member.getId())) {
-            throw new AuthenticateException("회원의 아이디가 같지 않습니다.");
-        }
-        return ResponseEntity.ok(resumeService.unLockResume(member.getId(), resumeId));
+        Member tokenMember = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        return ResponseEntity.ok(resumeService.unLockResume(tokenMember.getId(), resumeId));
     }
 
     @GetMapping("/recommend/{user_id}/{resume_id}")

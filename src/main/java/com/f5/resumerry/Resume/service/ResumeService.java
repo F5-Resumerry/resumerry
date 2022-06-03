@@ -437,7 +437,7 @@ public class ResumeService {
         // token_history table 관리 여부
         Resume resumeData = resumeRepository.getById(resumeId);
         // 해당 이력서 열람을 위해 토큰을 사용했다는 이력 남기는거 token histroy에 resume_id 추가했음
-        String reason =resumeData.getMember().getAccountName() + "  " + resumeData.getTitle()+" 이력서 해제";
+        String reason = resumeData.getMember().getAccountName() + "  " + resumeData.getTitle()+" 이력서 해제";
         tokenHistoryRepository.insertTokenHistory(memberId, reason, (long) (numOfTokenUserHas- numOfTokenToUnLockResume));
         resumeAuthorityRepository.insertResumeAuthority(memberId, resumeId); // lock 해제 이력 남김
 
