@@ -44,7 +44,7 @@ public class MyPageController {
     @GetMapping("/{member_id}/clip")
     @ApiOperation(value = "마이페이지 스크랩 이력서 목록 조회")
     public ResponseEntity viewScrapList(@ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
-                                        @ApiParam("member_id") @PathVariable Long member_id){
+                                        @ApiParam("member_id") @PathVariable("member_id") Long member_id){
 
         Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
         if(!member_id.equals(member.getId())) {

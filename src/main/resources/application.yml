@@ -26,7 +26,7 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
   mail:
     host: smtp.gmail.com
     port: 587
@@ -46,6 +46,13 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+  flyway:
+    locations: classpath:/db/migration
+    sql-migration-suffixes: .sql
+    baseline-on-migrate: true          # flyway_schema_history 테이블을 자동으로 생성할지 여부
+    baseline-version: 0
+
+
 logging:
   level:
     org.hibernate.SQL: debug
