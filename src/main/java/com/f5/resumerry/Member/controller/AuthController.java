@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Repository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -42,7 +43,7 @@ public class AuthController {
 
 
     @PostMapping(value = "/sign-up")
-    public ResponseEntity<Member> signUp(@Validated(ValidationSequence.class) @ModelAttribute SignUpReqDTO memberDTO) {
+    public ResponseEntity<Member> signUp(@Validated(ValidationSequence.class) @RequestBody SignUpReqDTO memberDTO) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/auth/sign-in").toUriString());
 
         if (!memberServiceImpl.checkEmail(memberDTO.getEmail())) {

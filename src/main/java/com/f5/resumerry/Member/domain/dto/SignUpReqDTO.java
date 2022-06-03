@@ -4,6 +4,7 @@ import com.f5.resumerry.selector.CategoryEnum;
 import com.f5.resumerry.selector.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class SignUpReqDTO {
     @NotBlank(message = "아이디는 필수 입력 값입니다.")
     @Pattern(regexp = "^[a-zA-Z0-9]{4,12}$"
