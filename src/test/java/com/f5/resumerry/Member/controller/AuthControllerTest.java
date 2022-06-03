@@ -1,6 +1,7 @@
 package com.f5.resumerry.Member.controller;
 
 import com.f5.resumerry.Member.domain.dto.SignUpDTO;
+import com.f5.resumerry.Member.domain.dto.SignUpReqDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
@@ -24,7 +25,7 @@ class AuthControllerTest {
 
     @Test
     void signUp() {
-        SignUpDTO signUpDTO = new SignUpDTO();
+        SignUpReqDTO signUpDTO = new SignUpReqDTO();
         signUpDTO.setAccountName("hello");
         try {
             mockMvc.perform((RequestBuilder) authController.signUp(signUpDTO));

@@ -3,6 +3,7 @@ import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.domain.entity.MemberInfo;
 import com.f5.resumerry.selector.CategoryEnum;
 import com.f5.resumerry.selector.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -71,6 +72,17 @@ public class SignUpDTO {
         this.salt = salt;
         this.category = category;
         this.memberInfoId = memberInfoId;
+    }
+
+    public SignUpDTO(SignUpReqDTO r){
+        this.accountName = r.getAccountName();
+        this.nickname = r.getNickname();
+        this.email = r.getEmail();
+        this.password = r.getPassword();
+        this.years = r.getYears();
+        this.isWorking = r.getIsWorking();
+        this.role = r.getRole();
+        this.category = r.getCategory();
     }
 
     public Member toEntity(){

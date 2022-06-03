@@ -2,6 +2,7 @@ package com.f5.resumerry.Member.controller;
 
 import com.f5.resumerry.Member.domain.dto.SignInDTO;
 import com.f5.resumerry.Member.domain.dto.SignUpDTO;
+import com.f5.resumerry.Member.domain.dto.SignUpReqDTO;
 import com.f5.resumerry.Member.domain.dto.ValidationGroups.ValidationSequence;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.service.JwtUtil;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -39,8 +41,8 @@ public class AuthController {
     private final MyUserDetailsService userDetailsService;
 
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<Member> signUp(@Validated(ValidationSequence.class) @RequestBody SignUpDTO memberDTO) {
+    @PostMapping(value = "/sign-up")
+    public ResponseEntity<Member> signUp(@Validated(ValidationSequence.class) @ModelAttribute SignUpReqDTO memberDTO) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/auth/sign-in").toUriString());
 
         if (!memberServiceImpl.checkEmail(memberDTO.getEmail())) {
