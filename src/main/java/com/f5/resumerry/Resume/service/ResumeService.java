@@ -298,7 +298,7 @@ public class ResumeService {
         String contents = uploadResumeDTO.getContents();
         CategoryEnum category = uploadResumeDTO.getCategory();
         Integer years = uploadResumeDTO.getYears();
-        Resume resume = resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
+        resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
 
     }
 
