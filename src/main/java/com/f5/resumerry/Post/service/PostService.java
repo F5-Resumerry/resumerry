@@ -59,7 +59,7 @@ public class PostService {
             if(sort.equals("recent")){
                 Pageable paging = PageRequest.of(pageNo,20, Sort.by("createdDate").ascending());
             }
-            Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending());
+            Pageable paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending());
 
             Page<PostsDTO> pagePosts = new PageImpl<PostsDTO>(new ArrayList<>());
 

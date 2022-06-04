@@ -18,18 +18,6 @@ public interface ResumeCustomRepository {
     List<FilterViewResumeDTO> viewResumesInMyPage(Long memberId);
 
     List<FilterViewResumeDTO> viewScrapResumesInMyPage(Long memberId);
-
-    void uploadResume(Long id, String fullFileLink, String title, String contents, CategoryEnum category, Integer years);
-
-   // void updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);
-
-    List<Resume> findAllWithMember(String t, Integer sy, Integer ey, CategoryEnum c);
-    List<Resume> findAllWithMemberByYears(String t, Integer sy, Integer ey, CategoryEnum c);
-    List<Resume> findAllWithMemberByRecommend(String t, Integer sy, Integer ey, CategoryEnum c);
-    List<Resume> findAllWithMemberByView(String t, Integer sy, Integer ey, CategoryEnum c);
-    List<ResumeHashtag> findHashtag(Long resumeId);
-
-
     Resume viewResume(Long resumeId);
 
 }

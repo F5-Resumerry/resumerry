@@ -27,7 +27,6 @@ import java.util.Optional;
 public class MyPageService {
     private final MemberRepository memberRepository;
     private final ResumeRepository resumeRepository;
-
     private final ResumeHashtagRepository resumeHashtagRepository;
 
     @Transactional

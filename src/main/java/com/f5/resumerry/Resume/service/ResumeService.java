@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -294,20 +295,20 @@ public class ResumeService {
     public ResumesFullResponse viewResumes(ResumeFilterDTO resumeFilterDTO) {
         // 해시태그 반영 안됨
         // 해시태그 이름으로 파싱 -> resumeid
+        ResumesFullResponse resumesFullResponse = new ResumesFullResponse();
         String sort = resumeFilterDTO.getSort();
         String title = resumeFilterDTO.getTitle();
         Integer startYear = resumeFilterDTO.getStartYear();
         Integer endYear = resumeFilterDTO.getEndYear();
         CategoryEnum category = resumeFilterDTO.getCategory();
         Integer pageNo = resumeFilterDTO.getPageNo();
+
         Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending()) ;
 
         if(SortingEnum.VIEW.toString().equalsIgnoreCase(sort)) {
             paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending()) ;
         }
-        if(SortingEnum.RECOMMEND.toString().equalsIgnoreCase(sort)) {
-            paging = PageRequest.of(pageNo, 20, Sort.by("recommendCnt").descending()) ;
-        }
+
         if(SortingEnum.YEARS.toString().equalsIgnoreCase(sort)) {
             paging = PageRequest.of(pageNo, 20, Sort.by("years").descending()) ;
         }
@@ -332,7 +333,11 @@ public class ResumeService {
             list.setHashtag(hashtagLists);
         }
 
-        ResumesFullResponse resumesFullResponse = new ResumesFullResponse(lists.getContent(), lists.getTotalPages());
+
+        if(SortingEnum.RECOMMEND.toString().equalsIgnoreCase(sort)) {
+              return new ResumesFullResponse(lists.stream().sorted(Comparator.comparing(FilterViewResumeDTO::getRecommendCnt).reversed()).collect(Collectors.toList()), lists.getTotalPages());
+        }
+        resumesFullResponse = new ResumesFullResponse(lists.getContent(), lists.getTotalPages());
         return resumesFullResponse;
 
     }

@@ -31,4 +31,5 @@ public class FilterViewResumeDTO {
     private String nickname;
     private Integer years;
 
+
 }
