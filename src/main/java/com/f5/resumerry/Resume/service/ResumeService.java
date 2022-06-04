@@ -52,30 +52,20 @@ public class ResumeService {
 
     private final ResumeRepositorySupport resumeRepositorySupport;
 
-    public JSONArray viewResumesInMyPage(Long memberId) {
+    public List<FilterViewResumeDTO> viewResumesInMyPage(Long memberId) {
         JSONArray jsonArray = new JSONArray();
-        List<Resume> resumeList = resumeRepository.findByMemberId(memberId);
-        for(Resume resume: resumeList){
-            if(!resume.getIsDelete()) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("resumeId", resume.getId());
-                jsonObject.put("title", resume.getTitle());
-                jsonObject.put("modifiedDate", resume.getModifiedDate().toString());
-                jsonObject.put("category", resume.getCategory());
-                jsonObject.put("contents", resume.getContents());
-                jsonObject.put("fileLink", resume.getFileLink());
-                jsonObject.put("viewCnt", resume.getViewCnt());
-                jsonObject.put("years", resume.getYears());
-                jsonObject.put("memberId", resume.getMemberId());
-                JSONArray jsonArray1 = new JSONArray();
-                for(ResumeHashtag resumeHashtag: resume.getResumeHashtagList()){
-                    jsonArray1.add(resumeHashtag.getHashtag().getHashtagName());
-                }
-                jsonObject.put("hashtagList", jsonArray1);
-                jsonArray.add(jsonObject);
+        List<FilterViewResumeDTO> lists = resumeRepository.viewResumesInMyPage(memberId);
+        for(FilterViewResumeDTO list : lists) {
+            List<String> hashtagLists = new ArrayList<String>();
+            Long resumeId = list.getResumeId();
+            // resume hash tag 에서 list 반환
+            for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
+                Long hashtagId = resumeHashtag.getHashtagId();
+                hashtagLists.add(resumeHashtag.getHashtag().getHashtagName());
             }
+            list.setHashtag(hashtagLists);
         }
-        return jsonArray;
+        return lists;
     }
 
     public ViewResumeDTO viewResume(Long memberId, Long resumeId, Long tokenId) {

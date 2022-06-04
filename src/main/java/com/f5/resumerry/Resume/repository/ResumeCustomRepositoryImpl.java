@@ -4,6 +4,8 @@ import com.f5.resumerry.Resume.Resume;
 import com.f5.resumerry.Resume.ResumeHashtag;
 import com.f5.resumerry.Resume.dto.*;
 import com.f5.resumerry.selector.CategoryEnum;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,6 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+
+import static com.f5.resumerry.Member.domain.entity.QMember.member;
+import static com.f5.resumerry.Resume.QResume.resume;
+import static com.f5.resumerry.Resume.QResumeComment.resumeComment;
+import static com.f5.resumerry.Resume.QResumeRecommend.resumeRecommend;
+
 @Transactional
 @Repository
 public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
@@ -24,13 +32,29 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
 
     public ResumeCustomRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
-    public List<ResumeDTO> viewResumesInMyPage(Long id) {
-       return entityManager.createQuery("select new com.f5.resumerry.Resume.dto.ResumeDTO(r.id, r.title, r.contents, r.resumeRecommendList.size,r.resumeCommentList.size,r.viewCnt,r.modifiedDate, m.id, m.imageSrc, m.nickname,r.years) "
-               + "from Resume r "
-               + "join r.member m "
-               + "where m.id = :id", ResumeDTO.class)
-               .setParameter("id", id)
-               .getResultList();
+    public List<FilterViewResumeDTO> viewResumesInMyPage(Long id) {
+        return queryFactory
+                .selectDistinct(Projections.bean(FilterViewResumeDTO.class,
+                        resume.id.as("resumeId")
+                        , resume.title
+                        , resume.contents
+                        , resumeRecommend.count().intValue().as("recommendCnt")
+                        , resumeComment.count().intValue().as("commentCnt")
+                        , resume.viewCnt
+                        , resume.modifiedDate
+                        , resume.isLock
+                        , member.id.as("memberId")
+                        , member.imageSrc
+                        , member.nickname
+                        , member.years
+                ))
+                .from(resume)
+                .innerJoin(member).on(member.id.eq(resume.memberId))
+                .leftJoin(resumeComment).on(resumeComment.resumeId.eq(resume.id))
+                .leftJoin(resumeRecommend).on(resumeRecommend.resumeId.eq(resume.id))
+                .groupBy(resume.id, resumeComment.id)
+                .where(resume.isDelete.eq(true).and(member.id.eq(id)))
+                .fetch();
    }
 
 
