@@ -25,6 +25,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequestMapping("/resume")
+@CrossOrigin
 public class ResumeCommentController {
     private final ResumeService resumeService;
     private final MemberService memberService;

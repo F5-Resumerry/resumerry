@@ -36,6 +36,7 @@ import java.util.List;
 @Controller
 @RestController
 @Slf4j
+@CrossOrigin
 public class ResumeController {
     private final ResumeService resumeService;
     private final MemberService memberService;
