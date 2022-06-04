@@ -40,9 +40,9 @@ public class ResumeRepositorySupport extends QuerydslRepositorySupport {
     }
 
     // member tabel의 내용을 다 끌어옴,,
-    public PageImpl<FilterViewResumeDTO> findAllResumes(Pageable pageable, String title, CategoryEnum category, Integer startYear, Integer endYear){
-        JPQLQuery<FilterViewResumeDTO> query = jpaQueryFactory        // 1)
-                .select(Projections.bean(FilterViewResumeDTO.class,
+    public PageImpl<FilterViewResumeDTO> findAllResumes(Pageable pageable, String title, Integer startYear, Integer endYear){
+        JPQLQuery<FilterViewResumeDTO> query = jpaQueryFactory
+                .selectDistinct(Projections.bean(FilterViewResumeDTO.class,
                         resume.id.as("resumeId")
                         , resume.title
                         , resume.contents
@@ -60,7 +60,35 @@ public class ResumeRepositorySupport extends QuerydslRepositorySupport {
                 .innerJoin(member).on(member.id.eq(resume.memberId))
                 .leftJoin(resumeComment).on(resumeComment.resumeId.eq(resume.id))
                 .leftJoin(resumeRecommend).on(resumeRecommend.resumeId.eq(resume.id))
-                .groupBy(resume.id)
+                .groupBy(resume.id, resumeComment.id)
+                .where(resume.title.contains(title).and(resume.years.between(startYear, endYear)));
+
+        Long totalCount = query.fetchCount();             // 2)
+        List<FilterViewResumeDTO> results = querydsl().applyPagination(pageable, query).fetch();  // 3)
+        return new PageImpl<>(results, pageable, totalCount);
+    }
+
+    public PageImpl<FilterViewResumeDTO> findCategoryResumes(Pageable pageable, String title, CategoryEnum category, Integer startYear, Integer endYear){
+        JPQLQuery<FilterViewResumeDTO> query = jpaQueryFactory
+                .selectDistinct(Projections.bean(FilterViewResumeDTO.class,
+                        resume.id.as("resumeId")
+                        , resume.title
+                        , resume.contents
+                        , resumeRecommend.count().intValue().as("recommendCnt")
+                        , resumeComment.count().intValue().as("commentCnt")
+                        , resume.viewCnt
+                        , resume.modifiedDate
+                        , resume.isLock
+                        , member.id.as("memberId")
+                        , member.imageSrc
+                        , member.nickname
+                        , member.years
+                ))
+                .from(resume)
+                .innerJoin(member).on(member.id.eq(resume.memberId))
+                .leftJoin(resumeComment).on(resumeComment.resumeId.eq(resume.id))
+                .leftJoin(resumeRecommend).on(resumeRecommend.resumeId.eq(resume.id))
+                .groupBy(resume.id, resumeComment.id)
                 .where(resume.title.contains(title).and(resume.category.eq(category)).and(resume.years.between(startYear, endYear)));
 
         Long totalCount = query.fetchCount();             // 2)
