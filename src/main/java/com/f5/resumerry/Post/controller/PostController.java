@@ -26,6 +26,7 @@ import java.util.Map;
 
 @Controller
 @RestController
+@CrossOrigin
 public class PostController {
 
     @Autowired

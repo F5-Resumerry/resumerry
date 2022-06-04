@@ -24,6 +24,7 @@ import java.util.Map;
 @Controller
 @RestController
 @Slf4j
+@CrossOrigin
 public class PostCommentController {
     @Autowired
     private PostService postService;
