@@ -66,7 +66,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     public List<PostsDTO> findPostsInMyPage(Long memberId) {
-        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, p.contents, p.memberId, m.nickname, p.modifiedDate, p.category ) "
+        return entityManager.createQuery("select new com.f5.resumerry.Post.dto.PostsDTO(p.id, p.title, p.contents, size(p.postCommentList), p.viewCnt, p.isAnonymous, m.imageSrc, p.memberId, m.nickname, p.modifiedDate, p.category ) "
                         + "from Post p "
                         + "inner join Member m "
                         + "on m.id = p.memberId "
