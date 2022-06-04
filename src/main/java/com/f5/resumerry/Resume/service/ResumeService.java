@@ -432,7 +432,7 @@ public class ResumeService {
         Member memberData = memberRepository.findByMemberId(memberId);
         Long memberDataInfoId = memberData.getMemberInfoId();
 
-        memberRepository.updateMemberToken(numOfTokenToUnLockResume, memberDataInfoId);
+        memberRepository.updateMemberToken(-1 * numOfTokenToUnLockResume, memberDataInfoId);
 
         // token_history table 관리 여부
         Resume resumeData = resumeRepository.getById(resumeId);
