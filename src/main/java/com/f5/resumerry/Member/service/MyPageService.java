@@ -5,7 +5,10 @@ import com.f5.resumerry.Member.domain.dto.ScrapListDTO;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.repository.MemberRepository;
 import com.f5.resumerry.Resume.*;
+import com.f5.resumerry.Resume.dto.FilterViewResumeDTO;
+import com.f5.resumerry.Resume.repository.ResumeHashtagRepository;
 import com.f5.resumerry.Resume.repository.ResumeRepository;
+import com.f5.resumerry.security.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -24,40 +27,23 @@ import java.util.Optional;
 public class MyPageService {
     private final MemberRepository memberRepository;
     private final ResumeRepository resumeRepository;
+    private final ResumeHashtagRepository resumeHashtagRepository;
 
     @Transactional
-    public List<ScrapListDTO> viewScrapInMyPage(String accountName) {
-        List<ScrapListDTO> scrapListDTO = new ArrayList<ScrapListDTO>();
-        Member member = memberRepository.findByAccountName(accountName);
-        List<ResumeScrap> resumeList = member.getResumeScrapList();
-        System.out.println(resumeList);
-        for(ResumeScrap resumeScrap: resumeList){
-            Optional<Resume> resumeOptional = resumeRepository.findById(resumeScrap.getResumeId());
-            Resume resume = resumeOptional.orElse(null);
-            if(!resume.getIsDelete()) {
-                ScrapListDTO scrapListDTO1 = new ScrapListDTO();
-                scrapListDTO1.setResumeId(resume.getId());
-                scrapListDTO1.setTitle(resume.getTitle());
-                scrapListDTO1.setCategory(resume.getCategory());
-                scrapListDTO1.setFileLink(resume.getFileLink());
-                scrapListDTO1.setViewCnt(resume.getViewCnt());
-                scrapListDTO1.setYears(resume.getYears());
-                scrapListDTO1.setMemberId(resume.getMemberId());
-                scrapListDTO1.setModifiedDate(resume.getModifiedDate());
-                scrapListDTO1.setImageSrc(resume.getMember().getImageSrc());
-                scrapListDTO1.setNickname(resume.getMember().getNickname());
-                scrapListDTO1.setRecommendCnt(resume.getResumeRecommendList().size());
-                scrapListDTO1.setCommentCnt(resume.getResumeCommentList().size());
+    public List<FilterViewResumeDTO> viewScrapInMyPage(Long memberId) {
 
-                List<String> hashtagList = new ArrayList<String>();
-                for(ResumeHashtag resumeHashtag: resume.getResumeHashtagList()){
-                    hashtagList.add(resumeHashtag.getHashtag().getHashtagName());
-                }
-                scrapListDTO1.setHashtagList(hashtagList);
-                scrapListDTO.add(scrapListDTO1);
+        List<FilterViewResumeDTO> lists = resumeRepository.viewScrapResumesInMyPage(memberId);
+        for(FilterViewResumeDTO list : lists) {
+            List<String> hashtagLists = new ArrayList<String>();
+            Long resumeId = list.getResumeId();
+            // resume hash tag 에서 list 반환
+            for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
+                Long hashtagId = resumeHashtag.getHashtagId();
+                hashtagLists.add(resumeHashtag.getHashtag().getHashtagName());
             }
+            list.setHashtag(hashtagLists);
         }
-        return scrapListDTO;
+        return lists;
     }
     @Transactional
     public ProfileDTO viewProfileInMyPage(String accountName) {

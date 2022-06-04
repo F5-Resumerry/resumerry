@@ -13,5 +13,4 @@ public interface ResumeScrapRepository extends JpaRepository<ResumeScrap, Long> 
 
     ResumeScrap findByResumeIdAndMemberId(Long resumeId, Long memberId);
 
-    Boolean existsByResume(Resume resume);
 }

@@ -18,10 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 
@@ -61,9 +59,15 @@ public class PostService {
             if(sort.equals("recent")){
                 Pageable paging = PageRequest.of(pageNo,20, Sort.by("createdDate").ascending());
             }
-            Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending());
+            Pageable paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending());
 
-            Page<PostsDTO> pagePosts =postRepository.findByTitleContainingAndAndCategory(title, category, paging).map(PostsDTO::of);
+            Page<PostsDTO> pagePosts = new PageImpl<PostsDTO>(new ArrayList<>());
+
+            if(category.equals(CategoryEnum.ALL)){
+                pagePosts =postRepository.findByTitleContainingAndIsDeleteTrue(title, paging).map(PostsDTO::of);
+            } else {
+                pagePosts =postRepository.findByTitleContainingAndCategoryAndIsDeleteTrue(title, category, paging).map(PostsDTO::of);
+            }
             PostsFullResponse responses = new PostsFullResponse(pagePosts, pagePosts.getTotalPages());
             return responses;
     }

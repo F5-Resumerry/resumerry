@@ -12,5 +12,4 @@ public interface ResumeRecommendRepository extends JpaRepository<ResumeRecommend
 
     Boolean existsByResumeIdAndMemberId(Long ResumeId, Long memberId);
 
-    Boolean existsByResume(Resume resume);
 }

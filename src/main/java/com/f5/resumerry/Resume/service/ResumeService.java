@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,30 +53,19 @@ public class ResumeService {
 
     private final ResumeRepositorySupport resumeRepositorySupport;
 
-    public JSONArray viewResumesInMyPage(Long memberId) {
-        JSONArray jsonArray = new JSONArray();
-        List<Resume> resumeList = resumeRepository.findByMemberId(memberId);
-        for(Resume resume: resumeList){
-            if(!resume.getIsDelete()) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("resumeId", resume.getId());
-                jsonObject.put("title", resume.getTitle());
-                jsonObject.put("modifiedDate", resume.getModifiedDate().toString());
-                jsonObject.put("category", resume.getCategory());
-                jsonObject.put("contents", resume.getContents());
-                jsonObject.put("fileLink", resume.getFileLink());
-                jsonObject.put("viewCnt", resume.getViewCnt());
-                jsonObject.put("years", resume.getYears());
-                jsonObject.put("memberId", resume.getMemberId());
-                JSONArray jsonArray1 = new JSONArray();
-                for(ResumeHashtag resumeHashtag: resume.getResumeHashtagList()){
-                    jsonArray1.add(resumeHashtag.getHashtag().getHashtagName());
-                }
-                jsonObject.put("hashtagList", jsonArray1);
-                jsonArray.add(jsonObject);
+    public List<FilterViewResumeDTO> viewResumesInMyPage(Long memberId) {
+        List<FilterViewResumeDTO> lists = resumeRepository.viewResumesInMyPage(memberId);
+        for(FilterViewResumeDTO list : lists) {
+            List<String> hashtagLists = new ArrayList<String>();
+            Long resumeId = list.getResumeId();
+            // resume hash tag 에서 list 반환
+            for(ResumeHashtag resumeHashtag : resumeHashtagRepository.findByResumeId(resumeId)) {
+                Long hashtagId = resumeHashtag.getHashtagId();
+                hashtagLists.add(resumeHashtag.getHashtag().getHashtagName());
             }
+            list.setHashtag(hashtagLists);
         }
-        return jsonArray;
+        return lists;
     }
 
     public ViewResumeDTO viewResume(Long memberId, Long resumeId, Long tokenId) {
@@ -298,33 +288,39 @@ public class ResumeService {
         String contents = uploadResumeDTO.getContents();
         CategoryEnum category = uploadResumeDTO.getCategory();
         Integer years = uploadResumeDTO.getYears();
-        Resume resume = resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
+        resumeRepository.updateResume(memberId, resumeId, title, contents, category, years, fullFileNamePath);
 
     }
 
     public ResumesFullResponse viewResumes(ResumeFilterDTO resumeFilterDTO) {
         // 해시태그 반영 안됨
         // 해시태그 이름으로 파싱 -> resumeid
+        ResumesFullResponse resumesFullResponse = new ResumesFullResponse();
         String sort = resumeFilterDTO.getSort();
         String title = resumeFilterDTO.getTitle();
         Integer startYear = resumeFilterDTO.getStartYear();
         Integer endYear = resumeFilterDTO.getEndYear();
         CategoryEnum category = resumeFilterDTO.getCategory();
         Integer pageNo = resumeFilterDTO.getPageNo();
+
         Pageable paging = PageRequest.of(pageNo, 20, Sort.by("createdDate").descending()) ;
 
         if(SortingEnum.VIEW.toString().equalsIgnoreCase(sort)) {
             paging = PageRequest.of(pageNo, 20, Sort.by("viewCnt").descending()) ;
         }
-        if(SortingEnum.RECOMMEND.toString().equalsIgnoreCase(sort)) {
-            paging = PageRequest.of(pageNo, 20, Sort.by("recommendCnt").descending()) ;
-        }
+
         if(SortingEnum.YEARS.toString().equalsIgnoreCase(sort)) {
             paging = PageRequest.of(pageNo, 20, Sort.by("years").descending()) ;
         }
 
-        PageImpl<FilterViewResumeDTO> lists = resumeRepositorySupport.findAllResumes(paging, title, category, startYear, endYear);
+        PageImpl<FilterViewResumeDTO> lists = new PageImpl<>(new ArrayList<>());
 
+        if (category.equals(CategoryEnum.ALL)) {
+             lists = resumeRepositorySupport.findAllResumes(paging, title, startYear, endYear);
+        }
+        else{
+             lists = resumeRepositorySupport.findCategoryResumes(paging, title, category, startYear, endYear);
+        }
                 // dto에 hashtagname(string 부여) -> 리팩토링 필요,,
         for(FilterViewResumeDTO list : lists) {
             List<String> hashtagLists = new ArrayList<String>();
@@ -337,7 +333,11 @@ public class ResumeService {
             list.setHashtag(hashtagLists);
         }
 
-        ResumesFullResponse resumesFullResponse = new ResumesFullResponse(lists.getContent(), lists.getTotalPages());
+
+        if(SortingEnum.RECOMMEND.toString().equalsIgnoreCase(sort)) {
+              return new ResumesFullResponse(lists.stream().sorted(Comparator.comparing(FilterViewResumeDTO::getRecommendCnt).reversed()).collect(Collectors.toList()), lists.getTotalPages());
+        }
+        resumesFullResponse = new ResumesFullResponse(lists.getContent(), lists.getTotalPages());
         return resumesFullResponse;
 
     }
@@ -432,7 +432,7 @@ public class ResumeService {
         Member memberData = memberRepository.findByMemberId(memberId);
         Long memberDataInfoId = memberData.getMemberInfoId();
 
-        memberRepository.updateMemberToken(numOfTokenToUnLockResume, memberDataInfoId);
+        memberRepository.updateMemberToken(-1 * numOfTokenToUnLockResume, memberDataInfoId);
 
         // token_history table 관리 여부
         Resume resumeData = resumeRepository.getById(resumeId);

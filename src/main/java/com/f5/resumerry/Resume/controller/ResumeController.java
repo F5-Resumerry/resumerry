@@ -94,9 +94,7 @@ public class ResumeController {
         if(!user_id.equals(member.getId())) {
             throw new AuthenticateException("잘못된 회원 입니다");
         }
-        JSONArray result = new JSONArray();
-        result = resumeService.viewResumesInMyPage(user_id);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(resumeService.viewResumesInMyPage(user_id));
     }
 
     @GetMapping(value = "/resume/{user_id}/{resume_id}")
