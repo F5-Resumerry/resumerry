@@ -61,7 +61,7 @@ public class ResumeRepositorySupport extends QuerydslRepositorySupport {
                 .leftJoin(resumeComment).on(resumeComment.resumeId.eq(resume.id))
                 .leftJoin(resumeRecommend).on(resumeRecommend.resumeId.eq(resume.id))
                 .groupBy(resume.id, resumeComment.id)
-                .where(resume.title.contains(title).and(resume.years.between(startYear, endYear)));
+                .where(resume.title.contains(title).and(resume.years.between(startYear, endYear)).and(resume.isDelete.eq(true)));
 
         Long totalCount = query.fetchCount();             // 2)
         List<FilterViewResumeDTO> results = querydsl().applyPagination(pageable, query).fetch();  // 3)
@@ -89,7 +89,7 @@ public class ResumeRepositorySupport extends QuerydslRepositorySupport {
                 .leftJoin(resumeComment).on(resumeComment.resumeId.eq(resume.id))
                 .leftJoin(resumeRecommend).on(resumeRecommend.resumeId.eq(resume.id))
                 .groupBy(resume.id, resumeComment.id)
-                .where(resume.title.contains(title).and(resume.category.eq(category)).and(resume.years.between(startYear, endYear)));
+                .where(resume.title.contains(title).and(resume.category.eq(category)).and(resume.years.between(startYear, endYear)).and(resume.isDelete.eq(true)));
 
         Long totalCount = query.fetchCount();             // 2)
         List<FilterViewResumeDTO> results = querydsl().applyPagination(pageable, query).fetch();  // 3)
