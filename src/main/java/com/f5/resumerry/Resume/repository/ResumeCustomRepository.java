@@ -17,6 +17,8 @@ import java.util.List;
 public interface ResumeCustomRepository {
     List<FilterViewResumeDTO> viewResumesInMyPage(Long memberId);
 
+    List<FilterViewResumeDTO> viewScrapResumesInMyPage(Long memberId);
+
     void uploadResume(Long id, String fullFileLink, String title, String contents, CategoryEnum category, Integer years);
 
    // void updateResume(Long memberId, Long resumeId, String title, String contents, CategoryEnum category, Integer years, String fullFileNamePath);

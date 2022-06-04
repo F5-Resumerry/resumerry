@@ -45,12 +45,11 @@ public class MyPageController {
     @ApiOperation(value = "마이페이지 스크랩 이력서 목록 조회")
     public ResponseEntity viewScrapList(@ApiParam("유저 토큰") @RequestHeader("Authorization") String token,
                                         @ApiParam("member_id") @PathVariable("member_id") Long member_id){
-
-        Member member = memberService.getMember(jwtUtil.extractUsername(token.substring(7)));
+        Member member = authService.Token2Member(token);
         if(!member_id.equals(member.getId())) {
             throw new AuthenticateException("잘못된 회원 입니다");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(myPageService.viewScrapInMyPage(member.getAccountName()));
+        return ResponseEntity.status(HttpStatus.OK).body(myPageService.viewScrapInMyPage(member.getId()));
     }
 
     @GetMapping("/{member_id}")

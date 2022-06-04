@@ -20,6 +20,7 @@ import static com.f5.resumerry.Member.domain.entity.QMember.member;
 import static com.f5.resumerry.Resume.QResume.resume;
 import static com.f5.resumerry.Resume.QResumeComment.resumeComment;
 import static com.f5.resumerry.Resume.QResumeRecommend.resumeRecommend;
+import static com.f5.resumerry.Resume.QResumeScrap.resumeScrap;
 
 @Transactional
 @Repository
@@ -56,6 +57,32 @@ public class ResumeCustomRepositoryImpl implements ResumeCustomRepository {
                 .where(resume.isDelete.eq(true).and(member.id.eq(id)))
                 .fetch();
    }
+
+    public List<FilterViewResumeDTO> viewScrapResumesInMyPage(Long memberId) {
+        return queryFactory
+                .selectDistinct(Projections.bean(FilterViewResumeDTO.class,
+                        resume.id.as("resumeId")
+                        , resume.title
+                        , resume.contents
+                        , resumeRecommend.count().intValue().as("recommendCnt")
+                        , resumeComment.count().intValue().as("commentCnt")
+                        , resume.viewCnt
+                        , resume.modifiedDate
+                        , resume.isLock
+                        , member.id.as("memberId")
+                        , member.imageSrc
+                        , member.nickname
+                        , member.years
+                ))
+                .from(resumeScrap)
+                .innerJoin(resume).on(resumeScrap.resumeId.eq(resume.id))
+                .innerJoin(member).on(resume.memberId.eq(member.id))
+                .leftJoin(resumeComment).on(resumeComment.resumeId.eq(resume.id))
+                .leftJoin(resumeRecommend).on(resumeRecommend.resumeId.eq(resume.id))
+                .groupBy(resume.id, resumeComment.id)
+                .where(resume.isDelete.eq(true).and(resume.memberId.eq(memberId)))
+                .fetch();
+    }
 
 
 

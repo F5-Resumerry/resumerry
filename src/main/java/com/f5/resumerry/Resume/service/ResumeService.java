@@ -53,7 +53,6 @@ public class ResumeService {
     private final ResumeRepositorySupport resumeRepositorySupport;
 
     public List<FilterViewResumeDTO> viewResumesInMyPage(Long memberId) {
-        JSONArray jsonArray = new JSONArray();
         List<FilterViewResumeDTO> lists = resumeRepository.viewResumesInMyPage(memberId);
         for(FilterViewResumeDTO list : lists) {
             List<String> hashtagLists = new ArrayList<String>();
