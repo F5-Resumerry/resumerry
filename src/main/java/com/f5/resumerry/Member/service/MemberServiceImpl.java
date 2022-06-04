@@ -4,6 +4,7 @@ package com.f5.resumerry.Member.service;
 import com.f5.resumerry.Member.domain.dto.AmendRequestDTO;
 import com.f5.resumerry.Member.domain.dto.MemberInfoDTO;
 import com.f5.resumerry.Member.domain.dto.SignUpDTO;
+import com.f5.resumerry.Member.domain.dto.SignUpReqDTO;
 import com.f5.resumerry.Member.domain.entity.ConfirmationToken;
 import com.f5.resumerry.Member.domain.entity.Member;
 import com.f5.resumerry.Member.domain.entity.MemberInfo;
@@ -44,8 +45,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Member saveMember(SignUpDTO memberDTO) {
+    public Member saveMember(SignUpReqDTO memberReqDTO) {
         String salt = saltUtil.genSalt();
+        SignUpDTO memberDTO = new SignUpDTO(memberReqDTO);
         memberDTO.setSalt(salt);
         memberDTO.setPassword(saltUtil.encodePassword(salt, memberDTO.getPassword()));
         MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder().build();
