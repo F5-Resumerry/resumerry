@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,9 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     @Query("update Post p set p.viewCnt = p.viewCnt + 1 where p.memberId = ?1 and p.id = ?2")
     void updateViewCnt(Long memberId, Long postId);
 
-    Page<Post> findByTitleContainingAndAndCategory(String title, CategoryEnum category, Pageable pageable);
+    Page<Post> findByTitleContainingAndCategoryAndIsDeleteTrue(String title, CategoryEnum category, Pageable pageable);
+
+    Page<Post> findByTitleContainingAndIsDeleteTrue(String title, Pageable pageable);
 
 
 }
